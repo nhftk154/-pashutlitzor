@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>פשוט ליצור — סדנאות טיח פולימרי</title>
+<meta name="description" content="סדנאות יצירה בוטיק בטיח פולימרי — אגרטלים, אובייקטים מעוצבים ודקור לבית. סדנאות פרטיות, ערבי בנות, חגיגות ואירועי חברה. בסטודיו או אצלכם.">
+<meta name="theme-color" content="#2D5B68">
+
+<!-- Open Graph -->
+<meta property="og:title" content="פשוט ליצור — סדנאות טיח פולימרי">
+<meta property="og:description" content="חוויית יצירה בוטיק בטיח פולימרי. בואי ליצור אובייקט שתיקחי הביתה.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="og-image.jpg">
+<link rel="icon" type="image/png" href="favicon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============ TOKENS ============ */
+:root{
+  /* Polymer-concrete palette */
+  --concrete:#B7BCC3;        /* concrete grey */
+  --terracotta:#CE866C;      /* natural terracotta */
+  --sand:#D5C2A4;            /* sandy beige */
+  --teal:#2D5B68;            /* deep teal */
+  --sand-light:#EBE0C9;      /* light sand */
+  --olive:#6F7D56;           /* olive green */
+
+  --green-primary:#2D5B68;   /* deep teal = primary dark */
+  --green-secondary:#6F7D56; /* olive = secondary */
+  --accent:#CE866C;          /* terracotta accent */
+  --bg:#F6F1E8;              /* light warm sand */
+  --bg-warm:#EBE0C9;         /* light sand, deeper sections */
+  --text:#25333A;            /* dark teal-charcoal */
+  --text-soft:#5E6A5C;       /* muted olive-grey */
+  --white:#FFFFFF;
+  --wa:#25D366;
+  --wa-dark:#1ebe57;
+
+  --r-sm:12px;
+  --r-md:18px;
+  --r-lg:26px;
+
+  --shadow-sm:0 4px 14px rgba(37,51,58,.08);
+  --shadow-md:0 10px 30px rgba(37,51,58,.11);
+  --shadow-lg:0 20px 48px rgba(37,51,58,.15);
+
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --maxw:1180px;
+
+  --nav-h:70px;
+}
+
+/* ============ RESET ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Heebo',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  font-size:17px;
+  font-weight:400;
+  overflow-x:clip;
+  text-align:start;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3{font-family:'Frank Ruhl Libre','Heebo',serif;line-height:1.18;font-weight:700;letter-spacing:-.01em}
+section{position:relative}
+.mono{font-family:'DM Mono',monospace}
+
+/* grain overlay */
+body::before{
+  content:"";position:fixed;inset:0;z-index:9990;pointer-events:none;
+  opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:22px;width:100%}
+.eyebrow{
+  font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--green-primary);font-weight:500;
+  display:inline-block;margin-bottom:14px;
+}
+.section-pad{padding-block:clamp(64px,11vw,128px)}
+
+/* ============ BUTTONS ============ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-weight:600;font-size:17px;border-radius:999px;
+  padding:15px 30px;min-height:52px;
+  transition:transform .2s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease);
+  touch-action:manipulation;cursor:pointer;
+  will-change:transform;
+}
+.btn svg{width:22px;height:22px;flex:none}
+.btn-wa{background:var(--teal);color:#fff;box-shadow:0 8px 22px rgba(45,91,104,.32)}
+.btn-wa:hover{background:#234a55;transform:translateY(-2px);box-shadow:0 12px 30px rgba(45,91,104,.42)}
+.btn-wa:active{transform:translateY(0)}
+/* on the teal corporate section the teal button would vanish — use terracotta */
+#corporate .btn-wa{background:var(--accent);box-shadow:0 8px 22px rgba(206,134,108,.35)}
+#corporate .btn-wa:hover{background:#bd7159;box-shadow:0 12px 30px rgba(206,134,108,.45)}
+.btn-lg{font-size:20px;padding:20px 42px;min-height:64px;border-radius:999px}
+.btn-ghost{background:transparent;border:1.5px solid rgba(255,255,255,.55);color:#fff}
+.btn-ghost:hover{background:rgba(255,255,255,.12)}
+
+/* ============ NAVBAR ============ */
+#navbar{
+  position:fixed;inset-block-start:0;inset-inline:0;z-index:1000;
+  height:var(--nav-h);display:flex;align-items:center;
+  transition:background .35s var(--ease),box-shadow .35s var(--ease),backdrop-filter .35s var(--ease);
+}
+/* RTL: nav-logo on the LEFT → use order to push it to the end in flex row */
+#navbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#navbar.scrolled{
+  background:rgba(246,241,232,.88);
+  backdrop-filter:blur(16px) saturate(1.3);
+  -webkit-backdrop-filter:blur(16px) saturate(1.3);
+  box-shadow:0 1px 0 rgba(26,20,16,.06),var(--shadow-sm);
+}
+/* Logo goes to the LEFT in RTL = order:1 pushes it after the links/cta */
+.nav-logo{
+  display:flex;align-items:center;gap:0;
+  order:1; /* LEFT side in RTL flex row */
+}
+.nav-logo img{
+  height:56px;width:auto;max-width:160px;
+  border-radius:10px;object-fit:contain;
+  background:#fff;padding:7px 10px;
+  box-shadow:var(--shadow-sm);
+  transition:opacity .2s;
+}
+.nav-logo:hover img{opacity:.85}
+/* nav-links + cta stay on the right (default order:0) */
+.nav-links{display:none;align-items:center;gap:28px;order:0}
+.nav-links a{
+  font-size:16px;font-weight:400;color:var(--text);position:relative;
+  transition:color .2s;padding-block:6px;
+}
+.nav-links a::after{
+  content:"";position:absolute;inset-block-end:0;inset-inline-start:0;
+  width:0;height:2px;background:var(--text);transition:width .25s var(--ease);
+}
+.nav-links a:hover::after{width:100%}
+.nav-cta{padding:11px 22px;min-height:44px;font-size:15px;order:0}
+.nav-cta .nav-cta-text{display:none}
+/* hamburger (mobile only) */
+.nav-burger{
+  order:0;display:flex;flex-direction:column;justify-content:center;gap:5px;
+  width:44px;height:44px;padding:10px;border-radius:10px;
+}
+.nav-burger span{display:block;height:2px;width:100%;background:var(--text);border-radius:2px;transition:transform .25s var(--ease),opacity .2s}
+.nav-burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.nav-burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.nav-mobile{
+  position:fixed;inset-inline:0;inset-block-start:var(--nav-h);z-index:999;
+  background:rgba(246,241,232,.97);backdrop-filter:blur(16px);
+  display:flex;flex-direction:column;padding:18px 22px 26px;gap:4px;
+  box-shadow:var(--shadow-md);
+  opacity:0;visibility:hidden;transform:translateY(-8px);
+  transition:opacity .25s var(--ease),transform .25s var(--ease),visibility .25s;
+}
+.nav-mobile.open{opacity:1;visibility:visible;transform:none}
+.nav-mobile a{font-size:1.15rem;font-weight:500;color:var(--text);padding:13px 4px;border-bottom:1px solid rgba(37,51,58,.08)}
+.nav-mobile a:last-child{border-bottom:none}
+@media(min-width:880px){
+  .nav-links{display:flex}
+  .nav-cta .nav-cta-text{display:inline}
+  .nav-burger,.nav-mobile{display:none}
+}
+
+/* ============ HERO ============ */
+#hero{
+  min-height:100svh;display:flex;align-items:center;
+  position:relative;overflow:hidden;
+  background:var(--bg);
+  padding-block:calc(var(--nav-h) + 40px) 80px;
+}
+.hero-layout{
+  width:100%;
+  max-width:780px;
+}
+.hero-text{
+  display:flex;flex-direction:column;
+  align-items:flex-start;
+  padding-block:20px;
+}
+.hero-eyebrow{color:var(--text-soft)}
+#hero h1{
+  color:var(--text);font-size:clamp(2.4rem,7vw,4.4rem);font-weight:700;
+  letter-spacing:-.02em;margin-bottom:18px;line-height:1.1;
+}
+#hero h1 .accent-word{color:var(--accent);font-weight:500}
+.hero-sub{
+  color:var(--text-soft);font-size:clamp(1rem,2.8vw,1.25rem);
+  font-weight:300;max-width:48ch;margin-bottom:36px;line-height:1.7;
+}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.btn-ghost{
+  background:transparent;border:1.5px solid var(--text);color:var(--text);
+}
+.btn-ghost:hover{background:rgba(26,20,16,.06)}
+/* hero logo watermark background */
+.hero-logo-bg{
+  position:absolute;inset:0;z-index:0;
+  pointer-events:none;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-logo-bg img{
+  width:min(420px,70vw);height:auto;
+  opacity:.07;
+  mix-blend-mode:multiply;
+  filter:grayscale(100%) blur(1px);
+  transform:none;
+  user-select:none;
+}
+/* make hero content sit above the watermark */
+.hero-layout{position:relative;z-index:1}
+/* blob image side */
+.hero-visual{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.hero-blob{
+  width:min(520px,90%);aspect-ratio:1/1.1;
+  border-radius:50% 50% 50% 50% / 55% 55% 45% 45%;
+  background:var(--bg-warm);
+  overflow:hidden;position:relative;
+  box-shadow:var(--shadow-md);
+}
+.hero-blob img{
+  width:100%;height:100%;object-fit:cover;
+  display:block;
+}
+.hero-blob-placeholder{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--green-secondary);font-size:13px;font-family:'DM Mono',monospace;
+  letter-spacing:.1em;text-align:center;padding:24px;
+  flex-direction:column;gap:12px;
+}
+.hero-blob-placeholder svg{
+  width:48px;height:48px;opacity:.35;
+}
+/* Mobile: stack vertically */
+@media(max-width:680px){
+  .hero-layout{
+    grid-template-columns:1fr;
+    gap:40px;
+  }
+  .hero-visual{order:-1}
+  .hero-blob{width:min(320px,85vw);border-radius:50%}
+}
+.scroll-hint{
+  position:absolute;inset-block-end:26px;inset-inline-start:50%;
+  transform:translateX(50%);z-index:2;color:var(--text-soft);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  font-size:12px;letter-spacing:.1em;font-family:'DM Mono',monospace;
+}
+.scroll-hint svg{width:20px;height:20px;animation:bob 1.8s var(--ease) infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+
+/* ============ CANVAS SEQUENCE (scroll-expand hero) ============ */
+#canvas-sequence{height:260vh;background:var(--bg)}
+@media(max-width:680px){#canvas-sequence{height:180vh}}
+.canvas-sticky{
+  position:sticky;inset-block-start:0;height:100svh;width:100%;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);
+}
+.canvas-card{
+  position:relative;overflow:hidden;border-radius:0;
+  width:100%;height:100%;
+  box-shadow:none;
+}
+#frame-canvas{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:100vw;height:100svh;object-fit:cover;display:block;
+  transition:filter .05s linear;
+}
+.canvas-fallback{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.canvas-logo{
+  position:absolute;inset:0;z-index:1;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;will-change:opacity,transform;
+}
+.canvas-logo img{width:72%;max-width:300px;height:auto}
+.canvas-hint{
+  position:absolute;inset-block-end:30px;inset-inline-start:50%;
+  transform:translateX(50%);z-index:2;color:var(--text-soft);
+  font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.14em;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.canvas-hint svg{width:18px;height:18px;animation:bob 1.8s var(--ease) infinite}
+
+/* ============ CONCEPT ============ */
+#concept{background:var(--bg);text-align:center}
+#concept .wrap{max-width:740px}
+#concept h2{font-size:clamp(2rem,6vw,3rem);margin-bottom:24px}
+#concept p{font-size:clamp(1.1rem,3vw,1.35rem);color:var(--text-soft);font-weight:300;line-height:1.7}
+#concept .concept-divider{
+  width:54px;height:3px;background:var(--accent);border-radius:2px;
+  margin:34px auto 0;
+}
+
+/* ============ WORKSHOPS ============ */
+#workshops{background:var(--bg-warm)}
+.section-head{margin-bottom:46px;max-width:620px}
+.section-head h2{font-size:clamp(2rem,6vw,3rem);margin-bottom:14px}
+.section-head p{color:var(--text-soft);font-size:1.1rem;font-weight:300}
+.cards-grid{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:600px){.cards-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.cards-grid{grid-template-columns:repeat(4,1fr)}}
+.w-card{
+  background:var(--white);border-radius:var(--r-lg);padding:30px 26px;
+  box-shadow:var(--shadow-sm);border:1px solid rgba(183,188,195,.45);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease);
+  display:flex;flex-direction:column;gap:14px;height:100%;
+}
+.w-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:rgba(206,134,108,.45)}
+.w-icon{
+  width:58px;height:58px;border-radius:16px;
+  background:linear-gradient(145deg,var(--green-secondary),var(--green-primary));
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  box-shadow:var(--shadow-sm);
+}
+.w-icon svg{width:30px;height:30px;stroke:#fff;stroke-width:1.8;fill:none}
+.w-card h3{font-size:1.3rem}
+.w-card p{color:var(--text-soft);font-size:1rem;font-weight:300;flex-grow:1}
+.w-card .w-link{
+  font-weight:600;color:var(--green-primary);font-size:.97rem;
+  display:inline-flex;align-items:center;gap:6px;margin-top:4px;
+}
+.w-card .w-link svg{width:16px;height:16px;transition:transform .2s}
+.w-card:hover .w-link svg{transform:translateX(-4px)}
+
+/* ============ GALLERY ============ */
+#gallery{background:var(--bg)}
+.masonry{columns:2;column-gap:14px}
+@media(min-width:900px){.masonry{columns:3;column-gap:16px}}
+.masonry figure{
+  break-inside:avoid;margin-bottom:14px;border-radius:var(--r-md);
+  overflow:hidden;box-shadow:var(--shadow-sm);position:relative;
+  background:var(--bg-warm);
+}
+.masonry figure img{
+  width:100%;height:auto;object-fit:cover;
+  transition:transform .5s var(--ease);
+}
+/* staggered reveal per tile */
+.masonry figure:nth-child(2){transition-delay:.07s}
+.masonry figure:nth-child(3){transition-delay:.14s}
+.masonry figure:nth-child(4){transition-delay:.21s}
+.masonry figure:nth-child(5){transition-delay:.28s}
+.masonry figure:nth-child(6){transition-delay:.35s}
+.masonry figure:nth-child(7){transition-delay:.42s}
+.masonry figure:hover img{transform:scale(1.05)}
+.masonry .ph{
+  width:100%;display:flex;align-items:center;justify-content:center;
+  color:var(--green-primary);
+  background:linear-gradient(135deg,var(--sand),var(--sand-light));
+}
+.masonry .ph svg{width:40px;height:40px;opacity:.4;stroke:currentColor;stroke-width:1.4;fill:none}
+
+/* ============ CORPORATE ============ */
+#corporate{background:var(--green-primary);color:#fff;overflow:hidden}
+.corp-grid{display:grid;grid-template-columns:1fr;gap:40px;align-items:center}
+@media(min-width:920px){.corp-grid{grid-template-columns:1.1fr .9fr;gap:60px}}
+#corporate .eyebrow{color:var(--accent)}
+#corporate h2{font-size:clamp(2rem,6vw,3.1rem);margin-bottom:18px}
+.corp-lead{color:rgba(255,255,255,.88);font-size:1.15rem;font-weight:300;margin-bottom:30px;max-width:48ch}
+.corp-list{list-style:none;display:flex;flex-direction:column;gap:18px;margin-bottom:34px}
+.corp-list li{display:flex;gap:14px;align-items:flex-start}
+.corp-check{
+  flex:none;width:30px;height:30px;border-radius:50%;
+  background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;
+  margin-top:2px;
+}
+.corp-check svg{width:17px;height:17px;stroke:var(--accent);stroke-width:2.4;fill:none}
+.corp-list strong{display:block;font-weight:600;font-size:1.1rem;margin-bottom:2px}
+.corp-list span{color:rgba(255,255,255,.78);font-weight:300;font-size:1rem}
+.corp-visual{
+  border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-lg);
+  aspect-ratio:4/5;background:linear-gradient(145deg,#1f4651,#14333b);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.corp-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.corp-visual .ph svg{width:64px;height:64px;stroke:rgba(255,255,255,.5);stroke-width:1.2;fill:none}
+.corp-stats{display:flex;gap:28px;margin-bottom:34px;flex-wrap:wrap}
+.corp-stat .num{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;color:#FAF8F5;line-height:1}
+.corp-stat .lbl{font-size:.9rem;color:rgba(255,255,255,.75);font-weight:300;margin-top:4px}
+
+/* ============ TESTIMONIALS ============ */
+#testimonials{background:var(--bg-warm);text-align:center}
+.t-track{
+  display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;
+  padding-block:8px;padding-inline:2px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.t-track::-webkit-scrollbar{display:none}
+@media(min-width:920px){
+  .t-track{display:grid;grid-template-columns:repeat(3,1fr);overflow:visible}
+}
+.t-card{
+  flex:0 0 84%;scroll-snap-align:center;
+  background:var(--white);border-radius:var(--r-lg);padding:32px 28px;
+  box-shadow:var(--shadow-sm);text-align:start;
+  border:1px solid rgba(42,31,24,.05);
+  display:flex;flex-direction:column;gap:14px;
+}
+@media(min-width:920px){.t-card{flex:auto}}
+.t-quote{
+  font-family:'DM Mono',monospace;font-size:3rem;line-height:.6;
+  color:var(--accent);height:26px;
+}
+.t-card p{color:var(--text-soft);font-size:1.05rem;font-weight:300;flex-grow:1}
+.t-author{display:flex;align-items:center;gap:12px;margin-top:6px}
+.t-avatar{
+  width:44px;height:44px;border-radius:50%;flex:none;
+  background:linear-gradient(145deg,var(--green-secondary),var(--green-primary));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:1.1rem;
+}
+.t-name{font-weight:600;font-size:1rem}
+.t-meta{font-size:.85rem;color:var(--text-soft);font-weight:300}
+.t-dots{display:flex;gap:8px;justify-content:center;margin-top:24px}
+@media(min-width:920px){.t-dots{display:none}}
+.t-dots button{width:9px;height:9px;border-radius:50%;background:rgba(42,31,24,.2);transition:background .2s,width .2s}
+.t-dots button.active{background:var(--green-primary);width:24px;border-radius:5px}
+
+/* ============ CLOSING CTA ============ */
+#contact{
+  background:
+    radial-gradient(80% 120% at 50% 0%,rgba(206,134,108,.14),transparent 60%),
+    var(--bg);
+  text-align:center;
+}
+#contact .wrap{max-width:760px}
+#contact h2{font-size:clamp(2.2rem,7vw,3.6rem);margin-bottom:18px}
+#contact .contact-sub{font-size:1.2rem;color:var(--text-soft);font-weight:300;margin-bottom:38px;max-width:46ch;margin-inline:auto}
+.contact-btns{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%}
+.btn-ig{background:transparent;border:1.5px solid var(--text);color:var(--text)}
+.btn-ig:hover{transform:translateY(-2px);background:rgba(37,51,58,.06)}
+.btn-ig:active{transform:translateY(0)}
+.contact-note{
+  margin-top:22px;font-family:'DM Mono',monospace;font-size:14px;
+  color:var(--text-soft);letter-spacing:.04em;
+}
+
+/* ============ IG STRIP ============ */
+#ig-strip{background:var(--teal)}
+.ig-inner{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  padding:20px 22px;color:#fff;font-weight:600;font-size:1.05rem;
+  transition:opacity .2s;text-decoration:none;
+}
+.ig-inner:hover{opacity:.88}
+.ig-inner svg{width:26px;height:26px;fill:#fff;flex:none}
+.ig-handle{font-family:'DM Mono',monospace;font-size:.95rem}
+.ig-sep{opacity:.55}
+.ig-arrow{opacity:.7}
+@media(max-width:480px){.ig-sep,.ig-cta{display:none}}
+
+/* ============ FOOTER ============ */
+footer{background:var(--text);color:rgba(255,255,255,.8);padding-block:34px}
+footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center}
+@media(min-width:680px){footer .wrap{flex-direction:row;justify-content:space-between;text-align:start}}
+.foot-logo{display:flex;align-items:center;gap:10px;font-weight:700;color:#fff}
+.foot-logo img{height:46px;width:auto;max-width:130px;border-radius:10px;object-fit:contain;background:#fff;padding:6px}
+.foot-social{display:flex;gap:14px}
+.foot-social a{
+  width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.1);transition:background .2s,transform .2s;
+}
+.foot-social a:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
+.foot-social svg{width:20px;height:20px;fill:#fff}
+.foot-copy{font-size:.85rem;font-weight:300}
+
+/* ============ FAB ============ */
+.fab{
+  position:fixed;inset-block-end:calc(22px + env(safe-area-inset-bottom));inset-inline-end:22px;z-index:1100;
+  width:60px;height:60px;border-radius:50%;background:var(--wa);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(37,211,102,.4);
+  animation:pulse 2.4s var(--ease) infinite;
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1), opacity .4s var(--ease), visibility .4s;
+  opacity:0;visibility:hidden;transform:scale(.5);
+}
+.fab.fab--visible{opacity:1;visibility:visible;transform:scale(1)}
+.fab:hover{transform:scale(1.08)}
+.fab svg{width:32px;height:32px;fill:#fff}
+@media(min-width:600px){.fab{width:64px;height:64px}}
+@keyframes pulse{
+  0%,100%{box-shadow:0 8px 24px rgba(37,211,102,.4),0 0 0 0 rgba(37,211,102,.5)}
+  50%{box-shadow:0 8px 24px rgba(37,211,102,.4),0 0 0 16px rgba(37,211,102,0)}
+}
+
+/* ============ CUSTOM CURSOR ============ */
+#cursor,#cursor-dot{display:none}
+@media(pointer:fine){
+  body{cursor:none!important}
+  a,button{cursor:none!important}
+  #cursor{
+    display:block;position:fixed;top:0;left:0;z-index:9999;
+    width:40px;height:40px;border:2px solid var(--text);border-radius:50%;
+    pointer-events:none;
+    background:rgba(26,20,16,.05);
+    transform:translate(-50%,-50%);
+    transition:width .18s var(--ease),height .18s var(--ease),background .18s var(--ease);
+    mix-blend-mode:multiply;
+    will-change:transform;
+  }
+  #cursor.hover{
+    width:56px;height:56px;
+    background:rgba(26,20,16,.08);
+  }
+  #cursor-dot{
+    display:block;position:fixed;top:0;left:0;z-index:9999;
+    width:5px;height:5px;border-radius:50%;
+    background:var(--text);
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    will-change:transform;
+  }
+}
+
+/* ============ SCROLL REVEAL ============ */
+.reveal{opacity:0;transform:translateY(28px) scale(.99);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.reveal[data-delay="1"]{transition-delay:.08s}
+.reveal[data-delay="2"]{transition-delay:.16s}
+.reveal[data-delay="3"]{transition-delay:.24s}
+
+/* ============ A11Y: REDUCED MOTION ============ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+  .reveal{opacity:1!important;transform:none!important}
+  .fab{animation:none;opacity:1;visibility:visible;transform:none}
+  #canvas-sequence{height:100svh}
+  .canvas-card{width:100%!important;height:100%!important;border-radius:0!important}
+  .canvas-logo{display:none}
+  .canvas-hint{display:none}
+  .scroll-hint svg{animation:none}
+  #cursor,#cursor-dot{display:none!important}
+  body{cursor:auto!important}
+}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.skip-link{
+  position:absolute;inset-block-start:-60px;inset-inline-start:14px;z-index:2000;
+  background:var(--green-primary);color:#fff;padding:10px 18px;border-radius:8px;
+  transition:inset-block-start .2s;
+}
+.skip-link:focus{inset-block-start:14px}
+</style>
+</head>
+<body>
+
+<a href="#concept" class="skip-link">דלגו לתוכן הראשי</a>
+
+<!-- ===== NAVBAR ===== -->
+<header id="navbar">
+  <div class="wrap">
+    <nav class="nav-links" aria-label="ניווט ראשי">
+      <a href="#concept">מה זה</a>
+      <a href="#workshops">הסדנאות</a>
+      <a href="#gallery">גלריה</a>
+      <a href="#corporate">לארגונים</a>
+    </nav>
+    <button class="nav-burger" id="nav-burger" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="nav-mobile">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="nav-logo" href="#" aria-label="פשוט ליצור — לראש העמוד">
+      <img src="logo-removebg-preview.png" alt="פשוט ליצור">
+    </a>
+  </div>
+</header>
+<nav class="nav-mobile" id="nav-mobile" aria-label="ניווט נייד">
+  <a href="#concept">מה זה</a>
+  <a href="#workshops">הסדנאות</a>
+  <a href="#gallery">גלריה</a>
+  <a href="#corporate">לארגונים</a>
+</nav>
+
+<main>
+<!-- ===== HERO ===== -->
+<!-- ===== CANVAS SEQUENCE ===== -->
+<section id="canvas-sequence" aria-label="רצף הנחת הפרח באגרטל">
+  <div class="canvas-sticky">
+    <div class="canvas-card" id="canvas-card">
+      <canvas id="frame-canvas"></canvas>
+      <div class="canvas-logo" aria-hidden="true"><img src="logo-removebg-preview.png" alt=""></div>
+      <img class="canvas-fallback" src="ezgif-frame-001.png" alt="פרח מונח בתוך אגרטל מטיח פולימרי">
+    </div>
+    </div>
+    <div class="canvas-hint" id="canvas-hint"><span>גללי לגלות</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></div>
+  </div>
+</section>
+
+<section id="hero">
+  <div class="hero-logo-bg" aria-hidden="true">
+    <img src="logo-removebg-preview.png" alt="">
+  </div>
+  <div class="wrap">
+    <div class="hero-layout">
+      <!-- Text side (right in RTL) -->
+      <div class="hero-text">
+        <span class="eyebrow hero-eyebrow" style="margin-bottom:18px">סדנאות יצירה בטיח פולימרי</span>
+        <h1>לגעת, ליצור,<br><span class="accent-word">לקחת הביתה.</span></h1>
+        <p class="hero-sub">חוויית יצירה בוטיק שבה את מעצבת במו ידייך אגרטל או אובייקט שתיקחי הביתה — בסטודיו האינטימי שלנו או אצלכם באירוע.</p>
+        <div class="hero-actions">
+          <a class="btn btn-wa btn-lg" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%20%D7%91%D7%90%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A2%D7%9C%20%D7%94%D7%A1%D7%93%D7%A0%D7%90%D7%95%D7%AA" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.78.97-.15.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43l-.48-.01c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.25 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+            בואי נדבר בוואטסאפ
+          </a>
+          <a class="btn btn-ghost btn-lg" href="#workshops">לכל הסדנאות</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href="#concept" class="scroll-hint" aria-label="גללו למטה">
+    <span>גללי לגלות</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+  </a>
+</section>
+
+<!-- ===== CONCEPT ===== -->
+<section id="concept" class="section-pad">
+  <div class="wrap">
+    <span class="eyebrow reveal">החומר</span>
+    <h2 class="reveal" data-delay="1">מה זה טיח פולימרי?</h2>
+    <p class="reveal" data-delay="2">חומר יצירה רך, נעים ונקי שמתעצב בקלות במגע הידיים — בלי לכלוך, בלי כלים מסובכים, רק את והחומר. כל אובייקט מתקשה לתוצאה מט, אבנית ומלוטשת שנראית כאילו יצאה מסטודיו עיצוב.</p>
+    <div class="concept-divider reveal" data-delay="3"></div>
+  </div>
+</section>
+
+<!-- ===== WORKSHOPS ===== -->
+<section id="workshops" class="section-pad">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow reveal">הסדנאות שלנו</span>
+      <h2 class="reveal" data-delay="1">חוויה שמתאימה לכל רגע</h2>
+      <p class="reveal" data-delay="2">בין אם בא לך לפנק את עצמך, לחגוג עם החברות או להפיק אירוע — יש לנו את הפורמט המושלם.</p>
+    </div>
+    <div class="cards-grid">
+
+      <article class="w-card reveal" data-delay="0">
+        <div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13a4 4 0 100-8 4 4 0 000 8z"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></div>
+        <h3>סדנאות פרטיות</h3>
+        <p>חוויה אישית ורגועה, ללמוד וליצור בקצב שלך אובייקט ייחודי משלך — מתנה מושלמת או פינוק עצמי.</p>
+        <a class="w-link" href="https://wa.me/972525477845?text=%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%AA%20%D7%91%D7%A1%D7%93%D7%A0%D7%94%20%D7%A4%D7%A8%D7%98%D7%99%D7%AA" target="_blank" rel="noopener">
+          לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </a>
+      </article>
+
+      <article class="w-card reveal" data-delay="1">
+        <div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.6 4.2L18 8l-3.2 3 .9 4.5L12 13.6 8.3 15.5l.9-4.5L6 8l4.4-.8z"/></svg></div>
+        <h3>ערב בנות</h3>
+        <p>במקום עוד מסעדה — ערב יצירה כיפי עם החברות, יין, מוזיקה והמון צחוקים. כל אחת חוזרת הביתה עם יצירה.</p>
+        <a class="w-link" href="https://wa.me/972525477845?text=%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%AA%20%D7%91%D7%A2%D7%A8%D7%91%20%D7%91%D7%A0%D7%95%D7%AA" target="_blank" rel="noopener">
+          לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </a>
+      </article>
+
+      <article class="w-card reveal" data-delay="2">
+        <div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3 3 0 100-6 3 3 0 000 6zM17 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/><path d="M2 20c0-3 2.5-5 6-5s6 2 6 5M14.5 20c0-2 1-3.5 3.5-3.5s3.5 1.5 3.5 3.5"/></svg></div>
+        <h3>חגיגות קבוצתיות</h3>
+        <p>ימי הולדת, מסיבות רווקות וגיבושים. מעצבים את החוויה לפי הקבוצה, האווירה והתקציב שלכם.</p>
+        <a class="w-link" href="https://wa.me/972525477845?text=%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%AA%20%D7%91%D7%97%D7%92%D7%99%D7%92%D7%94%20%D7%A7%D7%91%D7%95%D7%A6%D7%AA%D7%99%D7%AA" target="_blank" rel="noopener">
+          לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </a>
+      </article>
+
+      <article class="w-card reveal" data-delay="3">
+        <div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l6-3 6 3v13M15 21V11l6 0v10"/><path d="M2 21h20M7 11h0M11 11h0M7 15h0M11 15h0"/></svg></div>
+        <h3>אירועי חברה</h3>
+        <p>ימי גיבוש, אירועי סוף שנה ופעילויות צוות. אנחנו מגיעים אליכם עם כל הציוד — חוויה רגועה ויוקרתית.</p>
+        <a class="w-link" href="https://wa.me/972525477845?text=%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%91%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%97%D7%91%D7%A8%D7%94" target="_blank" rel="noopener">
+          לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </a>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== GALLERY ===== -->
+<section id="gallery" class="section-pad">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow reveal">רגעים מהסטודיו</span>
+      <h2 class="reveal" data-delay="1">יצירות, ידיים וחיוכים</h2>
+      <p class="reveal" data-delay="2">הצצה לסדנאות אמיתיות ולתוצאות שיצרו המשתתפות שלנו.</p>
+    </div>
+    <div class="masonry">
+      <figure class="reveal"><img src="photo-1.jpg" width="825" height="1100" alt="אגרטל ואובייקט טיח פולימרי עם פרחים יבשים" loading="lazy"></figure>
+      <figure class="reveal"><img src="photo-2.jpg" width="825" height="1100" alt="מגשי טיח פולימרי בטקסטורות שונות" loading="lazy"></figure>
+      <figure class="reveal"><img src="photo-3.jpg" width="1100" height="997" alt="יצירות טיח פולימרי צבעוניות" loading="lazy"></figure>
+      <figure class="reveal"><img src="photo-4.jpg" width="1100" height="825" alt="קבוצת משתתפות מציגות את יצירותיהן" loading="lazy"></figure>
+      <figure class="reveal"><img src="photo-5.jpg" width="1100" height="825" alt="מגש שיש ורוד עם קופסת טיח פולימרי" loading="lazy"></figure>
+      <figure class="reveal"><img src="photo-6.jpg" width="825" height="1100" alt="מגש שיש עם פמוט ונר" loading="lazy"></figure>
+      <figure class="reveal"><img src="photo-7.jpg" width="618" height="1100" alt="אירוע סדנה קבוצתי" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== CORPORATE ===== -->
+<section id="corporate" class="section-pad">
+  <div class="wrap">
+    <div class="corp-grid">
+      <div>
+        <span class="eyebrow reveal">לחברות וארגונים</span>
+        <h2 class="reveal" data-delay="1">חוויית גיבוש שמדברת אחרת</h2>
+        <p class="corp-lead reveal" data-delay="2">סדנת יצירה רגועה ויוקרתית שמחברת בין אנשים — בלי תחרות, בלי לחץ, רק יצירה משותפת שכל אחד לוקח איתו הביתה.</p>
+
+        <div class="corp-stats reveal" data-delay="2">
+          <div class="corp-stat"><div class="num">5–100</div><div class="lbl">משתתפים בקבוצה</div></div>
+          <div class="corp-stat"><div class="num">100%</div><div class="lbl">מגיעים אליכם</div></div>
+          <div class="corp-stat"><div class="num">0</div><div class="lbl">כאב ראש בהפקה</div></div>
+        </div>
+
+        <ul class="corp-list reveal" data-delay="3">
+          <li>
+            <span class="corp-check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+            <span><strong>גמישות מלאה בגודל הקבוצה</strong><span>מצוות קטן ועד אירוע חברה גדול — מתאימים את החוויה אליכם.</span></span>
+          </li>
+          <li>
+            <span class="corp-check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+            <span><strong>מגיעים עם הכל אליכם</strong><span>סטאפ נייד מלא — במשרד, במרחב עבודה או בכל מיקום שתבחרו.</span></span>
+          </li>
+          <li>
+            <span class="corp-check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
+            <span><strong>ארגון פשוט וללא טרחה</strong><span>אנחנו דואגים לחומרים, להדרכה ולניקיון. אתם רק נהנים.</span></span>
+          </li>
+        </ul>
+
+        <a class="btn btn-wa btn-lg reveal" data-delay="3" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A0%D7%97%D7%A0%D7%95%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%A0%D7%99%D7%9D%20%D7%91%D7%A1%D7%93%D7%A0%D7%94%20%D7%9C%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%97%D7%91%D7%A8%D7%94" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.78.97-.15.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43l-.48-.01c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.25 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+          לקבלת הצעה לארגון
+        </a>
+      </div>
+      <div class="corp-visual reveal" data-delay="2">
+        <img src="corporate.jpg" width="1100" height="825" loading="lazy" alt="אירוע חברה — סדנת טיח פולימרי" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ph" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l6-3 6 3v13M15 21V11l6 0v10"/><path d="M2 21h20"/></svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section id="testimonials" class="section-pad">
+  <div class="wrap">
+    <div class="section-head" style="margin-inline:auto;text-align:center">
+      <span class="eyebrow reveal">הן כבר יצרו</span>
+      <h2 class="reveal" data-delay="1">מה אומרות המשתתפות</h2>
+    </div>
+    <div class="t-track" id="t-track">
+      <article class="t-card">
+        <div class="t-quote">”</div>
+        <p>חגגנו יום הולדת והיה פשוט קסום. יצאנו עם אגרטל שאני לא מאמינה שיצרתי בעצמי. חוויה ששווה כל רגע.</p>
+        <div class="t-author"><span class="t-avatar">ש</span><div><div class="t-name">שירה לוי</div><div class="t-meta">סדנת יום הולדת</div></div></div>
+      </article>
+      <article class="t-card">
+        <div class="t-quote">”</div>
+        <p>הזמנו סדנה לצוות במשרד והכל הגיע אלינו מסודר עד הפרט האחרון. הצוות עדיין מדבר על זה. ממליצה בחום!</p>
+        <div class="t-author"><span class="t-avatar">ד</span><div><div class="t-name">דנה כהן</div><div class="t-meta">מנהלת רווחה, חברת הייטק</div></div></div>
+      </article>
+      <article class="t-card">
+        <div class="t-quote">”</div>
+        <p>ערב בנות מושלם. במקום עוד מסעדה ישבנו ויצרנו ביחד באווירה הכי נעימה. כולנו חזרנו עם חיוך ועם יצירה.</p>
+        <div class="t-author"><span class="t-avatar">מ</span><div><div class="t-name">מאיה אברהם</div><div class="t-meta">ערב בנות</div></div></div>
+      </article>
+      <article class="t-card">
+        <div class="t-quote">”</div>
+        <p>המנחה סבלנית, מקצועית ועם המון חום. גם מי שאין לה שום ניסיון יוצאת עם תוצאה שנראית מהממת. תודה!</p>
+        <div class="t-author"><span class="t-avatar">נ</span><div><div class="t-name">נועה פרידמן</div><div class="t-meta">סדנה פרטית</div></div></div>
+      </article>
+    </div>
+    <div class="t-dots" id="t-dots" aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- ===== CLOSING CTA ===== -->
+<section id="contact" class="section-pad">
+  <div class="wrap">
+    <span class="eyebrow reveal">מוכנה להתחיל?</span>
+    <h2 class="reveal" data-delay="1">בואי ניצור משהו יפה ביחד</h2>
+    <p class="contact-sub reveal" data-delay="2">הודעה אחת בוואטסאפ וכבר נמצא לך את החוויה המושלמת — בלי טפסים, בלי התחייבות. פשוט ליצור.</p>
+    <div class="contact-btns reveal" data-delay="2">
+      <a class="btn btn-wa btn-lg" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%20%D7%91%D7%90%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A2%D7%9C%20%D7%94%D7%A1%D7%93%D7%A0%D7%90%D7%95%D7%AA" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.78.97-.15.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43l-.48-.01c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.25 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+        שלחי הודעה בוואטסאפ
+      </a>
+      <a class="btn btn-ig btn-lg" href="https://www.instagram.com/dina_evgi?igsh=NWgyeW82cmZkeXp0" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.2 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.15 0-3.5 0-4.74.07-.97.04-1.5.2-1.85.34-.46.18-.8.4-1.15.74-.34.35-.56.69-.74 1.15-.14.35-.3.88-.34 1.85C3.07 9.5 3.07 9.85 3.07 12s0 2.5.04 3.74c.04.97.2 1.5.34 1.85.18.46.4.8.74 1.15.35.34.69.56 1.15.74.35.14.88.3 1.85.34 1.24.07 1.59.07 4.74.07s3.5 0 4.74-.07c.97-.04 1.5-.2 1.85-.34.46-.18.8-.4 1.15-.74.34-.35.56-.69.74-1.15.14-.35.3-.88.34-1.85.07-1.24.07-1.59.07-3.74s0-2.5-.04-3.74c-.04-.97-.2-1.5-.34-1.85a3.1 3.1 0 0 0-.74-1.15 3.1 3.1 0 0 0-1.15-.74c-.35-.14-.88-.3-1.85-.34C15.5 4 15.15 4 12 4Zm0 3.06A4.94 4.94 0 1 1 7.06 12 4.94 4.94 0 0 1 12 7.06Zm0 8.15A3.21 3.21 0 1 0 8.79 12 3.21 3.21 0 0 0 12 15.21Zm6.3-8.35a1.15 1.15 0 1 1-1.15-1.15 1.15 1.15 0 0 1 1.15 1.15Z"/></svg>
+        מוזמנת לראות עוד
+      </a>
+    </div>
+    <div class="contact-note reveal" data-delay="3">052-547-7845 · זמינות לסטודיו ולאירועים</div>
+  </div>
+</section>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-logo">
+      <img src="logo-removebg-preview.png" alt="לוגו פשוט ליצור">
+      <span>פשוט ליצור</span>
+    </div>
+    <div class="foot-social">
+      <a href="https://www.instagram.com/dina_evgi?igsh=NWgyeW82cmZkeXp0" target="_blank" rel="noopener" aria-label="עמוד האינסטגרם שלנו">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.2 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.15 0-3.5 0-4.74.07-.97.04-1.5.2-1.85.34-.46.18-.8.4-1.15.74-.34.35-.56.69-.74 1.15-.14.35-.3.88-.34 1.85C3.07 9.5 3.07 9.85 3.07 12s0 2.5.04 3.74c.04.97.2 1.5.34 1.85.18.46.4.8.74 1.15.35.34.69.56 1.15.74.35.14.88.3 1.85.34 1.24.07 1.59.07 4.74.07s3.5 0 4.74-.07c.97-.04 1.5-.2 1.85-.34.46-.18.8-.4 1.15-.74.34-.35.56-.69.74-1.15.14-.35.3-.88.34-1.85.07-1.24.07-1.59.07-3.74s0-2.5-.04-3.74c-.04-.97-.2-1.5-.34-1.85a3.1 3.1 0 0 0-.74-1.15 3.1 3.1 0 0 0-1.15-.74c-.35-.14-.88-.3-1.85-.34C15.5 4 15.15 4 12 4Zm0 3.06A4.94 4.94 0 1 1 7.06 12 4.94 4.94 0 0 1 12 7.06Zm0 8.15A3.21 3.21 0 1 0 8.79 12 3.21 3.21 0 0 0 12 15.21Zm6.3-8.35a1.15 1.15 0 1 1-1.15-1.15 1.15 1.15 0 0 1 1.15 1.15Z"/></svg>
+      </a>
+    </div>
+    <div class="foot-copy">© <span id="year"></span> פשוט ליצור · כל הזכויות שמורות</div>
+  </div>
+</footer>
+
+
+<!-- ===== FAB ===== -->
+<a class="fab" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%20%D7%91%D7%90%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A2%D7%9C%20%D7%94%D7%A1%D7%93%D7%A0%D7%90%D7%95%D7%AA" target="_blank" rel="noopener" aria-label="צרו קשר מהיר בוואטסאפ">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.78.97-.15.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43l-.48-.01c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.25 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+</a>
+
+<!-- ===== CUSTOM CURSOR ===== -->
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-dot" aria-hidden="true"></div>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ---------- NAVBAR ---------- */
+  var navbar = document.getElementById('navbar');
+  function onNavScroll(){
+    if(window.scrollY > 40) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
+  }
+
+  /* ---------- MOBILE MENU ---------- */
+  var burger = document.getElementById('nav-burger');
+  var mobileNav = document.getElementById('nav-mobile');
+  function closeMenu(){
+    mobileNav.classList.remove('open');
+    burger.setAttribute('aria-expanded','false');
+    burger.setAttribute('aria-label','פתיחת תפריט');
+  }
+  burger.addEventListener('click', function(){
+    var open = mobileNav.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-label', open ? 'סגירת תפריט' : 'פתיחת תפריט');
+  });
+  mobileNav.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+
+  /* ---------- CANVAS FRAME SEQUENCE ---------- */
+  var FRAME_COUNT = 45;
+  var framePath = function(i){
+    return 'ezgif-frame-' + String(i).padStart(3,'0') + '.png';
+  };
+  var canvas = document.getElementById('frame-canvas');
+  var fallback = document.querySelector('.canvas-fallback');
+  var ctx = canvas.getContext('2d');
+  var section = document.getElementById('canvas-sequence');
+  var images = [];
+  var loadedCount = 0;
+  var lastExact = -1;
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    lastExact = -1; // force redraw
+  }
+
+  function coverRect(img, cw, ch){
+    var iw = img.naturalWidth, ih = img.naturalHeight;
+    var scale = Math.max(cw/iw, ch/ih);
+    return {dx:(cw-iw*scale)/2, dy:(ch-ih*scale)/2, dw:iw*scale, dh:ih*scale};
+  }
+
+  function drawCrossfade(exact){
+    if(Math.abs(exact - lastExact) < 0.001) return;
+    lastExact = exact;
+    var lo = Math.floor(exact);
+    var hi = Math.min(lo + 1, FRAME_COUNT - 1);
+    var blend = exact - lo;
+    var imgLo = images[lo], imgHi = images[hi];
+    if(!imgLo || !imgLo.complete || !imgLo.naturalWidth) return;
+    var cw = canvas.width, ch = canvas.height;
+    var r = coverRect(imgLo, cw, ch);
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.globalAlpha = 1;
+    ctx.drawImage(imgLo, r.dx, r.dy, r.dw, r.dh);
+    if(blend > 0.001 && imgHi && imgHi.complete && imgHi.naturalWidth){
+      var r2 = coverRect(imgHi, cw, ch);
+      ctx.globalAlpha = blend;
+      ctx.drawImage(imgHi, r2.dx, r2.dy, r2.dw, r2.dh);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function getProgress(){
+    var rect = section.getBoundingClientRect();
+    var total = section.offsetHeight - window.innerHeight;
+    var scrolled = -rect.top;
+    var p = scrolled / total;
+    return Math.max(0, Math.min(1, p));
+  }
+
+  var fab = document.querySelector('.fab');
+  function updateCanvas(){
+    if(reduceMotion) return;
+    var p = getProgress();
+    // REVERSE playback: top (p=0) -> last frame; bottom (p=1) -> first frame
+    var exact = (1 - p) * (FRAME_COUNT - 1);
+    drawCrossfade(exact);
+    updateExpand(p);
+    fab.classList.toggle('fab--visible', p >= 1);
+  }
+
+  /* ---------- SCROLL-EXPAND (card grows to fullscreen) ---------- */
+  var card = document.getElementById('canvas-card');
+  var hint = document.getElementById('canvas-hint');
+  var logoEl = document.querySelector('.canvas-logo');
+  var tiltX = 0, tiltY = 0, expandP = 0;
+
+  function applyCardTilt(){ /* canvas is fullscreen now — no tilt */ }
+
+  function updateExpand(p){
+    var pe = Math.min(p/0.7, 1);
+    expandP = pe;
+    var blur = Math.max(0, 18 * (1 - pe/0.35));
+    canvas.style.filter = blur > 0.2 ? 'blur(' + blur.toFixed(1) + 'px)' : '';
+    // logo cover: fully visible at rest, dissolves as expansion starts
+    var logoFade = Math.max(0, 1 - pe/0.35);
+    logoEl.style.opacity = logoFade;
+    logoEl.style.transform = 'scale(' + (1 + pe*0.5) + ')';
+    logoEl.style.visibility = logoFade <= 0 ? 'hidden' : 'visible';
+    if(hint) hint.style.opacity = Math.max(0, 1 - pe*2.5);
+  }
+
+  function preloadFrames(){
+    for(var i = 1; i <= FRAME_COUNT; i++){
+      (function(idx){
+        var img = new Image();
+        img.onload = function(){
+          loadedCount++;
+          // redraw whenever a frame finishes loading, so the
+          // currently-needed frame paints as soon as it's ready
+          lastExact = -1; // reset guard so the redraw actually runs
+          updateCanvas();
+        };
+        img.src = framePath(idx);
+        images[idx-1] = img;
+      })(i);
+    }
+  }
+
+  if(!reduceMotion){
+    resizeCanvas();
+    preloadFrames();
+    window.addEventListener('resize', function(){
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      resizeCanvas();
+      updateCanvas();
+    });
+  } else {
+    canvas.style.display = 'none';
+    fallback.style.display = 'block';
+  }
+
+  /* ---------- UNIFIED SCROLL (continuous rAF loop) ---------- */
+  var lastScrollY = -1;
+  function rafLoop(){
+    var sy = window.scrollY;
+    if(sy !== lastScrollY){
+      lastScrollY = sy;
+      onNavScroll();
+      updateCanvas();
+    }
+    requestAnimationFrame(rafLoop);
+  }
+  requestAnimationFrame(rafLoop);
+  onNavScroll();
+
+  /* ---------- SCROLL REVEAL ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduceMotion){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    },{threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ---------- TESTIMONIALS DOTS ---------- */
+  var track = document.getElementById('t-track');
+  var dotsWrap = document.getElementById('t-dots');
+  var cards = track.children;
+  for(var d=0; d<cards.length; d++){
+    var dot = document.createElement('button');
+    dot.setAttribute('aria-label','המלצה ' + (d+1));
+    if(d===0) dot.classList.add('active');
+    (function(index){
+      dot.addEventListener('click', function(){
+        cards[index].scrollIntoView({behavior: reduceMotion?'auto':'smooth', inline:'center', block:'nearest'});
+      });
+    })(d);
+    dotsWrap.appendChild(dot);
+  }
+  var dotBtns = dotsWrap.children;
+  var tTick = false;
+  track.addEventListener('scroll', function(){
+    if(!tTick){
+      window.requestAnimationFrame(function(){
+        var center = track.scrollLeft + track.clientWidth/2;
+        var closest = 0, min = Infinity;
+        for(var i=0;i<cards.length;i++){
+          var c = cards[i];
+          var cc = c.offsetLeft + c.offsetWidth/2;
+          var dist = Math.abs(cc - (track.scrollWidth - center)); // RTL aware-ish
+          var dist2 = Math.abs((c.offsetLeft + c.offsetWidth/2) - center);
+          var use = Math.min(dist, dist2);
+          if(use < min){ min = use; closest = i; }
+        }
+        for(var j=0;j<dotBtns.length;j++) dotBtns[j].classList.toggle('active', j===closest);
+        tTick = false;
+      });
+      tTick = true;
+    }
+  }, {passive:true});
+
+  /* ---------- HOVER MOTION (mouse parallax + tilt + magnetic) ---------- */
+  if(!reduceMotion && window.matchMedia('(pointer:fine)').matches){
+    window.addEventListener('mousemove', function(e){
+      tiltX = (e.clientX/window.innerWidth - .5) * 8;
+      tiltY = -(e.clientY/window.innerHeight - .5) * 8;
+      applyCardTilt();
+    }, {passive:true});
+
+    document.querySelectorAll('.w-card, .t-card').forEach(function(el){
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var nx = (e.clientX - r.left)/r.width - .5;
+        var ny = (e.clientY - r.top)/r.height - .5;
+        el.style.transform = 'perspective(700px) rotateX('+(-ny*7).toFixed(2)+'deg) rotateY('+(nx*7).toFixed(2)+'deg) translateY(-6px)';
+      });
+      el.addEventListener('mouseleave', function(){ el.style.transform = ''; });
+    });
+
+    document.querySelectorAll('.btn').forEach(function(btn){
+      btn.addEventListener('mousemove', function(e){
+        var r = btn.getBoundingClientRect();
+        var nx = (e.clientX - r.left)/r.width - .5;
+        var ny = (e.clientY - r.top)/r.height - .5;
+        btn.style.transform = 'translate('+(nx*10).toFixed(1)+'px,'+(ny*8).toFixed(1)+'px)';
+      });
+      btn.addEventListener('mouseleave', function(){ btn.style.transform = ''; });
+    });
+  }
+
+  /* ---------- CUSTOM CURSOR ---------- */
+  if(!reduceMotion && window.matchMedia('(pointer:fine)').matches){
+    var cur = document.getElementById('cursor');
+    var dotC = document.getElementById('cursor-dot');
+    var mx=window.innerWidth/2, my=window.innerHeight/2;
+    var cx=mx, cy=my;
+
+    function setCursorPos(el, x, y){
+      el.style.left = x + 'px';
+      el.style.top  = y + 'px';
+    }
+
+    window.addEventListener('mousemove', function(e){
+      mx = e.clientX; my = e.clientY;
+      setCursorPos(dotC, mx, my);
+    }, {passive:true});
+
+    function loop(){
+      cx += (mx - cx) * 0.16;
+      cy += (my - cy) * 0.16;
+      setCursorPos(cur, cx, cy);
+      requestAnimationFrame(loop);
+    }
+    setCursorPos(cur, cx, cy);
+    setCursorPos(dotC, mx, my);
+    loop();
+
+    document.querySelectorAll('a,button,.w-card').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ cur.classList.add('hover'); });
+      el.addEventListener('mouseleave', function(){ cur.classList.remove('hover'); });
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
