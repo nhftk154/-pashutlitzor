@@ -894,12 +894,12 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 
   function drawCrossfade(exact){
     if(Math.abs(exact - lastExact) < 0.001) return;
-    lastExact = exact;
     var lo = Math.floor(exact);
     var hi = Math.min(lo + 1, FRAME_COUNT - 1);
     var blend = exact - lo;
     var imgLo = images[lo], imgHi = images[hi];
     if(!imgLo || !imgLo.complete || !imgLo.naturalWidth) return;
+    lastExact = exact;
     var cw = canvas.width, ch = canvas.height;
     var r = coverRect(imgLo, cw, ch);
     ctx.clearRect(0, 0, cw, ch);
