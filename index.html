@@ -598,7 +598,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     <div class="canvas-card" id="canvas-card">
       <canvas id="frame-canvas"></canvas>
       <div class="canvas-logo" aria-hidden="true"><img src="logo-removebg-preview.png" alt=""></div>
-      <img class="canvas-fallback" src="ezgif-frame-001.png" alt="פרח מונח בתוך אגרטל מטיח פולימרי">
+      <img class="canvas-fallback" src="frames/ezgif-frame-001.png" alt="פרח מונח בתוך אגרטל מטיח פולימרי">
     </div>
     </div>
     <div class="canvas-hint" id="canvas-hint"><span>גללי לגלות</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></div>
@@ -868,7 +868,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   /* ---------- CANVAS FRAME SEQUENCE ---------- */
   var FRAME_COUNT = 45;
   var framePath = function(i){
-    return 'ezgif-frame-' + String(i).padStart(3,'0') + '.png';
+    return 'frames/ezgif-frame-' + String(i).padStart(3,'0') + '.png';
   };
   var canvas = document.getElementById('frame-canvas');
   var fallback = document.querySelector('.canvas-fallback');
