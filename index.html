@@ -654,45 +654,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       <h2 class="reveal" data-delay="1">חוויה שמתאימה לכל רגע</h2>
       <p class="reveal" data-delay="2">בין אם בא לך לפנק את עצמך, לחגוג עם החברות או להפיק אירוע. יש לנו את הפורמט המושלם.</p>
     </div>
-    <div class="cards-grid">
-
-      <article class="w-card reveal" data-delay="0">
-        <div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13a4 4 0 100-8 4 4 0 000 8z"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></div>
-        <h3>סדנאות פרטיות</h3>
-        <p>חוויה אישית ורגועה, ללמוד וליצור בקצב שלך אובייקט ייחודי משלך. מתנה מושלמת או פינוק עצמי.</p>
-        <a class="w-link" href="https://wa.me/972525477845?text=%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%AA%20%D7%91%D7%A1%D7%93%D7%A0%D7%94%20%D7%A4%D7%A8%D7%98%D7%99%D7%AA" target="_blank" rel="noopener">
-          לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-        </a>
-      </article>
-
-      <article class="w-card reveal" data-delay="1">
-        <div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.6 4.2L18 8l-3.2 3 .9 4.5L12 13.6 8.3 15.5l.9-4.5L6 8l4.4-.8z"/></svg></div>
-        <h3>ערב בנות</h3>
-        <p>ערב יצירה כיפי עם החברות, יין, מוזיקה והמון צחוקים. כל אחת חוזרת הביתה עם יצירה.</p>
-        <a class="w-link" href="https://wa.me/972525477845?text=%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%AA%20%D7%91%D7%A2%D7%A8%D7%91%20%D7%91%D7%A0%D7%95%D7%AA" target="_blank" rel="noopener">
-          לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-        </a>
-      </article>
-
-      <article class="w-card reveal" data-delay="2">
-        <div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3 3 0 100-6 3 3 0 000 6zM17 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/><path d="M2 20c0-3 2.5-5 6-5s6 2 6 5M14.5 20c0-2 1-3.5 3.5-3.5s3.5 1.5 3.5 3.5"/></svg></div>
-        <h3>חגיגות קבוצתיות</h3>
-        <p>ימי הולדת, מסיבות רווקות וגיבושים. מעצבים את החוויה לפי הקבוצה, האווירה והתקציב שלכם.</p>
-        <a class="w-link" href="https://wa.me/972525477845?text=%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%AA%20%D7%91%D7%97%D7%92%D7%99%D7%92%D7%94%20%D7%A7%D7%91%D7%95%D7%A6%D7%AA%D7%99%D7%AA" target="_blank" rel="noopener">
-          לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-        </a>
-      </article>
-
-      <article class="w-card reveal" data-delay="3">
-        <div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l6-3 6 3v13M15 21V11l6 0v10"/><path d="M2 21h20M7 11h0M11 11h0M7 15h0M11 15h0"/></svg></div>
-        <h3>אירועי חברה</h3>
-        <p>ימי גיבוש, אירועי סוף שנה ופעילויות צוות. אנחנו מגיעים אליכם עם כל הציוד לחוויה רגועה ויוקרתית.</p>
-        <a class="w-link" href="https://wa.me/972525477845?text=%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%91%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%97%D7%91%D7%A8%D7%94" target="_blank" rel="noopener">
-          לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-        </a>
-      </article>
-
-    </div>
+    <div class="cards-grid" id="workshops-grid"></div>
   </div>
 </section>
 
@@ -704,15 +666,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       <h2 class="reveal" data-delay="1">יצירות, ידיים וחיוכים</h2>
       <p class="reveal" data-delay="2">הצצה לסדנאות אמיתיות ולתוצאות שיצרו המשתתפות שלנו.</p>
     </div>
-    <div class="masonry">
-      <figure class="reveal"><img src="assets/gallery/photo-1.jpg" width="825" height="1100" alt="אגרטל ואובייקט גבס פולימרי עם פרחים יבשים" loading="lazy"></figure>
-      <figure class="reveal"><img src="assets/gallery/photo-2.jpg" width="825" height="1100" alt="מגשי גבס פולימרי בטקסטורות שונות" loading="lazy"></figure>
-      <figure class="reveal"><img src="assets/gallery/photo-3.jpg" width="1100" height="997" alt="יצירות גבס פולימרי צבעוניות" loading="lazy"></figure>
-      <figure class="reveal"><img src="assets/gallery/photo-4.jpg" width="1100" height="825" alt="קבוצת משתתפות מציגות את יצירותיהן" loading="lazy"></figure>
-      <figure class="reveal"><img src="assets/gallery/photo-5.jpg" width="1100" height="825" alt="מגש שיש ורוד עם קופסת טיח פולימרי" loading="lazy"></figure>
-      <figure class="reveal"><img src="assets/gallery/photo-6.jpg" width="825" height="1100" alt="מגש שיש עם פמוט ונר" loading="lazy"></figure>
-      <figure class="reveal"><img src="assets/gallery/photo-7.jpg" width="618" height="1100" alt="אירוע סדנה קבוצתי" loading="lazy"></figure>
-    </div>
+    <div class="masonry" id="gallery-grid"></div>
   </div>
 </section>
 
@@ -753,7 +707,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
         </a>
       </div>
       <div class="corp-visual reveal" data-delay="2">
-        <img src="assets/corporate.jpg" width="1100" height="825" loading="lazy" alt="אירוע חברה סדנת גבס פולימרי" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <img id="corporate-img" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="ph" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l6-3 6 3v13M15 21V11l6 0v10"/><path d="M2 21h20"/></svg></div>
       </div>
     </div>
@@ -767,28 +721,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       <span class="eyebrow reveal">הן כבר יצרו</span>
       <h2 class="reveal" data-delay="1">מה אומרות המשתתפות</h2>
     </div>
-    <div class="t-track" id="t-track">
-      <article class="t-card">
-        <div class="t-quote">”</div>
-        <p>חגגנו יום הולדת והיה פשוט קסום. יצאנו עם אגרטל שאני לא מאמינה שיצרתי בעצמי. חוויה ששווה כל רגע.</p>
-        <div class="t-author"><span class="t-avatar">ש</span><div><div class="t-name">שירה לוי</div><div class="t-meta">סדנת יום הולדת</div></div></div>
-      </article>
-      <article class="t-card">
-        <div class="t-quote">”</div>
-        <p>הזמנו סדנה לצוות במשרד והכל הגיע אלינו מסודר עד הפרט האחרון. הצוות עדיין מדבר על זה. ממליצה בחום!</p>
-        <div class="t-author"><span class="t-avatar">ד</span><div><div class="t-name">דנה כהן</div><div class="t-meta">מנהלת רווחה, חברת הייטק</div></div></div>
-      </article>
-      <article class="t-card">
-        <div class="t-quote">”</div>
-        <p>ערב בנות מושלם. במקום עוד מסעדה ישבנו ויצרנו ביחד באווירה הכי נעימה. כולנו חזרנו עם חיוך ועם יצירה.</p>
-        <div class="t-author"><span class="t-avatar">מ</span><div><div class="t-name">מאיה אברהם</div><div class="t-meta">ערב בנות</div></div></div>
-      </article>
-      <article class="t-card">
-        <div class="t-quote">”</div>
-        <p>המנחה סבלנית, מקצועית ועם המון חום. גם מי שאין לה שום ניסיון יוצאת עם תוצאה שנראית מהממת. תודה!</p>
-        <div class="t-author"><span class="t-avatar">נ</span><div><div class="t-name">נועה פרידמן</div><div class="t-meta">סדנה פרטית</div></div></div>
-      </article>
-    </div>
+    <div class="t-track" id="t-track"></div>
     <div class="t-dots" id="t-dots" aria-hidden="true"></div>
   </div>
 </section>
@@ -841,9 +774,90 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <div id="cursor-dot" aria-hidden="true"></div>
 
 <script>
-(function(){
+(async function(){
   "use strict";
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- DYNAMIC CONTENT (gallery / testimonials / corporate / workshops) ---------- */
+  var WORKSHOP_ICONS = {
+    private: '<path d="M12 13a4 4 0 100-8 4 4 0 000 8z"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/>',
+    social: '<path d="M12 3l1.6 4.2L18 8l-3.2 3 .9 4.5L12 13.6 8.3 15.5l.9-4.5L6 8l4.4-.8z"/>',
+    party: '<path d="M9 11a3 3 0 100-6 3 3 0 000 6zM17 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/><path d="M2 20c0-3 2.5-5 6-5s6 2 6 5M14.5 20c0-2 1-3.5 3.5-3.5s3.5 1.5 3.5 3.5"/>',
+    corporate: '<path d="M3 21V8l6-3 6 3v13M15 21V11l6 0v10"/><path d="M2 21h20M7 11h0M11 11h0M7 15h0M11 15h0"/>'
+  };
+
+  function esc(s){
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+
+  function renderGallery(list){
+    var grid = document.getElementById('gallery-grid');
+    if(!grid || !Array.isArray(list)) return;
+    grid.innerHTML = list.map(function(p){
+      return '<figure class="reveal"><img src="' + esc(p.src) + '" width="' + (p.width || 1100) +
+        '" height="' + (p.height || 1100) + '" alt="' + esc(p.alt) + '" loading="lazy"></figure>';
+    }).join('');
+  }
+
+  function renderCorporate(c){
+    var img = document.getElementById('corporate-img');
+    if(!img || !c) return;
+    img.src = c.src;
+    img.width = c.width || 1100;
+    img.height = c.height || 825;
+    img.alt = c.alt || '';
+  }
+
+  function renderTestimonials(list){
+    var track = document.getElementById('t-track');
+    if(!track || !Array.isArray(list)) return;
+    track.innerHTML = list.map(function(t){
+      var initial = (t.name || '').trim().charAt(0);
+      return '<article class="t-card">' +
+        '<div class="t-quote">”</div>' +
+        '<p>' + esc(t.quote) + '</p>' +
+        '<div class="t-author"><span class="t-avatar">' + esc(initial) + '</span>' +
+        '<div><div class="t-name">' + esc(t.name) + '</div><div class="t-meta">' + esc(t.meta) + '</div></div></div>' +
+        '</article>';
+    }).join('');
+  }
+
+  function renderWorkshops(list){
+    var grid = document.getElementById('workshops-grid');
+    if(!grid || !Array.isArray(list)) return;
+    grid.innerHTML = list.map(function(w, i){
+      var icon = WORKSHOP_ICONS[w.icon] || WORKSHOP_ICONS.private;
+      var msg = encodeURIComponent(w.waText || '');
+      return '<article class="w-card reveal" data-delay="' + (i % 4) + '">' +
+        '<div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg></div>' +
+        '<h3>' + esc(w.title) + '</h3>' +
+        '<p>' + esc(w.description) + '</p>' +
+        '<a class="w-link" href="https://wa.me/972525477845?text=' + msg + '" target="_blank" rel="noopener">' +
+        'לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>' +
+        '</a></article>';
+    }).join('');
+  }
+
+  async function loadDynamicContent(){
+    try {
+      var results = await Promise.all([
+        fetch('content/gallery.json').then(function(r){ return r.json(); }),
+        fetch('content/testimonials.json').then(function(r){ return r.json(); }),
+        fetch('content/corporate.json').then(function(r){ return r.json(); }),
+        fetch('content/workshops.json').then(function(r){ return r.json(); })
+      ]);
+      renderGallery(results[0]);
+      renderTestimonials(results[1]);
+      renderCorporate(results[2]);
+      renderWorkshops(results[3]);
+    } catch(err){
+      console.error('טעינת תוכן דינמי נכשלה:', err);
+    }
+  }
+
+  await loadDynamicContent();
 
   document.getElementById('year').textContent = new Date().getFullYear();
 
