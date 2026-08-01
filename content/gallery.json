@@ -1,9 +1,11 @@
-[
-  { "src": "assets/gallery/photo-1.jpg", "alt": "אגרטל ואובייקט גבס פולימרי עם פרחים יבשים", "width": 825, "height": 1100 },
-  { "src": "assets/gallery/photo-2.jpg", "alt": "מגשי גבס פולימרי בטקסטורות שונות", "width": 825, "height": 1100 },
-  { "src": "assets/gallery/photo-3.jpg", "alt": "יצירות גבס פולימרי צבעוניות", "width": 1100, "height": 997 },
-  { "src": "assets/gallery/photo-4.jpg", "alt": "קבוצת משתתפות מציגות את יצירותיהן", "width": 1100, "height": 825 },
-  { "src": "assets/gallery/photo-5.jpg", "alt": "מגש שיש ורוד עם קופסת טיח פולימרי", "width": 1100, "height": 825 },
-  { "src": "assets/gallery/photo-6.jpg", "alt": "מגש שיש עם פמוט ונר", "width": 825, "height": 1100 },
-  { "src": "assets/gallery/photo-7.jpg", "alt": "אירוע סדנה קבוצתי", "width": 618, "height": 1100 }
-]
+{
+  "items": [
+    { "src": "assets/gallery/photo-1.jpg", "alt": "אגרטל ואובייקט גבס פולימרי עם פרחים יבשים" },
+    { "src": "assets/gallery/photo-2.jpg", "alt": "מגשי גבס פולימרי בטקסטורות שונות" },
+    { "src": "assets/gallery/photo-3.jpg", "alt": "יצירות גבס פולימרי צבעוניות" },
+    { "src": "assets/gallery/photo-4.jpg", "alt": "קבוצת משתתפות מציגות את יצירותיהן" },
+    { "src": "assets/gallery/photo-5.jpg", "alt": "מגש שיש ורוד עם קופסת טיח פולימרי" },
+    { "src": "assets/gallery/photo-6.jpg", "alt": "מגש שיש עם פמוט ונר" },
+    { "src": "assets/gallery/photo-7.jpg", "alt": "אירוע סדנה קבוצתי" }
+  ]
+}

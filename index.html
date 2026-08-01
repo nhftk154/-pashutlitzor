@@ -792,12 +792,12 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     return d.innerHTML;
   }
 
-  function renderGallery(list){
+  function renderGallery(data){
     var grid = document.getElementById('gallery-grid');
+    var list = data && data.items;
     if(!grid || !Array.isArray(list)) return;
     grid.innerHTML = list.map(function(p){
-      return '<figure class="reveal"><img src="' + esc(p.src) + '" width="' + (p.width || 1100) +
-        '" height="' + (p.height || 1100) + '" alt="' + esc(p.alt) + '" loading="lazy"></figure>';
+      return '<figure class="reveal"><img src="' + esc(p.src) + '" alt="' + esc(p.alt) + '" loading="lazy"></figure>';
     }).join('');
   }
 
@@ -805,13 +805,12 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     var img = document.getElementById('corporate-img');
     if(!img || !c) return;
     img.src = c.src;
-    img.width = c.width || 1100;
-    img.height = c.height || 825;
     img.alt = c.alt || '';
   }
 
-  function renderTestimonials(list){
+  function renderTestimonials(data){
     var track = document.getElementById('t-track');
+    var list = data && data.items;
     if(!track || !Array.isArray(list)) return;
     track.innerHTML = list.map(function(t){
       var initial = (t.name || '').trim().charAt(0);
@@ -824,8 +823,9 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     }).join('');
   }
 
-  function renderWorkshops(list){
+  function renderWorkshops(data){
     var grid = document.getElementById('workshops-grid');
+    var list = data && data.items;
     if(!grid || !Array.isArray(list)) return;
     grid.innerHTML = list.map(function(w, i){
       var icon = WORKSHOP_ICONS[w.icon] || WORKSHOP_ICONS.private;

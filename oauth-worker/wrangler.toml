@@ -1,0 +1,8 @@
+name = "pashutlitzor-cms-auth"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# אחרי הפריסה (wrangler deploy) יש להגדיר שני secrets:
+#   wrangler secret put OAUTH_CLIENT_ID
+#   wrangler secret put OAUTH_CLIENT_SECRET
+# הערכים מתקבלים מיצירת GitHub OAuth App — ראו README.

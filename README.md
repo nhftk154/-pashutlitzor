@@ -15,6 +15,17 @@ assets/
     logo-removebg-preview.png  ← לוגו המותג
     favicon.png
     og-image.jpg      ← תמונת שיתוף לרשתות חברתיות
+content/               ← תוכן שניתן לעריכה בלי לגעת בקוד (JSON)
+  gallery.json          תמונות הגלריה + תיאור לכל תמונה
+  testimonials.json      המלצות לקוחות
+  corporate.json         תמונת אירוע חברה
+  workshops.json         כרטיסי הסדנאות
+admin/                 ← ממשק העריכה הגרפי (Decap CMS)
+  index.html
+  config.yml
+oauth-worker/          ← פרוקסי OAuth (Cloudflare Worker) שמאפשר כניסה ל-/admin
+  worker.js
+  wrangler.toml
 ```
 
 ## הפעלה
@@ -39,10 +50,43 @@ python3 -m http.server 4599
 | CTA סגירה | `#contact` | כפתור וואטסאפ + כפתור אינסטגרם |
 | פוטר | `footer` | לוגו + קישור אינסטגרם + קופירייט |
 
-## הוספת/החלפת תמונות
+## עריכת תוכן — ממשק גרפי ללקוחה (/admin)
 
-- גלריה: הוסיפו קובץ ל-`assets/gallery/` (פורמט 3:4 מומלץ) ורשומה תואמת ב-
-  `content/gallery.json`
+הגלריה, ההמלצות, תמונת האירוע החברתי וכרטיסי הסדנאות **לא כתובים בקוד** —
+הם נטענים בזמן ריצה מתוך קובצי `content/*.json`. זה מאפשר לערוך אותם דרך
+ממשק גרפי בכתובת **`/admin`** (למשל `pashutlitzor.com/admin`), בלי לגעת
+בקוד בכלל: התחברות עם GitHub, טופס עם שדות (תמונה + תיאור, טקסט המלצה
+וכו'), כפתור "שמור ופרסם" — והאתר החי מתעדכן תוך דקה־שתיים (GitHub Pages
+בונה מחדש אוטומטית בכל שמירה).
+
+### הקמה חד-פעמית (רק בפעם הראשונה)
+
+1. **GitHub OAuth App** — בהגדרות GitHub (Settings → Developer settings →
+   OAuth Apps → New OAuth App) ליצור אפליקציה עם:
+   - Homepage URL: `https://pashutlitzor.com`
+   - Authorization callback URL: `https://<כתובת-ה-worker>/callback` (מתקבלת
+     בשלב הבא)
+   - לשמור את ה-Client ID וה-Client Secret שנוצרים (הם רגישים — לא לשתף)
+2. **פריסת הפרוקסי** (`oauth-worker/`, חינמי ב-Cloudflare Workers):
+   ```bash
+   cd oauth-worker
+   npx wrangler deploy
+   npx wrangler secret put OAUTH_CLIENT_ID
+   npx wrangler secret put OAUTH_CLIENT_SECRET
+   ```
+   הפקודה הראשונה מדפיסה כתובת (`https://....workers.dev`) — זו הכתובת
+   שמשלימים בה את ה-callback URL בשלב 1, ואותה יש להכניס ל-`base_url`
+   בקובץ `admin/config.yml` (במקום `REPLACE-WITH-OAUTH-WORKER-URL`).
+3. **הזמנת הלקוחה לריפו** — ב-GitHub, Settings → Collaborators, להזמין
+   לפי כתובת האימייל שלה עם הרשאת Write. היא תקבל מייל, תיצור חשבון
+   GitHub חינמי אם אין לה (רק פעם אחת), ותאשר.
+
+לאחר מכן היא נכנסת ל-`pashutlitzor.com/admin`, לוחצת "Login with GitHub"
+(חד פעמי), ומקבלת ממשק עריכה גרפי מלא.
+
+### הוספת/החלפת תמונות ידנית (בלי /admin)
+
+- גלריה: הוסיפו קובץ ל-`assets/gallery/` ורשומה תואמת ב-`content/gallery.json`
 - תמונת אירוע חברה: `assets/corporate.jpg` + `content/corporate.json`
 
 > כאשר קובץ תמונה חסר — האתר מציג placeholder אוטומטי.

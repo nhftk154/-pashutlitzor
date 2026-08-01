@@ -1,0 +1,122 @@
+# תצורת ממשק העריכה (Decap CMS) של pashutlitzor.com
+#
+# base_url: כתובת הפרוקסי (Cloudflare Worker) שמתווך את ההתחברות מול GitHub.
+# יש למלא כאן את הכתובת אחרי שמקימים את ה-OAuth App + ה-Worker (ראו README).
+# כל עוד זה לא מולא — ההתחברות לא תעבוד לא בפרודקשן ולא מקומית.
+#
+# לבדיקה מקומית בלי OAuth בכלל: אפשר להחליף זמנית את כל בלוק ה-backend ב-
+#   backend: { name: proxy, proxy_url: http://localhost:8081/api/v1, branch: main }
+# ולהריץ `npx decap-server` — עוקף לגמרי את ההתחברות (לשימוש מקומי בלבד,
+# לא לשמור/לדחוף שינוי כזה).
+backend:
+  name: github
+  repo: nhftk154/-pashutlitzor
+  branch: main
+  base_url: https://REPLACE-WITH-OAUTH-WORKER-URL
+  auth_endpoint: auth
+
+local_backend: true
+
+site_url: https://pashutlitzor.com
+display_url: https://pashutlitzor.com
+logo_url: /assets/branding/logo-removebg-preview.png
+locale: "he"
+
+media_folder: "assets/gallery"
+public_folder: "/assets/gallery"
+
+collections:
+  - name: "gallery"
+    label: "תמונות גלריה"
+    files:
+      - name: "gallery"
+        label: "תמונות גלריה"
+        file: "content/gallery.json"
+        fields:
+          - label: "תמונות"
+            name: "items"
+            widget: "list"
+            label_singular: "תמונה"
+            summary: "{{fields.alt}}"
+            fields:
+              - label: "תמונה"
+                name: "src"
+                widget: "image"
+                media_folder: "/assets/gallery"
+                public_folder: "/assets/gallery"
+              - label: "תיאור קצר של התמונה"
+                name: "alt"
+                widget: "string"
+                hint: "משפט קצר שמתאר מה רואים בתמונה"
+
+  - name: "testimonials"
+    label: "המלצות לקוחות"
+    files:
+      - name: "testimonials"
+        label: "המלצות לקוחות"
+        file: "content/testimonials.json"
+        fields:
+          - label: "המלצות"
+            name: "items"
+            widget: "list"
+            label_singular: "המלצה"
+            summary: "{{fields.name}}"
+            fields:
+              - label: "תוכן ההמלצה"
+                name: "quote"
+                widget: "text"
+              - label: "שם הלקוחה / הלקוח"
+                name: "name"
+                widget: "string"
+              - label: "פרטים נוספים (סוג סדנה, תפקיד וכו')"
+                name: "meta"
+                widget: "string"
+                required: false
+
+  - name: "corporate"
+    label: "תמונת אירוע חברה"
+    files:
+      - name: "corporate"
+        label: "תמונת אירוע חברה"
+        file: "content/corporate.json"
+        fields:
+          - label: "תמונה"
+            name: "src"
+            widget: "image"
+            media_folder: "/assets"
+            public_folder: "/assets"
+          - label: "תיאור קצר של התמונה"
+            name: "alt"
+            widget: "string"
+
+  - name: "workshops"
+    label: "כרטיסי סדנאות"
+    files:
+      - name: "workshops"
+        label: "כרטיסי סדנאות"
+        file: "content/workshops.json"
+        fields:
+          - label: "כרטיסים"
+            name: "items"
+            widget: "list"
+            label_singular: "כרטיס"
+            summary: "{{fields.title}}"
+            fields:
+              - label: "כותרת"
+                name: "title"
+                widget: "string"
+              - label: "תיאור (אפשר לציין כאן גם מחיר/תאריכים אם רוצים)"
+                name: "description"
+                widget: "text"
+              - label: "סוג אייקון"
+                name: "icon"
+                widget: "select"
+                options:
+                  - { label: "סדנה פרטית", value: "private" }
+                  - { label: "ערב בנות", value: "social" }
+                  - { label: "חגיגה קבוצתית", value: "party" }
+                  - { label: "אירוע חברה", value: "corporate" }
+              - label: "הודעת וואטסאפ מוכנה מראש"
+                name: "waText"
+                widget: "string"
+                hint: "הטקסט שיופיע אוטומטית בהודעה כשלוחצים על 'לפרטים'"
