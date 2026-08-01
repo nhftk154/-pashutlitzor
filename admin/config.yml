@@ -12,7 +12,7 @@ backend:
   name: github
   repo: nhftk154/-pashutlitzor
   branch: main
-  base_url: https://REPLACE-WITH-OAUTH-WORKER-URL
+  base_url: https://pashutlitzor-cms-auth.nhftk154.workers.dev
   auth_endpoint: auth
 
 local_backend: true
