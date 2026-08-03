@@ -120,3 +120,113 @@ collections:
                 name: "waText"
                 widget: "string"
                 hint: "הטקסט שיופיע אוטומטית בהודעה כשלוחצים על 'לפרטים'"
+
+  - name: "site-text"
+    label: "טקסטים כלליים באתר"
+    files:
+      - name: "site-text"
+        label: "טקסטים כלליים באתר"
+        file: "content/site-text.json"
+        fields:
+          - label: "תפריט ניווט עליון"
+            name: "nav"
+            widget: "object"
+            fields:
+              - { label: "קישור 1", name: "concept", widget: "string" }
+              - { label: "קישור 2", name: "workshops", widget: "string" }
+              - { label: "קישור 3", name: "gallery", widget: "string" }
+              - { label: "קישור 4", name: "corporate", widget: "string" }
+
+          - label: "מסך פתיחה (למעלה)"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "תווית קטנה מעל הכותרת", name: "eyebrow", widget: "string" }
+              - { label: "כותרת ראשית — שורה 1", name: "headingLine1", widget: "string" }
+              - { label: "כותרת ראשית — שורה 2 (מודגשת בצבע)", name: "headingAccent", widget: "string" }
+              - { label: "משפט משנה 1", name: "sub1", widget: "string" }
+              - { label: "משפט משנה 2", name: "sub2", widget: "text" }
+              - { label: "טקסט כפתור וואטסאפ", name: "ctaWhatsapp", widget: "string" }
+              - { label: "טקסט כפתור משני", name: "ctaSecondary", widget: "string" }
+
+          - label: "מקטע 'גבס פולימרי' (מה זה)"
+            name: "concept"
+            widget: "object"
+            fields:
+              - { label: "תווית קטנה", name: "eyebrow", widget: "string" }
+              - { label: "כותרת", name: "heading", widget: "string" }
+              - { label: "פסקת פתיחה", name: "intro", widget: "text" }
+              - label: "נקודות (כל אחת: כותרת קצרה מודגשת + הסבר)"
+                name: "points"
+                widget: "list"
+                label_singular: "נקודה"
+                summary: "{{fields.title}}"
+                fields:
+                  - { label: "כותרת קצרה", name: "title", widget: "string" }
+                  - { label: "הסבר", name: "description", widget: "text" }
+
+          - label: "מקטע סדנאות — כותרת עליונה"
+            name: "workshopsHead"
+            widget: "object"
+            fields:
+              - { label: "תווית קטנה", name: "eyebrow", widget: "string" }
+              - { label: "כותרת", name: "heading", widget: "string" }
+              - { label: "טקסט הסבר", name: "text", widget: "text" }
+
+          - label: "מקטע גלריה — כותרת עליונה"
+            name: "galleryHead"
+            widget: "object"
+            fields:
+              - { label: "תווית קטנה", name: "eyebrow", widget: "string" }
+              - { label: "כותרת", name: "heading", widget: "string" }
+              - { label: "טקסט הסבר", name: "text", widget: "text" }
+
+          - label: "מקטע לחברות וארגונים"
+            name: "corporate"
+            widget: "object"
+            fields:
+              - { label: "תווית קטנה", name: "eyebrow", widget: "string" }
+              - { label: "כותרת", name: "heading", widget: "string" }
+              - { label: "פסקת פתיחה", name: "lead", widget: "text" }
+              - label: "מספרים (סטטיסטיקות)"
+                name: "stats"
+                widget: "list"
+                label_singular: "מספר"
+                summary: "{{fields.number}} — {{fields.label}}"
+                fields:
+                  - { label: "מספר / ערך", name: "number", widget: "string" }
+                  - { label: "תיאור מתחת למספר", name: "label", widget: "string" }
+              - label: "יתרונות (עם וי ירוק)"
+                name: "features"
+                widget: "list"
+                label_singular: "יתרון"
+                summary: "{{fields.title}}"
+                fields:
+                  - { label: "כותרת קצרה", name: "title", widget: "string" }
+                  - { label: "הסבר", name: "description", widget: "text" }
+              - { label: "טקסט כפתור וואטסאפ", name: "ctaText", widget: "string" }
+
+          - label: "מקטע המלצות — כותרת עליונה"
+            name: "testimonialsHead"
+            widget: "object"
+            fields:
+              - { label: "תווית קטנה", name: "eyebrow", widget: "string" }
+              - { label: "כותרת", name: "heading", widget: "string" }
+
+          - label: "מקטע סיום (קריאה לפעולה)"
+            name: "contact"
+            widget: "object"
+            fields:
+              - { label: "תווית קטנה", name: "eyebrow", widget: "string" }
+              - { label: "כותרת", name: "heading", widget: "string" }
+              - { label: "משפט הסבר", name: "sub", widget: "text" }
+              - { label: "טקסט כפתור וואטסאפ", name: "ctaWhatsapp", widget: "string" }
+              - { label: "טקסט כפתור אינסטגרם", name: "ctaInstagram", widget: "string" }
+              - { label: "שורת טלפון וזמינות", name: "note", widget: "string" }
+
+          - label: "פוטר (תחתית העמוד)"
+            name: "footer"
+            widget: "object"
+            fields:
+              - { label: "שם המותג", name: "brand", widget: "string" }
+              - { label: "טקסט זכויות יוצרים", name: "rights", widget: "string" }

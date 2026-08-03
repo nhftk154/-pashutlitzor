@@ -570,10 +570,10 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <header id="navbar">
   <div class="wrap">
     <nav class="nav-links" aria-label="ניווט ראשי">
-      <a href="#concept">מה זה</a>
-      <a href="#workshops">הסדנאות</a>
-      <a href="#gallery">גלריה</a>
-      <a href="#corporate">לארגונים</a>
+      <a href="#concept" data-navkey="concept">מה זה</a>
+      <a href="#workshops" data-navkey="workshops">הסדנאות</a>
+      <a href="#gallery" data-navkey="gallery">גלריה</a>
+      <a href="#corporate" data-navkey="corporate">לארגונים</a>
     </nav>
     <button class="nav-burger" id="nav-burger" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="nav-mobile">
       <span></span><span></span><span></span>
@@ -584,10 +584,10 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   </div>
 </header>
 <nav class="nav-mobile" id="nav-mobile" aria-label="ניווט נייד">
-  <a href="#concept">מה זה</a>
-  <a href="#workshops">הסדנאות</a>
-  <a href="#gallery">גלריה</a>
-  <a href="#corporate">לארגונים</a>
+  <a href="#concept" data-navkey="concept">מה זה</a>
+  <a href="#workshops" data-navkey="workshops">הסדנאות</a>
+  <a href="#gallery" data-navkey="gallery">גלריה</a>
+  <a href="#corporate" data-navkey="corporate">לארגונים</a>
 </nav>
 
 <main>
@@ -613,16 +613,16 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     <div class="hero-layout">
       <!-- Text side (right in RTL) -->
       <div class="hero-text">
-        <span class="eyebrow hero-eyebrow" style="margin-bottom:18px;font-size:18px;font-weight:700;letter-spacing:.08em">סדנאות יצירה בגבס פולימרי</span>
-        <h1>לגעת, ליצור,<br><span class="accent-word">לקחת הביתה.</span></h1>
-        <p class="hero-sub">כשבא לכם לצאת מהתבנית</p>
-        <p class="hero-sub">הצטרפו לחוויה יצירתית, מרגיעה ומלאת סטייל בסדנאות הגבס הפולימרי שלי. בואו פשוט ליצור פריטים ייחודיים שעיצבתם לגמרי בעצמכם.</p>
+        <span class="eyebrow hero-eyebrow" id="hero-eyebrow" style="margin-bottom:18px;font-size:18px;font-weight:700;letter-spacing:.08em">סדנאות יצירה בגבס פולימרי</span>
+        <h1><span id="hero-heading-line1">לגעת, ליצור,</span><br><span class="accent-word" id="hero-heading-accent">לקחת הביתה.</span></h1>
+        <p class="hero-sub" id="hero-sub-1">כשבא לכם לצאת מהתבנית</p>
+        <p class="hero-sub" id="hero-sub-2">הצטרפו לחוויה יצירתית, מרגיעה ומלאת סטייל בסדנאות הגבס הפולימרי שלי. בואו פשוט ליצור פריטים ייחודיים שעיצבתם לגמרי בעצמכם.</p>
         <div class="hero-actions">
           <a class="btn btn-wa btn-lg" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%20%D7%91%D7%90%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A2%D7%9C%20%D7%94%D7%A1%D7%93%D7%A0%D7%90%D7%95%D7%AA" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.78.97-.15.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43l-.48-.01c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.25 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
-            בואי נדבר בוואטסאפ
+            <span id="hero-cta-wa-text">בואי נדבר בוואטסאפ</span>
           </a>
-          <a class="btn btn-ghost btn-lg" href="#workshops">לכל הסדנאות</a>
+          <a class="btn btn-ghost btn-lg" href="#workshops"><span id="hero-cta-secondary-text">לכל הסדנאות</span></a>
         </div>
       </div>
     </div>
@@ -636,12 +636,9 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <!-- ===== CONCEPT ===== -->
 <section id="concept" class="section-pad">
   <div class="wrap">
-    <span class="eyebrow reveal">נעים להכיר</span>
-    <h2 class="reveal" data-delay="1">גבס פולימרי</h2>
-    <p class="reveal" data-delay="2">אם עדיין לא שמעתם על גבס פולימרי, תתכוננו להפתעה. מדובר בדור החדש של חומרי היצירה והעיצוב לבית, והוא שונה לחלוטין מכל מה שהכרתם:<br><br>
-    <strong>ידידותי ואקולוגי:</strong> הוא מבוסס על מים, אינו רעיל ובטוח לחלוטין לעבודה (בלי ריחות חזקים ובלי חומרים מסוכנים).<br><br>
-    <strong>חזק ואיכותי:</strong> השילוב הפולימרי מעניק לו עמידות גבוהה בהרבה מגבס רגיל, ומגע חלק, נעים ויוקרתי שמזכיר שיש או אבן חלקה.<br><br>
-    <strong>קסם מהיר:</strong> בניגוד לחומרים אחרים שלוקח להם ימים להתייבש, הגבס הפולימרי מתקשה במהירות מדהימה — מה שמאפשר לנו ליצוק אותו, לעצב אותו, וגם לחלץ אותו מהתבנית ולקחת אותו הביתה כבר בסוף הסדנה!</p>
+    <span class="eyebrow reveal" id="concept-eyebrow">נעים להכיר</span>
+    <h2 class="reveal" data-delay="1" id="concept-heading">גבס פולימרי</h2>
+    <p class="reveal" data-delay="2" id="concept-body"></p>
     <div class="concept-divider reveal" data-delay="3"></div>
   </div>
 </section>
@@ -650,9 +647,9 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <section id="workshops" class="section-pad">
   <div class="wrap">
     <div class="section-head">
-      <span class="eyebrow reveal">הסדנאות שלנו</span>
-      <h2 class="reveal" data-delay="1">חוויה שמתאימה לכל רגע</h2>
-      <p class="reveal" data-delay="2">בין אם בא לך לפנק את עצמך, לחגוג עם החברות או להפיק אירוע. יש לנו את הפורמט המושלם.</p>
+      <span class="eyebrow reveal" id="workshops-eyebrow">הסדנאות שלנו</span>
+      <h2 class="reveal" data-delay="1" id="workshops-heading">חוויה שמתאימה לכל רגע</h2>
+      <p class="reveal" data-delay="2" id="workshops-text">בין אם בא לך לפנק את עצמך, לחגוג עם החברות או להפיק אירוע. יש לנו את הפורמט המושלם.</p>
     </div>
     <div class="cards-grid" id="workshops-grid"></div>
   </div>
@@ -662,9 +659,9 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <section id="gallery" class="section-pad">
   <div class="wrap">
     <div class="section-head">
-      <span class="eyebrow reveal">רגעים מהסטודיו</span>
-      <h2 class="reveal" data-delay="1">יצירות, ידיים וחיוכים</h2>
-      <p class="reveal" data-delay="2">הצצה לסדנאות אמיתיות ולתוצאות שיצרו המשתתפות שלנו.</p>
+      <span class="eyebrow reveal" id="gallery-eyebrow">רגעים מהסטודיו</span>
+      <h2 class="reveal" data-delay="1" id="gallery-heading">יצירות, ידיים וחיוכים</h2>
+      <p class="reveal" data-delay="2" id="gallery-text">הצצה לסדנאות אמיתיות ולתוצאות שיצרו המשתתפות שלנו.</p>
     </div>
     <div class="masonry" id="gallery-grid"></div>
   </div>
@@ -676,34 +673,17 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   <div class="wrap">
     <div class="corp-grid">
       <div>
-        <span class="eyebrow reveal">לחברות וארגונים</span>
-        <h2 class="reveal" data-delay="1">חוויית גיבוש שמדברת אחרת</h2>
-        <p class="corp-lead reveal" data-delay="2">סדנת יצירה רגועה ויוקרתית שמחברת בין אנשים. בלי תחרות, בלי לחץ, רק יצירה משותפת שכל אחד לוקח איתו הביתה.</p>
+        <span class="eyebrow reveal" id="corp-eyebrow">לחברות וארגונים</span>
+        <h2 class="reveal" data-delay="1" id="corp-heading">חוויית גיבוש שמדברת אחרת</h2>
+        <p class="corp-lead reveal" data-delay="2" id="corp-lead">סדנת יצירה רגועה ויוקרתית שמחברת בין אנשים. בלי תחרות, בלי לחץ, רק יצירה משותפת שכל אחד לוקח איתו הביתה.</p>
 
-        <div class="corp-stats reveal" data-delay="2">
-          <div class="corp-stat"><div class="num">5–100</div><div class="lbl">משתתפים בקבוצה</div></div>
-          <div class="corp-stat"><div class="num">100%</div><div class="lbl">מגיעים אליכם</div></div>
-          <div class="corp-stat"><div class="num">0</div><div class="lbl">כאב ראש בהפקה</div></div>
-        </div>
+        <div class="corp-stats reveal" data-delay="2" id="corp-stats"></div>
 
-        <ul class="corp-list reveal" data-delay="3">
-          <li>
-            <span class="corp-check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
-            <span><strong>גמישות מלאה בגודל הקבוצה</strong><span>מצוות קטן ועד אירוע חברה גדול. מתאימים את החוויה אליכם.</span></span>
-          </li>
-          <li>
-            <span class="corp-check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
-            <span><strong>מגיעים עם הכל אליכם</strong><span>סטאפ נייד מלא. במשרד, במרחב עבודה או בכל מיקום שתבחרו.</span></span>
-          </li>
-          <li>
-            <span class="corp-check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>
-            <span><strong>ארגון פשוט וללא טרחה</strong><span>אנחנו דואגים לחומרים, להדרכה ולניקיון. אתם רק נהנים.</span></span>
-          </li>
-        </ul>
+        <ul class="corp-list reveal" data-delay="3" id="corp-features"></ul>
 
         <a class="btn btn-wa btn-lg reveal" data-delay="3" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A0%D7%97%D7%A0%D7%95%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%A0%D7%99%D7%9D%20%D7%91%D7%A1%D7%93%D7%A0%D7%94%20%D7%9C%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%97%D7%91%D7%A8%D7%94" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.78.97-.15.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43l-.48-.01c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.25 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
-          לקבלת הצעה לארגון
+          <span id="corp-cta-text">לקבלת הצעה לארגון</span>
         </a>
       </div>
       <div class="corp-visual reveal" data-delay="2">
@@ -718,8 +698,8 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <section id="testimonials" class="section-pad">
   <div class="wrap">
     <div class="section-head" style="margin-inline:auto;text-align:center">
-      <span class="eyebrow reveal">הן כבר יצרו</span>
-      <h2 class="reveal" data-delay="1">מה אומרות המשתתפות</h2>
+      <span class="eyebrow reveal" id="testimonials-eyebrow">הן כבר יצרו</span>
+      <h2 class="reveal" data-delay="1" id="testimonials-heading">מה אומרות המשתתפות</h2>
     </div>
     <div class="t-track" id="t-track"></div>
     <div class="t-dots" id="t-dots" aria-hidden="true"></div>
@@ -729,20 +709,20 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <!-- ===== CLOSING CTA ===== -->
 <section id="contact" class="section-pad">
   <div class="wrap">
-    <span class="eyebrow reveal">מוכנה להתחיל?</span>
-    <h2 class="reveal" data-delay="1">בואי ניצור משהו יפה ביחד</h2>
-    <p class="contact-sub reveal" data-delay="2">הודעה אחת בוואטסאפ וכבר נמצא לך את החוויה המושלמת — בלי טפסים, בלי התחייבות. פשוט ליצור.</p>
+    <span class="eyebrow reveal" id="contact-eyebrow">מוכנה להתחיל?</span>
+    <h2 class="reveal" data-delay="1" id="contact-heading">בואי ניצור משהו יפה ביחד</h2>
+    <p class="contact-sub reveal" data-delay="2" id="contact-sub">הודעה אחת בוואטסאפ וכבר נמצא לך את החוויה המושלמת — בלי טפסים, בלי התחייבות. פשוט ליצור.</p>
     <div class="contact-btns reveal" data-delay="2">
       <a class="btn btn-wa btn-lg" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%20%D7%91%D7%90%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A2%D7%9C%20%D7%94%D7%A1%D7%93%D7%A0%D7%90%D7%95%D7%AA" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.78.97-.15.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43l-.48-.01c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.25 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
-        שלחי הודעה בוואטסאפ
+        <span id="contact-cta-wa-text">שלחי הודעה בוואטסאפ</span>
       </a>
       <a class="btn btn-ig btn-lg" href="https://www.instagram.com/dina_evgi?igsh=NWgyeW82cmZkeXp0" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.2 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.15 0-3.5 0-4.74.07-.97.04-1.5.2-1.85.34-.46.18-.8.4-1.15.74-.34.35-.56.69-.74 1.15-.14.35-.3.88-.34 1.85C3.07 9.5 3.07 9.85 3.07 12s0 2.5.04 3.74c.04.97.2 1.5.34 1.85.18.46.4.8.74 1.15.35.34.69.56 1.15.74.35.14.88.3 1.85.34 1.24.07 1.59.07 4.74.07s3.5 0 4.74-.07c.97-.04 1.5-.2 1.85-.34.46-.18.8-.4 1.15-.74.34-.35.56-.69.74-1.15.14-.35.3-.88.34-1.85.07-1.24.07-1.59.07-3.74s0-2.5-.04-3.74c-.04-.97-.2-1.5-.34-1.85a3.1 3.1 0 0 0-.74-1.15 3.1 3.1 0 0 0-1.15-.74c-.35-.14-.88-.3-1.85-.34C15.5 4 15.15 4 12 4Zm0 3.06A4.94 4.94 0 1 1 7.06 12 4.94 4.94 0 0 1 12 7.06Zm0 8.15A3.21 3.21 0 1 0 8.79 12 3.21 3.21 0 0 0 12 15.21Zm6.3-8.35a1.15 1.15 0 1 1-1.15-1.15 1.15 1.15 0 0 1 1.15 1.15Z"/></svg>
-        מוזמנת לראות עוד
+        <span id="contact-cta-ig-text">מוזמנת לראות עוד</span>
       </a>
     </div>
-    <div class="contact-note reveal" data-delay="3">052-547-7845 · זמינות לסטודיו ולאירועים</div>
+    <div class="contact-note reveal" data-delay="3" id="contact-note">052-547-7845 · זמינות לסטודיו ולאירועים</div>
   </div>
 </section>
 </main>
@@ -752,14 +732,14 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   <div class="wrap">
     <div class="foot-logo">
       <img src="assets/branding/logo-removebg-preview.png" alt="לוגו פשוט ליצור">
-      <span>פשוט ליצור</span>
+      <span id="footer-brand-logo">פשוט ליצור</span>
     </div>
     <div class="foot-social">
       <a href="https://www.instagram.com/dina_evgi?igsh=NWgyeW82cmZkeXp0" target="_blank" rel="noopener" aria-label="עמוד האינסטגרם שלנו">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.2 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.15 0-3.5 0-4.74.07-.97.04-1.5.2-1.85.34-.46.18-.8.4-1.15.74-.34.35-.56.69-.74 1.15-.14.35-.3.88-.34 1.85C3.07 9.5 3.07 9.85 3.07 12s0 2.5.04 3.74c.04.97.2 1.5.34 1.85.18.46.4.8.74 1.15.35.34.69.56 1.15.74.35.14.88.3 1.85.34 1.24.07 1.59.07 4.74.07s3.5 0 4.74-.07c.97-.04 1.5-.2 1.85-.34.46-.18.8-.4 1.15-.74.34-.35.56-.69.74-1.15.14-.35.3-.88.34-1.85.07-1.24.07-1.59.07-3.74s0-2.5-.04-3.74c-.04-.97-.2-1.5-.34-1.85a3.1 3.1 0 0 0-.74-1.15 3.1 3.1 0 0 0-1.15-.74c-.35-.14-.88-.3-1.85-.34C15.5 4 15.15 4 12 4Zm0 3.06A4.94 4.94 0 1 1 7.06 12 4.94 4.94 0 0 1 12 7.06Zm0 8.15A3.21 3.21 0 1 0 8.79 12 3.21 3.21 0 0 0 12 15.21Zm6.3-8.35a1.15 1.15 0 1 1-1.15-1.15 1.15 1.15 0 0 1 1.15 1.15Z"/></svg>
       </a>
     </div>
-    <div class="foot-copy">© <span id="year"></span> פשוט ליצור · כל הזכויות שמורות</div>
+    <div class="foot-copy">© <span id="year"></span> <span id="footer-brand-copy">פשוט ליצור</span> · <span id="footer-rights">כל הזכויות שמורות</span></div>
   </div>
 </footer>
 
@@ -823,6 +803,88 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     }).join('');
   }
 
+  function setText(id, value){
+    var el = document.getElementById(id);
+    if(el && value != null) el.textContent = value;
+  }
+
+  function renderSiteText(t){
+    if(!t) return;
+    if(t.nav){
+      document.querySelectorAll('[data-navkey]').forEach(function(a){
+        var key = a.getAttribute('data-navkey');
+        if(t.nav[key] != null) a.textContent = t.nav[key];
+      });
+    }
+    if(t.hero){
+      setText('hero-eyebrow', t.hero.eyebrow);
+      setText('hero-heading-line1', t.hero.headingLine1);
+      setText('hero-heading-accent', t.hero.headingAccent);
+      setText('hero-sub-1', t.hero.sub1);
+      setText('hero-sub-2', t.hero.sub2);
+      setText('hero-cta-wa-text', t.hero.ctaWhatsapp);
+      setText('hero-cta-secondary-text', t.hero.ctaSecondary);
+    }
+    if(t.concept){
+      setText('concept-eyebrow', t.concept.eyebrow);
+      setText('concept-heading', t.concept.heading);
+      var body = document.getElementById('concept-body');
+      if(body){
+        var points = Array.isArray(t.concept.points) ? t.concept.points : [];
+        var parts = [esc(t.concept.intro)].concat(points.map(function(p){
+          return '<strong>' + esc(p.title) + '</strong> ' + esc(p.description);
+        }));
+        body.innerHTML = parts.join('<br><br>');
+      }
+    }
+    if(t.workshopsHead){
+      setText('workshops-eyebrow', t.workshopsHead.eyebrow);
+      setText('workshops-heading', t.workshopsHead.heading);
+      setText('workshops-text', t.workshopsHead.text);
+    }
+    if(t.galleryHead){
+      setText('gallery-eyebrow', t.galleryHead.eyebrow);
+      setText('gallery-heading', t.galleryHead.heading);
+      setText('gallery-text', t.galleryHead.text);
+    }
+    if(t.corporate){
+      setText('corp-eyebrow', t.corporate.eyebrow);
+      setText('corp-heading', t.corporate.heading);
+      setText('corp-lead', t.corporate.lead);
+      setText('corp-cta-text', t.corporate.ctaText);
+      var statsEl = document.getElementById('corp-stats');
+      if(statsEl && Array.isArray(t.corporate.stats)){
+        statsEl.innerHTML = t.corporate.stats.map(function(s){
+          return '<div class="corp-stat"><div class="num">' + esc(s.number) + '</div><div class="lbl">' + esc(s.label) + '</div></div>';
+        }).join('');
+      }
+      var featuresEl = document.getElementById('corp-features');
+      if(featuresEl && Array.isArray(t.corporate.features)){
+        featuresEl.innerHTML = t.corporate.features.map(function(f){
+          return '<li><span class="corp-check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></span>' +
+            '<span><strong>' + esc(f.title) + '</strong><span>' + esc(f.description) + '</span></span></li>';
+        }).join('');
+      }
+    }
+    if(t.testimonialsHead){
+      setText('testimonials-eyebrow', t.testimonialsHead.eyebrow);
+      setText('testimonials-heading', t.testimonialsHead.heading);
+    }
+    if(t.contact){
+      setText('contact-eyebrow', t.contact.eyebrow);
+      setText('contact-heading', t.contact.heading);
+      setText('contact-sub', t.contact.sub);
+      setText('contact-cta-wa-text', t.contact.ctaWhatsapp);
+      setText('contact-cta-ig-text', t.contact.ctaInstagram);
+      setText('contact-note', t.contact.note);
+    }
+    if(t.footer){
+      setText('footer-brand-logo', t.footer.brand);
+      setText('footer-brand-copy', t.footer.brand);
+      setText('footer-rights', t.footer.rights);
+    }
+  }
+
   function renderWorkshops(data){
     var grid = document.getElementById('workshops-grid');
     var list = data && data.items;
@@ -846,12 +908,14 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
         fetch('content/gallery.json').then(function(r){ return r.json(); }),
         fetch('content/testimonials.json').then(function(r){ return r.json(); }),
         fetch('content/corporate.json').then(function(r){ return r.json(); }),
-        fetch('content/workshops.json').then(function(r){ return r.json(); })
+        fetch('content/workshops.json').then(function(r){ return r.json(); }),
+        fetch('content/site-text.json').then(function(r){ return r.json(); })
       ]);
       renderGallery(results[0]);
       renderTestimonials(results[1]);
       renderCorporate(results[2]);
       renderWorkshops(results[3]);
+      renderSiteText(results[4]);
     } catch(err){
       console.error('טעינת תוכן דינמי נכשלה:', err);
     }
