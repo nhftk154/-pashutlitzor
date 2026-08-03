@@ -38,6 +38,28 @@
         '    max-width: 100% !important;',
         '    box-sizing: border-box !important;',
         '  }',
+        '}',
+        // Decap's own CSS makes the collections "categories" sidebar
+        // position:fixed at 800px+ wide, so it floats over the entries
+        // list instead of sitting beside it (an upstream layout bug,
+        // unrelated to the mobile override above — reproduces at any
+        // desktop width). Force it back into normal flex flow.
+        '@media (min-width: 800px) {',
+        '  [class*="CollectionContainer"] {',
+        '    flex-direction: row !important;',
+        '    align-items: flex-start !important;',
+        '    gap: 20px !important;',
+        '  }',
+        '  [class*="SidebarContainer"] {',
+        '    position: static !important;',
+        '    width: 260px !important;',
+        '    max-width: 260px !important;',
+        '    flex: 0 0 260px !important;',
+        '  }',
+        '  [class*="CollectionMain"] {',
+        '    flex: 1 1 auto !important;',
+        '    min-width: 0 !important;',
+        '  }',
         '}'
       ].join('\n');
       var ID = 'mobile-admin-overrides';
