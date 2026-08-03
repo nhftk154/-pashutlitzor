@@ -41,6 +41,20 @@
         '    max-width: 100% !important;',
         '    box-sizing: border-box !important;',
         '  }',
+        // The entry-editor toolbar (back arrow, title, save status,
+        // publish button) is position:absolute with a hardcoded ~800px
+        // width, so most of it sits off-screen on a phone in portrait
+        // (only reachable in landscape, where the viewport is wide
+        // enough). Make it a normal, wrapping, sticky-at-top element.
+        '  [class*="ToolbarContainer"] {',
+        '    position: sticky !important;',
+        '    top: 0 !important;',
+        '    width: 100% !important;',
+        '    height: auto !important;',
+        '    min-height: 66px !important;',
+        '    flex-wrap: wrap !important;',
+        '    z-index: 300 !important;',
+        '  }',
         '}',
         // Decap's own CSS makes the collections "categories" sidebar
         // position:fixed at 800px+ wide, so it floats over the entries
