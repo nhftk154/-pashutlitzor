@@ -1,0 +1,149 @@
+/* ============ שיתוף עיצוב בין עמודי המדיניות (פרטיות/נגישות/תנאים) לאתר הראשי ============ */
+/* טוקנים, ניווט ופוטר מועתקים בכוונה מ-index.html כדי שהעמודים ייראו זהים לאתר. */
+
+:root{
+  --green-primary:#2D5B68;
+  --accent:#CE866C;
+  --bg:#F6F1E8;
+  --bg-warm:#EBE0C9;
+  --text:#25333A;
+  --text-soft:#545F53;
+  --wa:#25D366;
+
+  --shadow-sm:0 4px 14px rgba(37,51,58,.08);
+  --shadow-md:0 10px 30px rgba(37,51,58,.11);
+
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --maxw:1180px;
+  --nav-h:70px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Heebo',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  font-size:17px;
+  font-weight:400;
+  text-align:start;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3{font-family:'Frank Ruhl Libre','Heebo',serif;line-height:1.18;font-weight:700;letter-spacing:-.01em}
+section{position:relative}
+
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:22px;width:100%}
+
+/* ============ NAVBAR (זהה לאתר הראשי) ============ */
+#navbar{
+  position:fixed;inset-block-start:0;inset-inline:0;z-index:1000;
+  height:var(--nav-h);display:flex;align-items:center;
+  background:rgba(246,241,232,.88);
+  backdrop-filter:blur(16px) saturate(1.3);
+  -webkit-backdrop-filter:blur(16px) saturate(1.3);
+  box-shadow:0 1px 0 rgba(26,20,16,.06),var(--shadow-sm);
+}
+#navbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-logo{display:flex;align-items:center;gap:0;order:1}
+.nav-logo img{
+  height:56px;width:auto;max-width:160px;
+  border-radius:10px;object-fit:contain;
+  background:#fff;padding:7px 10px;
+  box-shadow:var(--shadow-sm);
+  transition:opacity .2s;
+}
+.nav-logo:hover img{opacity:.85}
+.nav-links{display:none;align-items:center;gap:28px;order:0}
+.nav-links a{font-size:16px;font-weight:400;color:var(--text);position:relative;transition:color .2s;padding-block:6px}
+.nav-links a::after{content:"";position:absolute;inset-block-end:0;inset-inline-start:0;width:0;height:2px;background:var(--text);transition:width .25s var(--ease)}
+.nav-links a:hover::after{width:100%}
+.nav-burger{order:0;display:flex;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;padding:10px;border-radius:10px}
+.nav-burger span{display:block;height:2px;width:100%;background:var(--text);border-radius:2px;transition:transform .25s var(--ease),opacity .2s}
+.nav-burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.nav-burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.nav-mobile{
+  position:fixed;inset-inline:0;inset-block-start:var(--nav-h);z-index:999;
+  background:rgba(246,241,232,.97);backdrop-filter:blur(16px);
+  display:flex;flex-direction:column;padding:18px 22px 26px;gap:4px;
+  box-shadow:var(--shadow-md);
+  opacity:0;visibility:hidden;transform:translateY(-8px);
+  transition:opacity .25s var(--ease),transform .25s var(--ease),visibility .25s;
+}
+.nav-mobile.open{opacity:1;visibility:visible;transform:none}
+.nav-mobile a{font-size:1.15rem;font-weight:500;color:var(--text);padding:13px 4px;border-bottom:1px solid rgba(37,51,58,.08)}
+.nav-mobile a:last-child{border-bottom:none}
+@media(min-width:880px){
+  .nav-links{display:flex}
+  .nav-burger,.nav-mobile{display:none}
+}
+
+/* ============ תוכן משפטי ============ */
+.legal-main{padding-block:calc(var(--nav-h) + 48px) 90px}
+.legal-header{margin-bottom:40px}
+.legal-back{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.06em;
+  color:var(--green-primary);font-weight:500;margin-bottom:22px;
+}
+.legal-back:hover{text-decoration:underline}
+.legal-header h1{font-size:clamp(2rem,5.5vw,2.9rem);color:var(--text);margin-bottom:10px}
+.legal-updated{font-family:'DM Mono',monospace;font-size:13px;color:var(--text-soft)}
+
+.legal-body{max-width:760px}
+.legal-body h2{font-size:1.35rem;color:var(--green-primary);margin-block:36px 12px}
+.legal-body h2:first-child{margin-block-start:0}
+.legal-body p{color:var(--text-soft);margin-bottom:14px;font-weight:300;font-size:1.02rem}
+.legal-body ul{color:var(--text-soft);font-weight:300;font-size:1.02rem;margin-bottom:14px;padding-inline-start:22px}
+.legal-body li{margin-bottom:6px}
+.legal-body strong{color:var(--text);font-weight:600}
+.legal-body a.inline-link{color:var(--green-primary);text-decoration:underline}
+
+.todo{
+  display:inline-block;background:#FFF3CD;color:#7A5A00;
+  padding:1px 8px;border-radius:6px;font-weight:600;
+  border:1px dashed #C9A100;font-size:.95em;
+}
+
+/* ============ FOOTER (זהה לאתר הראשי) ============ */
+footer{background:var(--text);color:rgba(255,255,255,.8);padding-block:34px}
+footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center}
+@media(min-width:680px){footer .wrap{flex-direction:row;justify-content:space-between;text-align:start;flex-wrap:wrap}}
+.foot-logo{display:flex;align-items:center;gap:10px;font-weight:700;color:#fff}
+.foot-logo img{height:46px;width:auto;max-width:130px;border-radius:10px;object-fit:contain;background:#fff;padding:6px}
+.foot-social{display:flex;gap:14px}
+.foot-social a{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.1);transition:background .2s,transform .2s}
+.foot-social a:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
+.foot-social svg{width:20px;height:20px;fill:#fff}
+.foot-copy{font-size:.85rem;font-weight:300}
+.foot-links{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:.85rem}
+.foot-links a{color:rgba(255,255,255,.8);transition:color .2s}
+.foot-links a:hover{color:#fff;text-decoration:underline}
+@media(min-width:680px){.foot-links{justify-content:flex-start}}
+
+/* ============ FAB ============ */
+.fab{
+  position:fixed;inset-block-end:calc(22px + env(safe-area-inset-bottom));inset-inline-end:22px;z-index:1100;
+  width:60px;height:60px;border-radius:50%;background:var(--wa);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(37,211,102,.4);
+}
+.fab:hover{transform:scale(1.08)}
+.fab svg{width:32px;height:32px;fill:#fff}
+@media(min-width:600px){.fab{width:64px;height:64px}}
+
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.skip-link{
+  position:absolute;inset-block-start:-60px;inset-inline-start:14px;z-index:2000;
+  background:var(--green-primary);color:#fff;padding:10px 18px;border-radius:8px;
+  transition:inset-block-start .2s;
+}
+.skip-link:focus{inset-block-start:14px}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}

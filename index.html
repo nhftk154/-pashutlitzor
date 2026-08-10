@@ -470,9 +470,13 @@ body::before{
 /* ============ FOOTER ============ */
 footer{background:var(--text);color:rgba(255,255,255,.8);padding-block:34px}
 footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center}
-@media(min-width:680px){footer .wrap{flex-direction:row;justify-content:space-between;text-align:start}}
+@media(min-width:680px){footer .wrap{flex-direction:row;justify-content:space-between;text-align:start;flex-wrap:wrap}}
 .foot-logo{display:flex;align-items:center;gap:10px;font-weight:700;color:#fff}
 .foot-logo img{height:46px;width:auto;max-width:130px;border-radius:10px;object-fit:contain;background:#fff;padding:6px}
+.foot-links{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:.85rem}
+.foot-links a{color:rgba(255,255,255,.8);transition:color .2s}
+.foot-links a:hover{color:#fff;text-decoration:underline}
+@media(min-width:680px){.foot-links{justify-content:flex-start}}
 .foot-social{display:flex;gap:14px}
 .foot-social a{
   width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -733,6 +737,11 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     <div class="foot-logo">
       <img src="assets/branding/logo-removebg-preview.png" alt="לוגו פשוט ליצור">
       <span id="footer-brand-logo">פשוט ליצור</span>
+    </div>
+    <div class="foot-links">
+      <a href="legal/privacy.html">מדיניות פרטיות</a>
+      <a href="legal/accessibility.html">הצהרת נגישות</a>
+      <a href="legal/terms.html">תנאי שימוש</a>
     </div>
     <div class="foot-social">
       <a href="https://www.instagram.com/dina_evgi?igsh=NWgyeW82cmZkeXp0" target="_blank" rel="noopener" aria-label="עמוד האינסטגרם שלנו">
