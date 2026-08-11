@@ -222,6 +222,7 @@ collections:
               - { label: "משפט הסבר", name: "sub", widget: "text" }
               - { label: "טקסט כפתור וואטסאפ", name: "ctaWhatsapp", widget: "string" }
               - { label: "טקסט כפתור אינסטגרם", name: "ctaInstagram", widget: "string" }
+              - { label: "טקסט כפתור פייסבוק", name: "ctaFacebook", widget: "string" }
               - { label: "שורת טלפון וזמינות", name: "note", widget: "string" }
 
           - label: "פוטר (תחתית העמוד)"
