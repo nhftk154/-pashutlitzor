@@ -121,6 +121,71 @@ collections:
                 widget: "string"
                 hint: "הטקסט שיופיע אוטומטית בהודעה כשלוחצים על 'לפרטים'"
 
+  - name: "videos"
+    label: "סרטוני סדנאות"
+    files:
+      - name: "videos"
+        label: "סרטוני סדנאות"
+        file: "content/videos.json"
+        fields:
+          - label: "סרטונים"
+            name: "items"
+            widget: "list"
+            label_singular: "סרטון"
+            summary: "{{fields.title}}"
+            types:
+              - name: "youtube"
+                label: "סרטון מיוטיוב"
+                widget: "object"
+                summary: "{{fields.title}} (יוטיוב)"
+                fields:
+                  - { label: "כותרת קצרה לסרטון", name: "title", widget: "string", required: false }
+                  - label: "קישור YouTube"
+                    name: "youtube_url"
+                    widget: "string"
+                    hint: "הדביקו כאן את הקישור לסרטון מיוטיוב (למשל https://www.youtube.com/watch?v=...)"
+                  - label: "תמונה ממוזערת (אופציונלי)"
+                    name: "poster"
+                    widget: "image"
+                    required: false
+                    media_folder: "/assets/videos"
+                    public_folder: "/assets/videos"
+                    hint: "אם לא תעלו תמונה — תוצג אוטומטית תמונה מיוטיוב"
+                  - label: "כיוון הסרטון"
+                    name: "aspect"
+                    widget: "select"
+                    default: "landscape"
+                    options:
+                      - { label: "לרוחב", value: "landscape" }
+                      - { label: "לאורך (טלפון)", value: "portrait" }
+                      - { label: "מרובע", value: "square" }
+              - name: "file"
+                label: "סרטון שהעליתי בעצמי"
+                widget: "object"
+                summary: "{{fields.title}} (קובץ)"
+                fields:
+                  - { label: "כותרת קצרה לסרטון", name: "title", widget: "string", required: false }
+                  - label: "קובץ הסרטון"
+                    name: "file_src"
+                    widget: "file"
+                    media_folder: "/assets/videos"
+                    public_folder: "/assets/videos"
+                    hint: "העלו כאן את קובץ הסרטון (mp4 מומלץ)"
+                  - label: "תמונה ממוזערת (חובה)"
+                    name: "poster"
+                    widget: "image"
+                    media_folder: "/assets/videos"
+                    public_folder: "/assets/videos"
+                    hint: "תמונת שער שתוצג לפני הפעלת הסרטון"
+                  - label: "כיוון הסרטון"
+                    name: "aspect"
+                    widget: "select"
+                    default: "portrait"
+                    options:
+                      - { label: "לרוחב", value: "landscape" }
+                      - { label: "לאורך (טלפון)", value: "portrait" }
+                      - { label: "מרובע", value: "square" }
+
   - name: "site-text"
     label: "טקסטים כלליים באתר"
     files:
@@ -135,7 +200,8 @@ collections:
               - { label: "קישור 1", name: "concept", widget: "string" }
               - { label: "קישור 2", name: "workshops", widget: "string" }
               - { label: "קישור 3", name: "gallery", widget: "string" }
-              - { label: "קישור 4", name: "corporate", widget: "string" }
+              - { label: "קישור 4", name: "videos", widget: "string" }
+              - { label: "קישור 5", name: "corporate", widget: "string" }
 
           - label: "מסך פתיחה (למעלה)"
             name: "hero"
@@ -175,6 +241,14 @@ collections:
 
           - label: "מקטע גלריה — כותרת עליונה"
             name: "galleryHead"
+            widget: "object"
+            fields:
+              - { label: "תווית קטנה", name: "eyebrow", widget: "string" }
+              - { label: "כותרת", name: "heading", widget: "string" }
+              - { label: "טקסט הסבר", name: "text", widget: "text" }
+
+          - label: "מקטע סרטונים — כותרת עליונה"
+            name: "videosHead"
             widget: "object"
             fields:
               - { label: "תווית קטנה", name: "eyebrow", widget: "string" }

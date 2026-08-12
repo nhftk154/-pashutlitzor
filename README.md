@@ -10,6 +10,7 @@ CNAME                 ← דומיין מותאם אישית (pashutlitzor.com)
 frames/               ← 45 פריימים (ezgif-frame-001.png … 045.png) לאנימציית הגלילה
 assets/
   gallery/            ← photo-1.jpg, photo-2.jpg … תמונות הגלריה
+  videos/             ← סרטונים שהועלו + תמונות שער (poster)
   corporate.jpg       ← תמונת אירוע חברה
   branding/
     logo-removebg-preview.png  ← לוגו המותג
@@ -20,6 +21,7 @@ content/               ← תוכן שניתן לעריכה בלי לגעת בק
   testimonials.json      המלצות לקוחות
   corporate.json         תמונת אירוע חברה
   workshops.json         כרטיסי הסדנאות
+  videos.json            סרטוני סדנאות (יוטיוב או קבצים שהועלו)
 admin/                 ← ממשק העריכה הגרפי (Decap CMS)
   index.html
   config.yml
@@ -45,6 +47,7 @@ python3 -m http.server 4599
 | מושג | `#concept` | "מה זה טיח פולימרי?" |
 | סדנאות | `#workshops` | 4 כרטיסים |
 | גלריה | `#gallery` | תמונות masonry (מספר משתנה) |
+| סרטונים | `#videos` | סרטוני סדנאות — יוטיוב/קבצים, לחיצה להפעלה (מספר משתנה) |
 | לארגונים | `#corporate` | B2B, סטטיסטיקות, value props |
 | המלצות | `#testimonials` | 4 ציטוטים, carousel mobile |
 | CTA סגירה | `#contact` | כפתור וואטסאפ + כפתור אינסטגרם |
@@ -52,7 +55,7 @@ python3 -m http.server 4599
 
 ## עריכת תוכן — ממשק גרפי ללקוחה (/admin)
 
-הגלריה, ההמלצות, תמונת האירוע החברתי וכרטיסי הסדנאות **לא כתובים בקוד** —
+הגלריה, ההמלצות, תמונת האירוע החברתי, כרטיסי הסדנאות וסרטוני הסדנאות **לא כתובים בקוד** —
 הם נטענים בזמן ריצה מתוך קובצי `content/*.json`. זה מאפשר לערוך אותם דרך
 ממשק גרפי בכתובת **`/admin`** (למשל `pashutlitzor.com/admin`), בלי לגעת
 בקוד בכלל: התחברות עם GitHub, טופס עם שדות (תמונה + תיאור, טקסט המלצה
@@ -95,6 +98,9 @@ python3 -m http.server 4599
 
 - גלריה: הוסיפו קובץ ל-`assets/gallery/` ורשומה תואמת ב-`content/gallery.json`
 - תמונת אירוע חברה: `assets/corporate.jpg` + `content/corporate.json`
+- סרטונים: הוסיפו קובץ סרטון + תמונת שער ל-`assets/videos/` ורשומה
+  תואמת ב-`content/videos.json`, או הוסיפו רשומה מסוג יוטיוב עם קישור
+  בלבד (בלי צורך בהעלאת קובץ).
 
 > כאשר קובץ תמונה חסר — האתר מציג placeholder אוטומטי.
 

@@ -369,6 +369,31 @@ body::before{
 }
 .masonry .ph svg{width:40px;height:40px;opacity:.4;stroke:currentColor;stroke-width:1.4;fill:none}
 
+/* ============ VIDEOS ============ */
+#videos{background:var(--bg-warm)}
+.video-grid{columns:2;column-gap:14px}
+@media(min-width:900px){.video-grid{columns:3;column-gap:16px}}
+.video-tile{break-inside:avoid;margin-bottom:14px}
+.video-facade{
+  position:relative;display:block;width:100%;
+  border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow-sm);
+  background:#12181a;cursor:pointer;
+}
+.video-facade img{width:100%;height:100%;object-fit:cover;display:block}
+.video-facade iframe,.video-facade video{width:100%;height:100%;display:block;border:0}
+.video-play{
+  position:absolute;inset:0;margin:auto;width:64px;height:64px;border-radius:50%;
+  background:rgba(37,51,58,.55);display:flex;align-items:center;justify-content:center;
+  color:#fff;transition:transform .25s var(--ease),background .25s var(--ease);
+}
+.video-play svg{width:26px;height:26px}
+.video-facade:hover .video-play{transform:scale(1.1);background:var(--accent)}
+.video-caption{
+  position:absolute;inset-inline:0;inset-block-end:0;padding:14px 16px 12px;
+  background:linear-gradient(to top,rgba(0,0,0,.65),transparent);
+  color:#fff;font-size:.95rem;font-weight:500;
+}
+
 /* ============ CORPORATE ============ */
 #corporate{background:var(--green-primary);color:#fff;overflow:hidden}
 .corp-grid{display:grid;grid-template-columns:1fr;gap:40px;align-items:center}
@@ -577,6 +602,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       <a href="#concept" data-navkey="concept">מה זה</a>
       <a href="#workshops" data-navkey="workshops">הסדנאות</a>
       <a href="#gallery" data-navkey="gallery">גלריה</a>
+      <a href="#videos" data-navkey="videos">סרטונים</a>
       <a href="#corporate" data-navkey="corporate">לארגונים</a>
     </nav>
     <button class="nav-burger" id="nav-burger" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="nav-mobile">
@@ -591,6 +617,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   <a href="#concept" data-navkey="concept">מה זה</a>
   <a href="#workshops" data-navkey="workshops">הסדנאות</a>
   <a href="#gallery" data-navkey="gallery">גלריה</a>
+  <a href="#videos" data-navkey="videos">סרטונים</a>
   <a href="#corporate" data-navkey="corporate">לארגונים</a>
 </nav>
 
@@ -671,6 +698,17 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   </div>
 </section>
 
+<!-- ===== VIDEOS ===== -->
+<section id="videos" class="section-pad">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow reveal" id="videos-eyebrow">כך זה נראה בפועל</span>
+      <h2 class="reveal" data-delay="1" id="videos-heading">סרטוני סדנאות</h2>
+      <p class="reveal" data-delay="2" id="videos-text">צפו איך נראית סדנה מהתחלה ועד התוצאה המוגמרת.</p>
+    </div>
+    <div class="video-grid" id="videos-grid"></div>
+  </div>
+</section>
 
 <!-- ===== CORPORATE ===== -->
 <section id="corporate" class="section-pad">
@@ -797,6 +835,64 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     }).join('');
   }
 
+  function extractYouTubeId(url){
+    if(!url) return '';
+    var m = String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{6,})/);
+    return m ? m[1] : '';
+  }
+
+  var VIDEO_ASPECT = { landscape:'16/9', portrait:'9/16', square:'1/1' };
+
+  function renderVideos(data){
+    var grid = document.getElementById('videos-grid');
+    var list = data && data.items;
+    if(!grid || !Array.isArray(list)) return;
+    grid.innerHTML = list.map(function(v, i){
+      var aspect = VIDEO_ASPECT[v.aspect] || '16/9';
+      var isYt = v.type === 'youtube';
+      var ytId = isYt ? extractYouTubeId(v.youtube_url) : '';
+      var poster = v.poster || (isYt && ytId ? 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg' : '');
+      var label = 'הפעלת סרטון' + (v.title ? ': ' + v.title : '');
+      return '<figure class="video-tile reveal" data-delay="' + (i % 3) + '">' +
+        '<div class="video-facade" style="aspect-ratio:' + aspect + '" role="button" tabindex="0" ' +
+        'data-type="' + esc(v.type) + '" data-yt="' + esc(ytId) + '" data-src="' + esc(v.file_src || '') + '" ' +
+        'aria-label="' + esc(label) + '">' +
+        (poster ? '<img src="' + esc(poster) + '" alt="" loading="lazy">' : '') +
+        '<span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>' +
+        (v.title ? '<span class="video-caption">' + esc(v.title) + '</span>' : '') +
+        '</div></figure>';
+    }).join('');
+
+    grid.querySelectorAll('.video-facade').forEach(function(el){
+      function activate(){
+        if(el.classList.contains('is-active')) return;
+        el.classList.add('is-active');
+        var player;
+        if(el.getAttribute('data-type') === 'youtube'){
+          player = document.createElement('iframe');
+          player.src = 'https://www.youtube-nocookie.com/embed/' + el.getAttribute('data-yt') + '?autoplay=1&rel=0';
+          player.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+          player.setAttribute('allowfullscreen', '');
+          player.title = el.getAttribute('aria-label') || 'סרטון';
+        } else {
+          player = document.createElement('video');
+          player.src = el.getAttribute('data-src');
+          player.controls = true;
+          player.autoplay = true;
+          player.playsInline = true;
+        }
+        el.innerHTML = '';
+        el.appendChild(player);
+        el.removeAttribute('role');
+        el.removeAttribute('tabindex');
+      }
+      el.addEventListener('click', activate);
+      el.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); }
+      });
+    });
+  }
+
   function renderCorporate(c){
     var img = document.getElementById('corporate-img');
     if(!img || !c) return;
@@ -863,6 +959,11 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       setText('gallery-heading', t.galleryHead.heading);
       setText('gallery-text', t.galleryHead.text);
     }
+    if(t.videosHead){
+      setText('videos-eyebrow', t.videosHead.eyebrow);
+      setText('videos-heading', t.videosHead.heading);
+      setText('videos-text', t.videosHead.text);
+    }
     if(t.corporate){
       setText('corp-eyebrow', t.corporate.eyebrow);
       setText('corp-heading', t.corporate.heading);
@@ -926,13 +1027,15 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
         fetch('content/testimonials.json').then(function(r){ return r.json(); }),
         fetch('content/corporate.json').then(function(r){ return r.json(); }),
         fetch('content/workshops.json').then(function(r){ return r.json(); }),
+        fetch('content/videos.json').then(function(r){ return r.json(); }),
         fetch('content/site-text.json').then(function(r){ return r.json(); })
       ]);
       renderGallery(results[0]);
       renderTestimonials(results[1]);
       renderCorporate(results[2]);
       renderWorkshops(results[3]);
-      renderSiteText(results[4]);
+      renderVideos(results[4]);
+      renderSiteText(results[5]);
     } catch(err){
       console.error('טעינת תוכן דינמי נכשלה:', err);
     }
@@ -1202,7 +1305,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     setCursorPos(dotC, mx, my);
     loop();
 
-    document.querySelectorAll('a,button,.w-card').forEach(function(el){
+    document.querySelectorAll('a,button,.w-card,.video-facade').forEach(function(el){
       el.addEventListener('mouseenter', function(){ cur.classList.add('hover'); });
       el.addEventListener('mouseleave', function(){ cur.classList.remove('hover'); });
     });
