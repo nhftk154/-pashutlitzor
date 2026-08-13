@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>חנות — פשוט ליצור</title>
+<meta name="description" content="קיטים ליצירה עצמית ופריטי גבס פולימרי מוגמרים — אגרטלים, מגשים ודקור לבית, ישירות מהסטודיו של פשוט ליצור.">
+<meta name="theme-color" content="#2D5B68">
+<link rel="icon" type="image/png" href="assets/branding/favicon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/shop.css">
+</head>
+<body>
+
+<header id="navbar">
+  <div class="wrap">
+    <nav class="nav-links" aria-label="ניווט ראשי">
+      <a href="index.html#concept">מה זה</a>
+      <a href="index.html#workshops">הסדנאות</a>
+      <a href="shop.html">חנות</a>
+      <a href="index.html#gallery">גלריה</a>
+      <a href="index.html#corporate">לארגונים</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:6px;order:0">
+      <button class="nav-icon-btn" type="button" data-cart-open aria-label="פתיחת עגלה">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span class="nav-cart-badge" data-count="0"></span>
+      </button>
+    </div>
+    <button class="nav-burger" id="nav-burger" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="nav-mobile">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="nav-logo" href="index.html" aria-label="פשוט ליצור — לראש העמוד">
+      <img src="assets/branding/logo-removebg-preview.png" alt="פשוט ליצור">
+    </a>
+  </div>
+</header>
+<nav class="nav-mobile" id="nav-mobile" aria-label="ניווט נייד">
+  <a href="index.html#concept">מה זה</a>
+  <a href="index.html#workshops">הסדנאות</a>
+  <a href="shop.html">חנות</a>
+  <a href="index.html#gallery">גלריה</a>
+  <a href="index.html#corporate">לארגונים</a>
+</nav>
+
+<main>
+<section class="shop-hero">
+  <div class="wrap">
+    <span class="eyebrow">החנות שלנו</span>
+    <h1>קיטים ופריטים מוגמרים</h1>
+    <p>ערכות DIY ליצירה עצמית בבית, ופריטי גבס פולימרי מוגמרים שיצאו מהסטודיו — כל אחד ביד.</p>
+  </div>
+</section>
+
+<section class="section-pad" style="padding-block:0 0">
+  <div class="wrap">
+    <div class="filter-row" id="filter-row"></div>
+    <div class="shop-grid" id="shop-grid"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap" style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center">
+    <a href="index.html" style="font-family:'Frank Ruhl Libre',serif;font-size:1.3rem;color:#fff">פשוט ליצור</a>
+    <span style="font-size:.9rem;opacity:.8">כל הזכויות שמורות למיכאל טויטו ©</span>
+  </div>
+</footer>
+
+<script src="assets/js/cart.js" defer></script>
+<script>
+(function(){
+  'use strict';
+
+  var burger = document.getElementById('nav-burger');
+  var mobileNav = document.getElementById('nav-mobile');
+  burger.addEventListener('click', function(){
+    var open = mobileNav.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mobileNav.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ mobileNav.classList.remove('open'); burger.setAttribute('aria-expanded','false'); });
+  });
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  var BADGE_LABEL = { bestseller: 'רב מכר', new: 'חדש', sale: 'מבצע' };
+
+  function priceLabel(product){
+    if (product.variants && product.variants.length){
+      var min = Math.min.apply(null, product.variants.map(function(v){ return v.priceIls; }));
+      return 'החל מ-₪' + min.toFixed(0);
+    }
+    return '₪' + Number(product.priceIls).toFixed(0);
+  }
+
+  function productCard(p){
+    var badge = p.badges && p.badges[0];
+    return '<a class="product-card reveal" href="product.html?slug=' + encodeURIComponent(p.slug) + '">' +
+      '<div class="product-card-media">' +
+        (badge ? '<span class="product-badge" data-badge="' + esc(badge) + '">' + esc(BADGE_LABEL[badge] || badge) + '</span>' : '') +
+        '<img src="' + esc((p.images && p.images[0]) || '') + '" alt="' + esc(p.name) + '" loading="lazy">' +
+      '</div>' +
+      '<div class="product-card-body">' +
+        '<span class="product-card-cat">' + esc(p.category) + '</span>' +
+        '<h3 class="product-card-name">' + esc(p.name) + '</h3>' +
+        '<span class="product-card-price">' + priceLabel(p) + '</span>' +
+      '</div>' +
+    '</a>';
+  }
+
+  fetch('content/products.json').then(function(r){ return r.json(); }).then(function(data){
+    var all = (data.items || []).filter(function(p){ return p.active !== false; });
+    var categories = [];
+    all.forEach(function(p){ if (categories.indexOf(p.category) === -1) categories.push(p.category); });
+
+    var filterRow = document.getElementById('filter-row');
+    var grid = document.getElementById('shop-grid');
+    var active = 'all';
+
+    function renderChips(){
+      var chips = ['<button type="button" class="filter-chip' + (active === 'all' ? ' active' : '') + '" data-cat="all">הכל</button>'];
+      categories.forEach(function(c){
+        chips.push('<button type="button" class="filter-chip' + (active === c ? ' active' : '') + '" data-cat="' + esc(c) + '">' + esc(c) + '</button>');
+      });
+      filterRow.innerHTML = chips.join('');
+      filterRow.querySelectorAll('.filter-chip').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          active = btn.getAttribute('data-cat');
+          renderChips();
+          renderGrid();
+        });
+      });
+    }
+
+    function renderGrid(){
+      var items = active === 'all' ? all : all.filter(function(p){ return p.category === active; });
+      grid.innerHTML = items.map(productCard).join('') || '<p style="color:var(--text-soft)">בקרוב יתווספו כאן מוצרים.</p>';
+      observeReveals();
+    }
+
+    function observeReveals(){
+      var els = document.querySelectorAll('.reveal:not(.in)');
+      if ('IntersectionObserver' in window){
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+        els.forEach(function(el){ io.observe(el); });
+      } else {
+        els.forEach(function(el){ el.classList.add('in'); });
+      }
+    }
+
+    renderChips();
+    renderGrid();
+  }).catch(function(){
+    document.getElementById('shop-grid').innerHTML = '<p style="color:var(--text-soft)">לא ניתן היה לטעון את המוצרים כרגע.</p>';
+  });
+})();
+</script>
+</body>
+</html>

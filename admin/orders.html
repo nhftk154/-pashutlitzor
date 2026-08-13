@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ניהול הזמנות — פשוט ליצור</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green-primary:#2D5B68; --green-secondary:#6F7D56; --accent:#CE866C;
+  --bg:#F6F1E8; --text:#25333A; --text-soft:#5E6A5C; --white:#fff;
+  --r-md:14px; --shadow-sm:0 4px 14px rgba(37,51,58,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Heebo',system-ui,sans-serif;background:var(--bg);color:var(--text);padding:28px 22px 80px}
+h1{font-size:1.7rem;margin-bottom:22px}
+.wrap{max-width:1000px;margin-inline:auto}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:999px;background:var(--green-primary);color:#fff;font-weight:600;border:none;cursor:pointer;font-size:15px}
+.btn:hover{background:#234a55}
+.state{color:var(--text-soft);padding-block:40px;text-align:center}
+table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow-sm)}
+th,td{padding:12px 14px;text-align:start;font-size:14px;border-bottom:1px solid rgba(37,51,58,.08)}
+th{background:var(--bg);font-weight:700;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-soft)}
+tr:last-child td{border-bottom:none}
+select{font-family:inherit;padding:7px 10px;border-radius:8px;border:1px solid rgba(37,51,58,.2);background:#fff}
+.total{font-family:'DM Mono',monospace;font-weight:600}
+.items{color:var(--text-soft);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ניהול הזמנות</h1>
+  <div id="root"><div class="state">טוען…</div></div>
+</div>
+
+<script>
+/* אותה כתובת Worker כמו ב-checkout.html — יש למלא אחרי פריסת shop-worker/ */
+window.SHOP_API_BASE = '';
+var OAUTH_URL = 'https://pashutlitzor-cms-auth.nhftk154.workers.dev/auth';
+var TOKEN_KEY = 'pl_admin_token';
+
+var STATUS_LABEL = {
+  paid: 'שולם', preparing: 'בהכנה', ready: 'מוכן לאיסוף', shipped: 'נשלח',
+  completed: 'הושלם', cancelled: 'בוטל', refunded: 'זוכה'
+};
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+  });
+}
+
+function login(){
+  return new Promise(function(resolve, reject){
+    var popup = window.open(OAUTH_URL, 'github-oauth', 'width=600,height=700');
+    if (!popup){ reject(new Error('popup blocked')); return; }
+    function handleMessage(e){
+      if (typeof e.data !== 'string') return;
+      if (e.data === 'authorizing:github'){
+        popup.postMessage('authorizing:github', e.origin);
+        return;
+      }
+      if (e.data.indexOf('authorization:github:success:') === 0){
+        window.removeEventListener('message', handleMessage);
+        var result = JSON.parse(e.data.slice('authorization:github:success:'.length));
+        resolve(result.token);
+      }
+      if (e.data.indexOf('authorization:github:error:') === 0){
+        window.removeEventListener('message', handleMessage);
+        reject(new Error('auth failed'));
+      }
+    }
+    window.addEventListener('message', handleMessage);
+  });
+}
+
+function authFetch(path, options){
+  var token = sessionStorage.getItem(TOKEN_KEY);
+  options = options || {};
+  options.headers = Object.assign({}, options.headers, { Authorization: 'Bearer ' + token });
+  return fetch(window.SHOP_API_BASE + path, options);
+}
+
+function renderLogin(root){
+  root.innerHTML = '<div class="state"><p style="margin-bottom:18px">יש להתחבר עם GitHub כדי לצפות בהזמנות.</p><button class="btn" id="login-btn">התחברות עם GitHub</button></div>';
+  document.getElementById('login-btn').addEventListener('click', function(){
+    login().then(function(token){
+      sessionStorage.setItem(TOKEN_KEY, token);
+      loadOrders();
+    }).catch(function(){
+      root.innerHTML = '<div class="state">ההתחברות נכשלה. נסי שוב.</div>';
+    });
+  });
+}
+
+function renderOrders(root, orders){
+  if (!orders.length){
+    root.innerHTML = '<div class="state">אין עדיין הזמנות.</div>';
+    return;
+  }
+  root.innerHTML =
+    '<table><thead><tr><th>תאריך</th><th>לקוח/ה</th><th>פריטים</th><th>סה"כ</th><th>סטטוס</th></tr></thead><tbody>' +
+    orders.map(function(o){
+      var itemsText = o.items.map(function(it){ return esc(it.name) + ' ×' + it.qty; }).join(', ');
+      return '<tr data-id="' + o.id + '">' +
+        '<td>' + esc(new Date(o.createdAt).toLocaleString('he-IL')) + '</td>' +
+        '<td>' + esc(o.customerName || '—') + '<br><span class="items">' + esc(o.customerEmail || '') + (o.customerPhone ? ' · ' + esc(o.customerPhone) : '') + '</span></td>' +
+        '<td class="items">' + itemsText + '</td>' +
+        '<td class="total">₪' + Number(o.totalIls).toFixed(2) + '</td>' +
+        '<td><select data-status>' +
+          Object.keys(STATUS_LABEL).map(function(s){ return '<option value="' + s + '"' + (s === o.status ? ' selected' : '') + '>' + STATUS_LABEL[s] + '</option>'; }).join('') +
+        '</select></td>' +
+      '</tr>';
+    }).join('') +
+    '</tbody></table>';
+
+  root.querySelectorAll('select[data-status]').forEach(function(select){
+    select.addEventListener('change', function(){
+      var id = select.closest('tr').getAttribute('data-id');
+      authFetch('/api/orders/' + id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: select.value })
+      });
+    });
+  });
+}
+
+function loadOrders(){
+  var root = document.getElementById('root');
+  root.innerHTML = '<div class="state">טוען הזמנות…</div>';
+  authFetch('/api/orders').then(function(r){
+    if (r.status === 401 || r.status === 403){
+      sessionStorage.removeItem(TOKEN_KEY);
+      renderLogin(root);
+      return null;
+    }
+    if (!r.ok) throw new Error('failed');
+    return r.json();
+  }).then(function(data){
+    if (data) renderOrders(root, data.orders);
+  }).catch(function(){
+    root.innerHTML = '<div class="state">שגיאה בטעינת ההזמנות.</div>';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  var root = document.getElementById('root');
+  if (!window.SHOP_API_BASE){
+    root.innerHTML = '<div class="state">החנות עדיין בהקמה — דשבורד ההזמנות יופעל אחרי פריסת ה-Worker.</div>';
+    return;
+  }
+  if (sessionStorage.getItem(TOKEN_KEY)) loadOrders();
+  else renderLogin(root);
+});
+</script>
+</body>
+</html>

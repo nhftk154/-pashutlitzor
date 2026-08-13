@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מוצר — פשוט ליצור</title>
+<meta name="theme-color" content="#2D5B68">
+<link rel="icon" type="image/png" href="assets/branding/favicon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/shop.css">
+</head>
+<body>
+
+<header id="navbar">
+  <div class="wrap">
+    <nav class="nav-links" aria-label="ניווט ראשי">
+      <a href="index.html#concept">מה זה</a>
+      <a href="index.html#workshops">הסדנאות</a>
+      <a href="shop.html">חנות</a>
+      <a href="index.html#gallery">גלריה</a>
+      <a href="index.html#corporate">לארגונים</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:6px;order:0">
+      <button class="nav-icon-btn" type="button" data-cart-open aria-label="פתיחת עגלה">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span class="nav-cart-badge" data-count="0"></span>
+      </button>
+    </div>
+    <button class="nav-burger" id="nav-burger" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="nav-mobile">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="nav-logo" href="index.html" aria-label="פשוט ליצור — לראש העמוד">
+      <img src="assets/branding/logo-removebg-preview.png" alt="פשוט ליצור">
+    </a>
+  </div>
+</header>
+<nav class="nav-mobile" id="nav-mobile" aria-label="ניווט נייד">
+  <a href="index.html#concept">מה זה</a>
+  <a href="index.html#workshops">הסדנאות</a>
+  <a href="shop.html">חנות</a>
+  <a href="index.html#gallery">גלריה</a>
+  <a href="index.html#corporate">לארגונים</a>
+</nav>
+
+<main>
+<section class="pdp">
+  <div class="wrap">
+    <a class="pdp-back" href="shop.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+      חזרה לחנות
+    </a>
+    <div id="pdp-root"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap" style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center">
+    <a href="index.html" style="font-family:'Frank Ruhl Libre',serif;font-size:1.3rem;color:#fff">פשוט ליצור</a>
+    <span style="font-size:.9rem;opacity:.8">כל הזכויות שמורות למיכאל טויטו ©</span>
+  </div>
+</footer>
+
+<script src="assets/js/cart.js" defer></script>
+<script>
+(function(){
+  'use strict';
+
+  var burger = document.getElementById('nav-burger');
+  var mobileNav = document.getElementById('nav-mobile');
+  burger.addEventListener('click', function(){
+    var open = mobileNav.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mobileNav.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ mobileNav.classList.remove('open'); burger.setAttribute('aria-expanded','false'); });
+  });
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  var slug = new URLSearchParams(window.location.search).get('slug');
+  var root = document.getElementById('pdp-root');
+
+  fetch('content/products.json').then(function(r){ return r.json(); }).then(function(data){
+    var product = (data.items || []).filter(function(p){ return p.slug === slug && p.active !== false; })[0];
+    if (!product){
+      root.innerHTML = '<p style="color:var(--text-soft);padding-block:60px">המוצר לא נמצא. <a href="shop.html" style="text-decoration:underline">חזרה לחנות</a></p>';
+      return;
+    }
+    document.title = product.name + ' — פשוט ליצור';
+    render(product);
+  }).catch(function(){
+    root.innerHTML = '<p style="color:var(--text-soft);padding-block:60px">לא ניתן היה לטעון את המוצר כרגע.</p>';
+  });
+
+  function render(product){
+    var hasVariants = product.variants && product.variants.length > 0;
+    var images = product.images && product.images.length ? product.images : [''];
+
+    var accordionSections = [
+      { title: 'תיאור', body: product.description },
+      { title: 'איך להשתמש', body: product.howToUse },
+      { title: 'משלוח ואיסוף', body: product.delivery }
+    ].filter(function(s){ return s.body; });
+
+    root.innerHTML =
+      '<div class="pdp-grid">' +
+        '<div class="pdp-gallery">' +
+          '<div class="pdp-gallery-main"><img id="pdp-main-img" src="' + esc(images[0]) + '" alt="' + esc(product.name) + '"></div>' +
+        '</div>' +
+        '<div class="pdp-info">' +
+          '<span class="pdp-cat">' + esc(product.category) + '</span>' +
+          '<h1>' + esc(product.name) + '</h1>' +
+          (product.shortDescription ? '<p class="pdp-short">' + esc(product.shortDescription) + '</p>' : '') +
+          '<div class="pdp-price" id="pdp-price"></div>' +
+          (hasVariants ?
+            '<div class="pdp-field"><label>אפשרות</label><div class="variant-row" id="variant-row"></div></div>' : '') +
+          '<div class="pdp-field"><label>כמות</label>' +
+            '<div class="qty-stepper">' +
+              '<button type="button" id="qty-down" aria-label="הפחתת כמות">−</button>' +
+              '<output id="qty-val">1</output>' +
+              '<button type="button" id="qty-up" aria-label="הוספת כמות">+</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="pdp-actions">' +
+            '<button type="button" class="btn btn-primary btn-lg btn-block" id="add-to-cart">הוסיפי לעגלה</button>' +
+          '</div>' +
+          '<div class="pdp-trust">' +
+            '<span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>עבודת יד בסטודיו</span>' +
+            '<span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>איסוף עצמי / משלוח בתיאום</span>' +
+          '</div>' +
+          '<div id="accordion"></div>' +
+        '</div>' +
+      '</div>';
+
+    var accordionEl = document.getElementById('accordion');
+    accordionEl.innerHTML = accordionSections.map(function(s, i){
+      return '<div class="accordion-item' + (i === 0 ? ' open' : '') + '">' +
+        '<button type="button" class="accordion-trigger">' + esc(s.title) +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>' +
+        '</button>' +
+        '<div class="accordion-panel"><div class="accordion-panel-inner">' + esc(s.body) + '</div></div>' +
+      '</div>';
+    }).join('');
+
+    accordionEl.querySelectorAll('.accordion-item').forEach(function(item){
+      var trigger = item.querySelector('.accordion-trigger');
+      var panel = item.querySelector('.accordion-panel');
+      function sync(){
+        panel.style.maxHeight = item.classList.contains('open') ? panel.scrollHeight + 'px' : '0px';
+      }
+      trigger.addEventListener('click', function(){
+        item.classList.toggle('open');
+        sync();
+      });
+      sync();
+      window.addEventListener('resize', sync);
+    });
+
+    var selectedVariant = hasVariants ? product.variants[0] : null;
+    var qty = 1;
+
+    function currentPrice(){
+      return selectedVariant ? selectedVariant.priceIls : product.priceIls;
+    }
+    function renderPrice(){
+      document.getElementById('pdp-price').textContent = '₪' + Number(currentPrice()).toFixed(2);
+    }
+
+    if (hasVariants){
+      var variantRow = document.getElementById('variant-row');
+      variantRow.innerHTML = product.variants.map(function(v){
+        return '<button type="button" class="variant-pill' + (v.sku === selectedVariant.sku ? ' active' : '') + '" data-sku="' + esc(v.sku) + '">' + esc(v.label) + '</button>';
+      }).join('');
+      variantRow.querySelectorAll('.variant-pill').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          selectedVariant = product.variants.filter(function(v){ return v.sku === btn.getAttribute('data-sku'); })[0];
+          variantRow.querySelectorAll('.variant-pill').forEach(function(b){ b.classList.remove('active'); });
+          btn.classList.add('active');
+          renderPrice();
+        });
+      });
+    }
+
+    document.getElementById('qty-up').addEventListener('click', function(){
+      qty += 1;
+      document.getElementById('qty-val').textContent = qty;
+    });
+    document.getElementById('qty-down').addEventListener('click', function(){
+      if (qty <= 1) return;
+      qty -= 1;
+      document.getElementById('qty-val').textContent = qty;
+    });
+
+    document.getElementById('add-to-cart').addEventListener('click', function(){
+      window.PLCart.addItem(product.slug, selectedVariant ? selectedVariant.sku : null, qty);
+    });
+
+    renderPrice();
+  }
+})();
+</script>
+</body>
+</html>

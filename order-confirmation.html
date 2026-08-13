@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>תודה על ההזמנה — פשוט ליצור</title>
+<meta name="theme-color" content="#2D5B68">
+<link rel="icon" type="image/png" href="assets/branding/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/shop.css">
+<style>
+.confirm-wrap{min-height:75svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:calc(var(--nav-h) + 20px) 22px 60px}
+.confirm-icon{width:70px;height:70px;border-radius:50%;background:var(--green-secondary);display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.confirm-icon svg{width:34px;height:34px;stroke:#fff;stroke-width:2.4;fill:none}
+.order-summary{width:100%;max-width:440px;background:var(--white);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);border:1px solid rgba(183,188,195,.45);padding:22px 24px;text-align:start;margin-top:18px}
+.order-summary .row{display:flex;justify-content:space-between;padding-block:8px;border-bottom:1px solid rgba(37,51,58,.08);font-size:.95rem}
+.order-summary .row:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+
+<header id="navbar">
+  <div class="wrap">
+    <a class="nav-logo" href="index.html" aria-label="פשוט ליצור — לראש העמוד">
+      <img src="assets/branding/logo-removebg-preview.png" alt="פשוט ליצור">
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="confirm-wrap" id="confirm-wrap">
+    <div class="confirm-icon"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <h1 style="font-size:1.8rem">תודה על ההזמנה!</h1>
+    <p style="color:var(--text-soft)" id="confirm-sub">ההזמנה מתקבלת, תקבלי אישור במייל בקרוב.</p>
+    <div id="order-summary"></div>
+    <a class="btn btn-ghost" href="shop.html" style="margin-top:10px">חזרה לחנות</a>
+  </div>
+</main>
+
+<script>
+/* אותה כתובת Worker כמו ב-checkout.html — יש למלא אחרי פריסת shop-worker/ */
+window.SHOP_API_BASE = '';
+</script>
+<script>
+(function(){
+  'use strict';
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    localStorage.removeItem('pl_cart_v1');
+
+    var sessionId = new URLSearchParams(window.location.search).get('session_id');
+    if (!sessionId || !window.SHOP_API_BASE) return;
+
+    var attempts = 0;
+    function poll(){
+      attempts++;
+      fetch(window.SHOP_API_BASE + '/api/order-by-session?session_id=' + encodeURIComponent(sessionId))
+        .then(function(r){ if (!r.ok) throw new Error('not ready'); return r.json(); })
+        .then(function(order){
+          document.getElementById('confirm-sub').textContent = 'מספר הזמנה: ' + order.id;
+          document.getElementById('order-summary').innerHTML =
+            '<div class="order-summary">' +
+            (order.items || []).map(function(it){
+              return '<div class="row"><span>' + esc(it.name) + (it.variantLabel ? ' (' + esc(it.variantLabel) + ')' : '') + ' × ' + it.qty + '</span><span>₪' + Number(it.lineTotal).toFixed(2) + '</span></div>';
+            }).join('') +
+            '<div class="row" style="font-weight:700"><span>סה"כ</span><span>₪' + Number(order.totalIls).toFixed(2) + '</span></div>' +
+            '</div>';
+        })
+        .catch(function(){
+          if (attempts < 5) setTimeout(poll, 1500);
+        });
+    }
+    poll();
+  });
+})();
+</script>
+</body>
+</html>

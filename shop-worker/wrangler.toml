@@ -1,0 +1,14 @@
+name = "pashutlitzor-shop"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# אחרי `wrangler d1 create pashutlitzor-orders` יש להדביק כאן את ה-database_id שמתקבל.
+[[d1_databases]]
+binding = "ORDERS_DB"
+database_name = "pashutlitzor-orders"
+database_id = ""
+
+# אחרי הפריסה (wrangler deploy) יש להגדיר שלושה secrets:
+#   wrangler secret put STRIPE_SECRET_KEY
+#   wrangler secret put STRIPE_WEBHOOK_SECRET   (מתקבל אחרי חיבור ה-Worker כ-endpoint ב-Stripe Dashboard)
+#   wrangler secret put RESEND_API_KEY

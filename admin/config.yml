@@ -186,6 +186,59 @@ collections:
                       - { label: "לאורך (טלפון)", value: "portrait" }
                       - { label: "מרובע", value: "square" }
 
+  - name: "products"
+    label: "מוצרים לחנות"
+    files:
+      - name: "products"
+        label: "מוצרים לחנות"
+        file: "content/products.json"
+        fields:
+          - label: "מוצרים"
+            name: "items"
+            widget: "list"
+            label_singular: "מוצר"
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "שם המוצר", name: "name", widget: "string" }
+              - { label: "מזהה URL (באנגלית, ללא רווחים, למשל vase-terracotta-round)", name: "slug", widget: "string" }
+              - label: "סוג מוצר"
+                name: "type"
+                widget: "select"
+                options:
+                  - { label: "קיט DIY", value: "kit" }
+                  - { label: "מוצר מוגמר", value: "finished" }
+              - { label: "קטגוריה", name: "category", widget: "string", hint: "לדוגמה: אגרטלים, מגשים, קיטים — אפשר להקליד קטגוריה חדשה" }
+              - { label: "תיאור קצר (לכרטיס המוצר)", name: "shortDescription", widget: "string" }
+              - { label: "תיאור מלא (לעמוד המוצר)", name: "description", widget: "text" }
+              - { label: "איך להשתמש (בעיקר לקיטים)", name: "howToUse", widget: "text", required: false }
+              - { label: "משלוח / איסוף", name: "delivery", widget: "text" }
+              - label: "תמונות"
+                name: "images"
+                widget: "list"
+                label_singular: "תמונה"
+                field: { label: "תמונה", name: "src", widget: "image", media_folder: "/assets/shop", public_folder: "/assets/shop" }
+              - label: "תגיות (אופציונלי)"
+                name: "badges"
+                widget: "select"
+                multiple: true
+                required: false
+                options:
+                  - { label: "רב מכר", value: "bestseller" }
+                  - { label: "חדש", value: "new" }
+                  - { label: "מבצע", value: "sale" }
+              - { label: "מחיר בסיס בשקלים (למשל 129.00)", name: "priceIls", widget: "number", value_type: "float" }
+              - label: "וריאציות (גדלים/צבעים — השאירי ריק אם למוצר אין וריאציות)"
+                name: "variants"
+                widget: "list"
+                required: false
+                label_singular: "וריאציה"
+                summary: "{{fields.label}}"
+                fields:
+                  - { label: "תווית (למשל: מגש גדול)", name: "label", widget: "string" }
+                  - { label: "מק״ט", name: "sku", widget: "string" }
+                  - { label: "מחיר בשקלים", name: "priceIls", widget: "number", value_type: "float" }
+              - { label: "פעיל (מוצג בחנות)", name: "active", widget: "boolean", default: true }
+
   - name: "site-text"
     label: "טקסטים כלליים באתר"
     files:

@@ -22,12 +22,28 @@ content/               ← תוכן שניתן לעריכה בלי לגעת בק
   corporate.json         תמונת אירוע חברה
   workshops.json         כרטיסי הסדנאות
   videos.json            סרטוני סדנאות (יוטיוב או קבצים שהועלו)
+  products.json          קטלוג מוצרי החנות
 admin/                 ← ממשק העריכה הגרפי (Decap CMS)
   index.html
   config.yml
+  orders.html           ← דשבורד ניהול הזמנות (לא Decap — מתחבר ל-shop-worker)
 oauth-worker/          ← פרוקסי OAuth (Cloudflare Worker) שמאפשר כניסה ל-/admin
   worker.js
   wrangler.toml
+shop-worker/            ← Cloudflare Worker לחנות: checkout, webhook תשלום, API הזמנות
+  worker.js
+  wrangler.toml
+  schema.sql             סכימת טבלת ההזמנות (Cloudflare D1)
+shop.html               ← רשימת מוצרים (חנות)
+product.html            ← עמוד מוצר בודד (?slug=...)
+checkout.html           ← מעבר ל-Stripe Checkout
+order-confirmation.html ← עמוד תודה אחרי תשלום
+assets/
+  css/
+    tokens.css           משתני עיצוב + סגנונות בסיס משותפים לעמודי החנות
+    shop.css              סגנונות ספציפיים לחנות (כרטיסי מוצר, PDP, מגירת עגלה)
+  js/
+    cart.js               מודול עגלת קניות משותף (localStorage)
 ```
 
 ## הפעלה
@@ -103,6 +119,41 @@ python3 -m http.server 4599
   בלבד (בלי צורך בהעלאת קובץ).
 
 > כאשר קובץ תמונה חסר — האתר מציג placeholder אוטומטי.
+
+## חנות אונליין
+
+בנוסף לדף הנחיתה, באתר קיימת חנות מלאה: `shop.html` (רשימת מוצרים) →
+`product.html?slug=...` (עמוד מוצר, וריאציות, הוספה לעגלה) → מגירת עגלה
+(בכל עמוד) → `checkout.html` → תשלום ב-Stripe Checkout → `order-confirmation.html`.
+
+**קטלוג המוצרים** (`content/products.json`) מנוהל בדיוק כמו שאר התוכן —
+דרך `/admin` (Decap CMS), collection בשם "מוצרים". כל מוצר כולל שם, סוג
+(ערכת DIY / פריט מוגמר), קטגוריה חופשית, תיאורים, תמונות, מחיר בשקלים,
+badges (רב מכר/חדש/מבצע) ווריאציות אופציונליות (למשל מידות שונות במחירים
+שונים).
+
+**הזמנות** הן נתונים דינמיים ולכן *לא* מנוהלות ב-Git/Decap — הן נשמרות
+ב-Cloudflare D1 דרך `shop-worker/`, ומוצגות בדשבורד ייעודי ב-`/admin/orders.html`
+(מתחבר עם אותה התחברות GitHub כמו `/admin` הרגיל).
+
+### הפעלת ה-backend (חד-פעמי, טרם בוצע)
+
+ה-frontend של החנות עובד באופן מלא (גלישה, עגלה) גם בלי זה, אבל תשלום
+בפועל דורש פריסת ה-Worker:
+
+```bash
+cd shop-worker
+npx wrangler d1 create pashutlitzor-orders   # ולעדכן את database_id ב-wrangler.toml
+npx wrangler d1 execute pashutlitzor-orders --file=./schema.sql
+npx wrangler deploy
+npx wrangler secret put STRIPE_SECRET_KEY
+npx wrangler secret put STRIPE_WEBHOOK_SECRET   # מתקבל אחרי הגדרת ה-webhook ב-Stripe Dashboard
+npx wrangler secret put RESEND_API_KEY
+```
+
+לאחר הפריסה יש למלא את כתובת ה-Worker במשתנה `window.SHOP_API_BASE` בשלושה
+מקומות: `checkout.html`, `order-confirmation.html`, `admin/orders.html`.
+עד אז כפתור התשלום מציג הודעה "החנות עדיין בהקמה" במקום לקרוס.
 
 ## פרטי קשר
 

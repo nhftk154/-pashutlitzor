@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/shop.css">
 
 <style>
 /* ============ TOKENS ============ */
@@ -175,6 +176,17 @@ body::before{
   .nav-cta .nav-cta-text{display:inline}
   .nav-burger,.nav-mobile{display:none}
 }
+
+/* ============ CART ICON (nav) ============ */
+.nav-icon-btn{position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;color:var(--text);order:0}
+.nav-icon-btn:hover{background:rgba(37,51,58,.06)}
+.nav-icon-btn svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none}
+.nav-cart-badge{
+  position:absolute;top:2px;inset-inline-end:2px;min-width:17px;height:17px;padding:0 4px;
+  border-radius:999px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;
+}
+.nav-cart-badge:empty,.nav-cart-badge[data-count="0"]{display:none}
 
 /* ============ HERO ============ */
 #hero{
@@ -601,10 +613,15 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     <nav class="nav-links" aria-label="ניווט ראשי">
       <a href="#concept" data-navkey="concept">מה זה</a>
       <a href="#workshops" data-navkey="workshops">הסדנאות</a>
+      <a href="shop.html">חנות</a>
       <a href="#gallery" data-navkey="gallery">גלריה</a>
       <a href="#videos" data-navkey="videos">סרטונים</a>
       <a href="#corporate" data-navkey="corporate">לארגונים</a>
     </nav>
+    <button class="nav-icon-btn" type="button" data-cart-open aria-label="פתיחת עגלה">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+      <span class="nav-cart-badge" data-count="0"></span>
+    </button>
     <button class="nav-burger" id="nav-burger" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="nav-mobile">
       <span></span><span></span><span></span>
     </button>
@@ -616,6 +633,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <nav class="nav-mobile" id="nav-mobile" aria-label="ניווט נייד">
   <a href="#concept" data-navkey="concept">מה זה</a>
   <a href="#workshops" data-navkey="workshops">הסדנאות</a>
+  <a href="shop.html">חנות</a>
   <a href="#gallery" data-navkey="gallery">גלריה</a>
   <a href="#videos" data-navkey="videos">סרטונים</a>
   <a href="#corporate" data-navkey="corporate">לארגונים</a>
@@ -807,6 +825,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <div id="cursor" aria-hidden="true"></div>
 <div id="cursor-dot" aria-hidden="true"></div>
 
+<script src="assets/js/cart.js" defer></script>
 <script>
 (async function(){
   "use strict";

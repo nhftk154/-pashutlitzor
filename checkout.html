@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מעבר לתשלום — פשוט ליצור</title>
+<meta name="theme-color" content="#2D5B68">
+<link rel="icon" type="image/png" href="assets/branding/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/shop.css">
+<style>
+.checkout-state{min-height:70svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:calc(var(--nav-h) + 20px) 22px 60px}
+.spinner{width:38px;height:38px;border-radius:50%;border:3px solid rgba(45,91,104,.2);border-top-color:var(--green-primary);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<header id="navbar">
+  <div class="wrap">
+    <a class="nav-logo" href="index.html" aria-label="פשוט ליצור — לראש העמוד">
+      <img src="assets/branding/logo-removebg-preview.png" alt="פשוט ליצור">
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="checkout-state" id="checkout-state">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>מעבירים אותך לתשלום מאובטח…</p>
+  </div>
+</main>
+
+<script>
+/* כתובת ה-Worker שמנפיק את ה-Stripe Checkout Session — יש למלא אחרי פריסת shop-worker/ (שלב 3 בתוכנית) */
+window.SHOP_API_BASE = ''; // לדוגמה: 'https://shop-worker.<subdomain>.workers.dev'
+</script>
+<script src="assets/js/cart.js" defer></script>
+<script>
+(function(){
+  'use strict';
+
+  function showError(message){
+    document.getElementById('checkout-state').innerHTML =
+      '<p style="font-weight:600">לא הצלחנו להעביר אותך לתשלום</p>' +
+      '<p style="color:var(--text-soft)">' + message + '</p>' +
+      '<a class="btn btn-ghost" href="shop.html">חזרה לחנות</a>';
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var cart = JSON.parse(localStorage.getItem('pl_cart_v1') || '[]');
+    if (!cart.length){
+      showError('העגלה שלך ריקה.');
+      return;
+    }
+    if (!window.SHOP_API_BASE){
+      showError('החנות עדיין בהקמה — התשלום האונליין עוד לא זמין. אפשר לפנות בוואטסאפ בינתיים.');
+      return;
+    }
+    fetch(window.SHOP_API_BASE + '/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: cart })
+    })
+      .then(function(r){ if (!r.ok) throw new Error('bad response'); return r.json(); })
+      .then(function(data){
+        if (!data.url) throw new Error('missing url');
+        window.location.href = data.url;
+      })
+      .catch(function(){
+        showError('אירעה תקלה בעת יצירת התשלום. נסי שוב בעוד רגע.');
+      });
+  });
+})();
+</script>
+</body>
+</html>
