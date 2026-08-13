@@ -6,6 +6,13 @@
       "title": "סדנת יומולדת",
       "youtube_url": "https://youtube.com/shorts/HQaFRDRLF2w?si=Amxzf5LUDuxNumw6",
       "poster": "/assets/videos/img_4732.jpeg"
+    },
+    {
+      "type": "youtube",
+      "aspect": "landscape",
+      "title": "סדנת סיכום לבנות שירות",
+      "youtube_url": "https://youtube.com/shorts/NJCDUmPQgVQ?si=XW-wk5pIaFirIU_1",
+      "poster": "/assets/videos/img_4921.jpeg"
     }
   ]
 }
