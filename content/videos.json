@@ -3,15 +3,9 @@
     {
       "type": "youtube",
       "aspect": "landscape",
-      "youtube_url": "https://youtu.be/E4nw0lFaL-g?si=H0Bif6RzoiCDzmvS",
-      "title": "בוב ספוג בבריכה"
-    },
-    {
-      "type": "file",
-      "aspect": "portrait",
-      "title": "התחלה",
-      "file_src": "/assets/videos/img_3422.mov",
-      "poster": "https://pashutlitzor.com/assets/gallery/photo-7.jpg"
+      "title": "סדנת יומולדת",
+      "youtube_url": "https://youtube.com/shorts/HQaFRDRLF2w?si=Amxzf5LUDuxNumw6",
+      "poster": "/assets/videos/img_4732.jpeg"
     }
   ]
 }
