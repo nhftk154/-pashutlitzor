@@ -42,8 +42,6 @@ collections:
               - label: "תמונה"
                 name: "src"
                 widget: "image"
-                media_folder: "/assets/gallery"
-                public_folder: "/assets/gallery"
               - label: "תיאור קצר של התמונה"
                 name: "alt"
                 widget: "string"
@@ -83,8 +81,6 @@ collections:
           - label: "תמונה"
             name: "src"
             widget: "image"
-            media_folder: "/assets"
-            public_folder: "/assets"
           - label: "תיאור קצר של התמונה"
             name: "alt"
             widget: "string"
@@ -148,8 +144,6 @@ collections:
                     name: "poster"
                     widget: "image"
                     required: false
-                    media_folder: "/assets/videos"
-                    public_folder: "/assets/videos"
                     hint: "אם לא תעלו תמונה — תוצג אוטומטית תמונה מיוטיוב"
                   - label: "כיוון הסרטון"
                     name: "aspect"
@@ -168,14 +162,10 @@ collections:
                   - label: "קובץ הסרטון"
                     name: "file_src"
                     widget: "file"
-                    media_folder: "/assets/videos"
-                    public_folder: "/assets/videos"
                     hint: "העלו כאן את קובץ הסרטון (mp4 מומלץ)"
                   - label: "תמונה ממוזערת (חובה)"
                     name: "poster"
                     widget: "image"
-                    media_folder: "/assets/videos"
-                    public_folder: "/assets/videos"
                     hint: "תמונת שער שתוצג לפני הפעלת הסרטון"
                   - label: "כיוון הסרטון"
                     name: "aspect"
@@ -211,12 +201,12 @@ collections:
               - { label: "תיאור קצר (לכרטיס המוצר)", name: "shortDescription", widget: "string" }
               - { label: "תיאור מלא (לעמוד המוצר)", name: "description", widget: "text" }
               - { label: "איך להשתמש (בעיקר לקיטים)", name: "howToUse", widget: "text", required: false }
-              - { label: "משלוח / איסוף", name: "delivery", widget: "text" }
+              - { label: "משלוח / איסוף", name: "delivery", widget: "text", required: false }
               - label: "תמונות"
                 name: "images"
                 widget: "list"
                 label_singular: "תמונה"
-                field: { label: "תמונה", name: "src", widget: "image", media_folder: "/assets/shop", public_folder: "/assets/shop" }
+                field: { label: "תמונה", name: "src", widget: "image" }
               - label: "תגיות (אופציונלי)"
                 name: "badges"
                 widget: "select"
