@@ -116,7 +116,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 .foot-logo{display:flex;align-items:center;gap:10px;font-weight:700;color:#fff}
 .foot-logo img{height:46px;width:auto;max-width:130px;border-radius:10px;object-fit:contain;background:#fff;padding:6px}
 .foot-social{display:flex;gap:14px}
-.foot-social a{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.1);transition:background .2s,transform .2s}
+.foot-social a{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.1);transition:background .2s,transform .2s}
 .foot-social a:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
 .foot-social svg{width:20px;height:20px;fill:#fff}
 .foot-copy{font-size:.85rem;font-weight:300}
