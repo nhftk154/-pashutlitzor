@@ -1048,12 +1048,12 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  /* ---------- NAVBAR (hidden over the hero, visible from "מה זה" onward) ---------- */
+  /* ---------- NAVBAR (hidden over the vase animation, visible once it ends) ---------- */
   var navbar = document.getElementById('navbar');
-  var conceptSection = document.getElementById('concept');
+  var heroSection = document.getElementById('hero');
   function onNavScroll(){
-    var pastHero = conceptSection.getBoundingClientRect().top <= 0;
-    navbar.classList.toggle('visible', pastHero);
+    var pastVaseAnimation = heroSection.getBoundingClientRect().top <= 0;
+    navbar.classList.toggle('visible', pastVaseAnimation);
   }
 
   /* ---------- MOBILE MENU ---------- */
