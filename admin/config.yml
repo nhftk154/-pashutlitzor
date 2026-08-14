@@ -201,7 +201,11 @@ collections:
               - { label: "תיאור קצר (לכרטיס המוצר)", name: "shortDescription", widget: "string" }
               - { label: "תיאור מלא (לעמוד המוצר)", name: "description", widget: "text" }
               - { label: "איך להשתמש (בעיקר לקיטים)", name: "howToUse", widget: "text", required: false }
-              - { label: "משלוח / איסוף", name: "delivery", widget: "text", required: false }
+              - label: "משלוח / איסוף"
+                name: "delivery"
+                widget: "text"
+                required: false
+                default: "איסוף עצמי מהסטודיו או משלוח בתיאום מראש."
               - label: "תמונות"
                 name: "images"
                 widget: "list"
