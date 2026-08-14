@@ -164,7 +164,21 @@
     }
 
     loadProducts().then(function(products){
-      var lines = cart.map(function(l){ return resolveLine(products, l); }).filter(Boolean);
+      var validRawLines = [];
+      var lines = [];
+      cart.forEach(function(l){
+        var resolved = resolveLine(products, l);
+        if (resolved){ lines.push(resolved); validRawLines.push(l); }
+      });
+
+      /* Cart referenced a slug no longer in the catalog (e.g. removed/renamed
+         product) — self-heal by dropping it so the badge count and the
+         drawer never disagree with each other. */
+      if (validRawLines.length !== cart.length){
+        writeCart(validRawLines);
+        return;
+      }
+
       var total = lines.reduce(function(s, l){ return s + l.lineTotal; }, 0);
 
       bodyEl.innerHTML = lines.map(function(l){
