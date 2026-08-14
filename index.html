@@ -12,7 +12,7 @@
 <meta property="og:description" content="חוויית יצירה בוטיק בגבס פולימרי. בואי ליצור אובייקט שתיקחי הביתה.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="assets/branding/og-image.jpg">
-<link rel="icon" type="image/png" href="assets/branding/favicon.png">
+<link rel="icon" type="image/png" href="assets/branding/logo-removebg-preview.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -115,29 +115,12 @@ body::before{
 #navbar{
   position:fixed;inset-block-start:0;inset-inline:0;z-index:1000;
   height:var(--nav-h);display:flex;align-items:center;
-  transition:background .35s var(--ease),box-shadow .35s var(--ease),backdrop-filter .35s var(--ease);
-}
-/* RTL: nav-logo on the LEFT → use order to push it to the end in flex row */
-#navbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
-#navbar.scrolled{
   background:rgba(246,241,232,.88);
   backdrop-filter:blur(16px) saturate(1.3);
   -webkit-backdrop-filter:blur(16px) saturate(1.3);
   box-shadow:0 1px 0 rgba(26,20,16,.06),var(--shadow-sm);
 }
-/* Logo goes to the LEFT in RTL = order:1 pushes it after the links/cta */
-.nav-logo{
-  display:flex;align-items:center;gap:0;
-  order:1; /* LEFT side in RTL flex row */
-}
-.nav-logo img{
-  height:56px;width:auto;max-width:160px;
-  border-radius:10px;object-fit:contain;
-  background:#fff;padding:7px 10px;
-  box-shadow:var(--shadow-sm);
-  transition:opacity .2s;
-}
-.nav-logo:hover img{opacity:.85}
+#navbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
 /* nav-links + cta stay on the right (default order:0) */
 .nav-links{display:none;align-items:center;gap:28px;order:0}
 .nav-links a{
@@ -178,7 +161,8 @@ body::before{
 }
 
 /* ============ CART ICON (nav) ============ */
-.nav-icon-btn{position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;color:var(--text);order:0}
+/* order:1 = end of the RTL flex row, where the logo used to sit */
+.nav-icon-btn{position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;color:var(--text);order:1}
 .nav-icon-btn:hover{background:rgba(37,51,58,.06)}
 .nav-icon-btn svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none}
 .nav-cart-badge{
@@ -625,9 +609,6 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     <button class="nav-burger" id="nav-burger" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="nav-mobile">
       <span></span><span></span><span></span>
     </button>
-    <a class="nav-logo" href="#" aria-label="פשוט ליצור — לראש העמוד">
-      <img src="assets/branding/logo-removebg-preview.png" alt="פשוט ליצור">
-    </a>
   </div>
 </header>
 <nav class="nav-mobile" id="nav-mobile" aria-label="ניווט נייד">
@@ -1064,13 +1045,6 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  /* ---------- NAVBAR ---------- */
-  var navbar = document.getElementById('navbar');
-  function onNavScroll(){
-    if(window.scrollY > 40) navbar.classList.add('scrolled');
-    else navbar.classList.remove('scrolled');
-  }
-
   /* ---------- MOBILE MENU ---------- */
   var burger = document.getElementById('nav-burger');
   var mobileNav = document.getElementById('nav-mobile');
@@ -1210,13 +1184,11 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     var sy = window.scrollY;
     if(sy !== lastScrollY){
       lastScrollY = sy;
-      onNavScroll();
       updateCanvas();
     }
     requestAnimationFrame(rafLoop);
   }
   requestAnimationFrame(rafLoop);
-  onNavScroll();
 
   /* ---------- SCROLL REVEAL ---------- */
   var revealEls = document.querySelectorAll('.reveal');
