@@ -16,10 +16,11 @@
 body{margin:0;font-family:'Heebo',system-ui,sans-serif;background:var(--bg);color:var(--text);padding:28px 22px 80px}
 h1{font-size:1.7rem;margin-bottom:22px}
 .wrap{max-width:1000px;margin-inline:auto}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:999px;background:var(--green-primary);color:#fff;font-weight:600;border:none;cursor:pointer;font-size:15px}
 .btn:hover{background:#234a55}
 .state{color:var(--text-soft);padding-block:40px;text-align:center}
-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow-sm)}
+table{width:100%;min-width:640px;border-collapse:collapse;background:var(--white);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow-sm)}
 th,td{padding:12px 14px;text-align:start;font-size:14px;border-bottom:1px solid rgba(37,51,58,.08)}
 th{background:var(--bg);font-weight:700;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-soft)}
 tr:last-child td{border-bottom:none}
@@ -100,7 +101,7 @@ function renderOrders(root, orders){
     return;
   }
   root.innerHTML =
-    '<table><thead><tr><th>תאריך</th><th>לקוח/ה</th><th>פריטים</th><th>סה"כ</th><th>סטטוס</th></tr></thead><tbody>' +
+    '<div class="table-scroll"><table><thead><tr><th>תאריך</th><th>לקוח/ה</th><th>פריטים</th><th>סה"כ</th><th>סטטוס</th></tr></thead><tbody>' +
     orders.map(function(o){
       var itemsText = o.items.map(function(it){ return esc(it.name) + ' ×' + it.qty; }).join(', ');
       return '<tr data-id="' + o.id + '">' +
@@ -113,7 +114,7 @@ function renderOrders(root, orders){
         '</select></td>' +
       '</tr>';
     }).join('') +
-    '</tbody></table>';
+    '</tbody></table></div>';
 
   root.querySelectorAll('select[data-status]').forEach(function(select){
     select.addEventListener('change', function(){
