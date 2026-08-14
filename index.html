@@ -343,6 +343,7 @@ body::before{
 /* ============ GALLERY ============ */
 #gallery{background:var(--bg)}
 .masonry{columns:2;column-gap:14px}
+@media(max-width:680px){.masonry{columns:1}}
 @media(min-width:900px){.masonry{columns:3;column-gap:16px}}
 .masonry figure{
   break-inside:avoid;margin-bottom:14px;border-radius:var(--r-md);
@@ -371,6 +372,7 @@ body::before{
 /* ============ VIDEOS ============ */
 #videos{background:var(--bg-warm)}
 .video-grid{columns:2;column-gap:14px}
+@media(max-width:680px){.video-grid{columns:1}}
 @media(min-width:900px){.video-grid{columns:3;column-gap:16px}}
 .video-tile{break-inside:avoid;margin-bottom:14px}
 .video-facade{
@@ -455,8 +457,12 @@ body::before{
 .t-meta{font-size:.85rem;color:var(--text-soft);font-weight:300}
 .t-dots{display:flex;gap:8px;justify-content:center;margin-top:24px}
 @media(min-width:920px){.t-dots{display:none}}
-.t-dots button{width:9px;height:9px;border-radius:50%;background:rgba(42,31,24,.2);transition:background .2s,width .2s}
-.t-dots button.active{background:var(--green-primary);width:24px;border-radius:5px}
+.t-dots button{width:44px;height:44px;position:relative;display:flex;align-items:center;justify-content:center}
+.t-dots button::before{
+  content:"";width:9px;height:9px;border-radius:50%;
+  background:rgba(42,31,24,.2);transition:background .2s,width .2s;
+}
+.t-dots button.active::before{background:var(--green-primary);width:24px;border-radius:5px}
 
 /* ============ CLOSING CTA ============ */
 #contact{
@@ -503,7 +509,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 @media(min-width:680px){.foot-links{justify-content:flex-start}}
 .foot-social{display:flex;gap:14px}
 .foot-social a{
-  width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   background:rgba(255,255,255,.1);transition:background .2s,transform .2s;
 }
 .foot-social a:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
@@ -866,9 +872,23 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
         '</div></figure>';
     }).join('');
 
+    var activeFacade = null;
+    function resetFacade(el){
+      if(!el.classList.contains('is-active')) return;
+      el.innerHTML = el._originalHtml;
+      el.classList.remove('is-active');
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+    }
+
     grid.querySelectorAll('.video-facade').forEach(function(el){
+      el._originalHtml = el.innerHTML;
       function activate(){
         if(el.classList.contains('is-active')) return;
+        if(activeFacade && activeFacade !== el){
+          resetFacade(activeFacade);
+        }
+        activeFacade = el;
         el.classList.add('is-active');
         var player;
         if(el.getAttribute('data-type') === 'youtube'){
@@ -1143,6 +1163,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   var hint = document.getElementById('canvas-hint');
   var logoEl = document.querySelector('.canvas-logo');
   var tiltX = 0, tiltY = 0, expandP = 0;
+  var lastFilter = null;
 
   function applyCardTilt(){ /* canvas is fullscreen now — no tilt */ }
 
@@ -1150,7 +1171,11 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     var pe = Math.min(p/0.7, 1);
     expandP = pe;
     var blur = Math.max(0, 18 * (1 - pe/0.35));
-    canvas.style.filter = blur > 0.2 ? 'blur(' + blur.toFixed(1) + 'px)' : '';
+    var filter = blur > 0.2 ? 'blur(' + blur.toFixed(1) + 'px)' : '';
+    if(filter !== lastFilter){
+      canvas.style.filter = filter;
+      lastFilter = filter;
+    }
     // logo cover: fully visible at rest, dissolves as expansion starts
     var logoFade = Math.max(0, 1 - pe/0.35);
     logoEl.style.opacity = logoFade;
@@ -1160,7 +1185,10 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   }
 
   function preloadFrames(){
-    for(var i = 1; i <= FRAME_COUNT; i++){
+    // Playback runs reversed (frame FRAME_COUNT is needed first, at scroll
+    // top), so request frames in that same order — the frames needed
+    // earliest should also arrive earliest over the network.
+    for(var i = FRAME_COUNT; i >= 1; i--){
       (function(idx){
         var img = new Image();
         img.onload = function(){
