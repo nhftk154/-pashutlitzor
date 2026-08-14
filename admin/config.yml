@@ -249,6 +249,7 @@ collections:
               - { label: "קישור 3", name: "gallery", widget: "string" }
               - { label: "קישור 4", name: "videos", widget: "string" }
               - { label: "קישור 5", name: "corporate", widget: "string" }
+              - { label: "קישור 6", name: "testimonials", widget: "string" }
 
           - label: "מסך פתיחה (למעלה)"
             name: "hero"
