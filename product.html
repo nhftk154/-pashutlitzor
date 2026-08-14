@@ -114,7 +114,7 @@
     root.innerHTML =
       '<div class="pdp-grid">' +
         '<div class="pdp-gallery">' +
-          '<div class="pdp-gallery-main"><img id="pdp-main-img" src="' + esc(images[0]) + '" alt="' + esc(product.name) + '"></div>' +
+          '<div class="pdp-gallery-main">' + (images[0] ? '<img id="pdp-main-img" src="' + esc(images[0]) + '" alt="' + esc(product.name) + '" onerror="this.remove()">' : '') + '</div>' +
         '</div>' +
         '<div class="pdp-info">' +
           '<span class="pdp-cat">' + esc(product.category) + '</span>' +

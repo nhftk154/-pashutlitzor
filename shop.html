@@ -107,7 +107,7 @@
     return '<a class="product-card reveal" href="product.html?slug=' + encodeURIComponent(p.slug) + '">' +
       '<div class="product-card-media">' +
         (badge ? '<span class="product-badge" data-badge="' + esc(badge) + '">' + esc(BADGE_LABEL[badge] || badge) + '</span>' : '') +
-        '<img src="' + esc((p.images && p.images[0]) || '') + '" alt="' + esc(p.name) + '" loading="lazy">' +
+        ((p.images && p.images[0]) ? '<img src="' + esc(p.images[0]) + '" alt="' + esc(p.name) + '" loading="lazy" onerror="this.remove()">' : '') +
       '</div>' +
       '<div class="product-card-body">' +
         '<span class="product-card-cat">' + esc(p.category) + '</span>' +
