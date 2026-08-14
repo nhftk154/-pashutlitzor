@@ -423,30 +423,37 @@ body::before{
 .corp-stat .num{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;color:#FAF8F5;line-height:1}
 .corp-stat .lbl{font-size:.9rem;color:rgba(255,255,255,.75);font-weight:300;margin-top:4px}
 
-/* ============ TESTIMONIALS ============ */
+/* ============ TESTIMONIALS (auto-scrolling wall) ============ */
 #testimonials{background:var(--bg-warm);text-align:center}
-.t-track{
-  display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;
-  padding-block:8px;padding-inline:2px;
-  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+.t-wrap{position:relative;height:600px;overflow:hidden;margin-top:8px}
+.t-fade{position:absolute;inset-inline:0;height:120px;z-index:2;pointer-events:none}
+.t-fade-top{top:0;background:linear-gradient(to bottom,var(--bg-warm),transparent)}
+.t-fade-bottom{bottom:0;background:linear-gradient(to top,var(--bg-warm),transparent)}
+.t-cols{display:grid;grid-template-columns:1fr;gap:16px;height:100%}
+@media(min-width:920px){.t-cols{grid-template-columns:repeat(3,1fr)}}
+.t-col{position:relative;overflow:hidden}
+.t-col:nth-child(2),.t-col:nth-child(3){display:none}
+@media(min-width:920px){.t-col:nth-child(2),.t-col:nth-child(3){display:block}}
+.t-col-inner{
+  display:flex;flex-direction:column;gap:16px;will-change:transform;
+  animation-timing-function:linear;animation-iteration-count:infinite;
 }
-.t-track::-webkit-scrollbar{display:none}
-@media(min-width:920px){
-  .t-track{display:grid;grid-template-columns:repeat(3,1fr);overflow:visible}
-}
+.t-col-inner.dir-down{animation-name:t-scroll-down;animation-duration:38s}
+.t-col-inner.dir-up{animation-name:t-scroll-up;animation-duration:38s}
+.t-col:hover .t-col-inner{animation-play-state:paused}
+@keyframes t-scroll-down{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@keyframes t-scroll-up{from{transform:translateY(-50%)}to{transform:translateY(0)}}
 .t-card{
-  flex:0 0 84%;scroll-snap-align:center;
-  background:var(--white);border-radius:var(--r-lg);padding:32px 28px;
+  background:var(--white);border-radius:var(--r-lg);padding:28px 26px;flex:none;
   box-shadow:var(--shadow-sm);text-align:start;
   border:1px solid rgba(42,31,24,.05);
   display:flex;flex-direction:column;gap:14px;
 }
-@media(min-width:920px){.t-card{flex:auto}}
 .t-quote{
   font-family:'DM Mono',monospace;font-size:3rem;line-height:.6;
   color:var(--accent);height:26px;
 }
-.t-card p{color:var(--text-soft);font-size:1.05rem;font-weight:300;flex-grow:1}
+.t-card p{color:var(--text-soft);font-size:1.05rem;font-weight:300;white-space:pre-line}
 .t-author{display:flex;align-items:center;gap:12px;margin-top:6px}
 .t-avatar{
   width:44px;height:44px;border-radius:50%;flex:none;
@@ -455,14 +462,7 @@ body::before{
 }
 .t-name{font-weight:600;font-size:1rem}
 .t-meta{font-size:.85rem;color:var(--text-soft);font-weight:300}
-.t-dots{display:flex;gap:8px;justify-content:center;margin-top:24px}
-@media(min-width:920px){.t-dots{display:none}}
-.t-dots button{width:44px;height:44px;position:relative;display:flex;align-items:center;justify-content:center}
-.t-dots button::before{
-  content:"";width:9px;height:9px;border-radius:50%;
-  background:rgba(42,31,24,.2);transition:background .2s,width .2s;
-}
-.t-dots button.active::before{background:var(--green-primary);width:24px;border-radius:5px}
+.t-sr-list{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* ============ CLOSING CTA ============ */
 #contact{
@@ -751,8 +751,12 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       <span class="eyebrow reveal" id="testimonials-eyebrow">הן כבר יצרו</span>
       <h2 class="reveal" data-delay="1" id="testimonials-heading">מה אומרות המשתתפות</h2>
     </div>
-    <div class="t-track" id="t-track"></div>
-    <div class="t-dots" id="t-dots" aria-hidden="true"></div>
+    <div class="t-wrap reveal" data-delay="2">
+      <div class="t-fade t-fade-top" aria-hidden="true"></div>
+      <div class="t-fade t-fade-bottom" aria-hidden="true"></div>
+      <div class="t-cols" id="t-cols" aria-hidden="true"></div>
+    </div>
+    <ul class="t-sr-list" id="t-sr-list"></ul>
   </div>
 </section>
 
@@ -924,10 +928,12 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   }
 
   function renderTestimonials(data){
-    var track = document.getElementById('t-track');
+    var cols = document.getElementById('t-cols');
+    var srList = document.getElementById('t-sr-list');
     var list = data && data.items;
-    if(!track || !Array.isArray(list)) return;
-    track.innerHTML = list.map(function(t){
+    if(!cols || !Array.isArray(list) || !list.length) return;
+
+    var cardsHtml = list.map(function(t){
       var initial = (t.name || '').trim().charAt(0);
       return '<article class="t-card">' +
         '<div class="t-quote">”</div>' +
@@ -936,6 +942,19 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
         '<div><div class="t-name">' + esc(t.name) + '</div><div class="t-meta">' + esc(t.meta) + '</div></div></div>' +
         '</article>';
     }).join('');
+
+    // כל עמודה מקבלת את הרשימה המלאה כפולה פעמיים, כדי לאפשר לולאת גלילה חלקה (translateY 0 -> -50%)
+    var doubled = cardsHtml + cardsHtml;
+    var dirs = ['dir-down', 'dir-up', 'dir-down'];
+    cols.innerHTML = dirs.map(function(dir){
+      return '<div class="t-col"><div class="t-col-inner ' + dir + '">' + doubled + '</div></div>';
+    }).join('');
+
+    if(srList){
+      srList.innerHTML = list.map(function(t){
+        return '<li>' + esc(t.quote) + ' — ' + esc(t.name) + (t.meta ? ', ' + esc(t.meta) : '') + '</li>';
+      }).join('');
+    }
   }
 
   function setText(id, value){
@@ -1243,43 +1262,6 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   } else {
     revealEls.forEach(function(el){ el.classList.add('in'); });
   }
-
-  /* ---------- TESTIMONIALS DOTS ---------- */
-  var track = document.getElementById('t-track');
-  var dotsWrap = document.getElementById('t-dots');
-  var cards = track.children;
-  for(var d=0; d<cards.length; d++){
-    var dot = document.createElement('button');
-    dot.setAttribute('aria-label','המלצה ' + (d+1));
-    if(d===0) dot.classList.add('active');
-    (function(index){
-      dot.addEventListener('click', function(){
-        cards[index].scrollIntoView({behavior: reduceMotion?'auto':'smooth', inline:'center', block:'nearest'});
-      });
-    })(d);
-    dotsWrap.appendChild(dot);
-  }
-  var dotBtns = dotsWrap.children;
-  var tTick = false;
-  track.addEventListener('scroll', function(){
-    if(!tTick){
-      window.requestAnimationFrame(function(){
-        var center = track.scrollLeft + track.clientWidth/2;
-        var closest = 0, min = Infinity;
-        for(var i=0;i<cards.length;i++){
-          var c = cards[i];
-          var cc = c.offsetLeft + c.offsetWidth/2;
-          var dist = Math.abs(cc - (track.scrollWidth - center)); // RTL aware-ish
-          var dist2 = Math.abs((c.offsetLeft + c.offsetWidth/2) - center);
-          var use = Math.min(dist, dist2);
-          if(use < min){ min = use; closest = i; }
-        }
-        for(var j=0;j<dotBtns.length;j++) dotBtns[j].classList.toggle('active', j===closest);
-        tTick = false;
-      });
-      tTick = true;
-    }
-  }, {passive:true});
 
   /* ---------- HOVER MOTION (mouse parallax + tilt + magnetic) ---------- */
   if(!reduceMotion && window.matchMedia('(pointer:fine)').matches){
