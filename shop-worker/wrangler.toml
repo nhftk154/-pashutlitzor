@@ -8,7 +8,11 @@ binding = "ORDERS_DB"
 database_name = "pashutlitzor-orders"
 database_id = ""
 
-# אחרי הפריסה (wrangler deploy) יש להגדיר שלושה secrets:
-#   wrangler secret put STRIPE_SECRET_KEY
-#   wrangler secret put STRIPE_WEBHOOK_SECRET   (מתקבל אחרי חיבור ה-Worker כ-endpoint ב-Stripe Dashboard)
+# אחרי הפריסה (wrangler deploy) יש להגדיר את הסודות הבאים:
+#   wrangler secret put GROW_USER_ID       (מתקבל מ-Grow/משולם אחרי פתיחת חשבון + בקשת גישת API)
+#   wrangler secret put GROW_PAGE_CODE     (מתקבל מ-Grow/משולם)
+#   wrangler secret put GROW_API_KEY       (רק אם רלוונטי לסוג החשבון — לוודא מול Grow)
 #   wrangler secret put RESEND_API_KEY
+#
+# ⚠️ לפני production: יש להשלים את כל ה-TODO-ים ב-worker.js, ובפרט את אימות
+# ה-callback מ-Grow (חתימה/סוד משותף) — בלי זה אפשר לזייף "הזמנה שולמה".

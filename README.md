@@ -139,15 +139,44 @@ badges (רב מכר/חדש/מבצע) ווריאציות אופציונליות (
 ### הפעלת ה-backend (חד-פעמי, טרם בוצע)
 
 ה-frontend של החנות עובד באופן מלא (גלישה, עגלה) גם בלי זה, אבל תשלום
-בפועל דורש פריסת ה-Worker:
+בפועל דורש פריסת ה-Worker. הסליקה מחוברת ל-**Grow (משולם)** — נבחרה על פני
+Stripe כי היא מותאמת לשוק הישראלי (עמלות נמוכות יותר, תמיכה ב-bit,
+תשלומים).
+
+> ⚠️ **`shop-worker/worker.js` הוא כרגע שלד (scaffold) בלבד**, בנוי לפי מידע
+> חלקי על ה-API של Grow (התיעוד הרשמי לא היה נגיש לסוכן). כל מקום מסומן
+> ב-`TODO` בקוד חייב אימות מול התיעוד האמיתי לפני שהחנות תלך לפרודקשן —
+> ובמיוחד **אימות ה-callback על תשלום** (`handleGrowCallback`), כי בלי
+> אימות תקין אפשר לזייף "הזמנה שולמה" מבלי לשלם בפועל.
+
+**מה חסר כדי להשלים את השלד לגרסה אמיתית**, אחרי פתיחת חשבון ב-Grow:
+
+1. לבקש מתמיכת Grow **גישת API** (לא רק ממשק סליקה רגיל) ולקבל: `userId`,
+   `pageCode` ו-(אם רלוונטי) `apiKey`.
+2. לבקש את **התיעוד המלא** של `createPaymentProcess` — בפרט:
+   - שמות השדות המדויקים בבקשה (סכום, successUrl/cancelUrl, שדה מותאם אישית
+     להעברת מזהה הזמנה פנימי שיחזור ב-callback).
+   - שם השדה בתגובה שמכיל את כתובת דף התשלום.
+3. לבקש את **מפרט ה-callback על תשלום** (Server-to-Server) — בפרט:
+   - **איך לאמת שהבקשה אכן הגיעה מ-Grow** (חתימה? סוד משותף בכותרת/בגוף?
+     allowlist כתובות IP?) — זו הנקודה הכי קריטית לאבטחה.
+   - השדות המדויקים שמצביעים על הצלחה/כישלון של התשלום.
+   - איפה להגדיר את כתובת ה-callback בממשק הניהול של Grow (הכתובת אצלנו:
+     `https://<worker-url>/api/grow-callback`).
+4. סביבת **sandbox/בדיקות** של Grow (אם קיימת) לבדיקת הזרימה המלאה לפני
+   מעבר ל-production.
+
+לאחר שמקבלים את הפרטים האלה, יש לעדכן את ה-TODO-ים ב-`shop-worker/worker.js`
+בהתאם, ואז:
 
 ```bash
 cd shop-worker
 npx wrangler d1 create pashutlitzor-orders   # ולעדכן את database_id ב-wrangler.toml
 npx wrangler d1 execute pashutlitzor-orders --file=./schema.sql
 npx wrangler deploy
-npx wrangler secret put STRIPE_SECRET_KEY
-npx wrangler secret put STRIPE_WEBHOOK_SECRET   # מתקבל אחרי הגדרת ה-webhook ב-Stripe Dashboard
+npx wrangler secret put GROW_USER_ID
+npx wrangler secret put GROW_PAGE_CODE
+npx wrangler secret put GROW_API_KEY        # רק אם רלוונטי
 npx wrangler secret put RESEND_API_KEY
 ```
 

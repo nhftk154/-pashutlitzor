@@ -1,12 +1,17 @@
-// Cloudflare Worker לחנות של pashutlitzor.com — יצירת תשלומי Stripe Checkout,
-// קליטת webhook, שמירת הזמנות ב-D1, ושליחת מיילי אישור. אח ל-oauth-worker/worker.js.
+// Cloudflare Worker לחנות של pashutlitzor.com — יצירת תשלום דרך Grow (משולם),
+// קליטת callback על תשלום, שמירת הזמנות ב-D1, ושליחת מיילי אישור.
+// אח ל-oauth-worker/worker.js.
 //
-// Secrets נדרשים (wrangler secret put ...): STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RESEND_API_KEY
+// ⚠️ שלד (scaffold) — טרם הושלם! מבוסס על מידע חלקי בלבד על ה-API של Grow.
+// לפני פריסה לפרודקשן חובה לוודא כל סעיף המסומן ב-TODO מול התיעוד הרשמי
+// שמתקבל בחשבון Grow בפועל (grow-il.readme.io / developers.grow.business),
+// ובמיוחד את אימות ה-callback — בלי זה כל אחד יכול לזייף "הזמנה שולמה".
+//
+// Secrets נדרשים (wrangler secret put ...): GROW_USER_ID, GROW_PAGE_CODE,
+//   GROW_API_KEY (אם רלוונטי לחשבון), RESEND_API_KEY
 // D1 binding נדרש (ב-wrangler.toml): ORDERS_DB
-//
-// GITHUB_REPO / OWNER_EMAIL / STORE_URL אפשר לקבוע כאן או כ-vars ב-wrangler.toml.
 
-const GITHUB_REPO = "nhftk154/-pashutlitzor";
+const GROW_API_BASE = "https://sandbox.meshulam.co.il/api/light/server/1.0"; // TODO: לוודא כתובת production (סביר שונה מ-sandbox)
 const STORE_URL = "https://pashutlitzor.com";
 const OWNER_EMAIL = "nhftk154@gmail.com"; // TODO: להחליף אם רוצים כתובת עסקית נפרדת
 const ALLOWED_ORIGINS = [
@@ -44,11 +49,11 @@ export default {
       if (url.pathname === "/api/checkout" && request.method === "POST") {
         return await handleCheckout(request, env, origin);
       }
-      if (url.pathname === "/api/stripe-webhook" && request.method === "POST") {
-        return await handleWebhook(request, env);
+      if (url.pathname === "/api/grow-callback" && request.method === "POST") {
+        return await handleGrowCallback(request, env);
       }
-      if (url.pathname === "/api/order-by-session" && request.method === "GET") {
-        return await handleOrderBySession(url, env, origin);
+      if (url.pathname === "/api/order-by-ref" && request.method === "GET") {
+        return await handleOrderByRef(url, env, origin);
       }
       if (url.pathname === "/api/orders" && request.method === "GET") {
         return await withAuth(request, env, origin, () => handleListOrders(url, env, origin));
@@ -69,6 +74,9 @@ export default {
 };
 
 /* ============ CHECKOUT ============ */
+// זורם ככה: יוצרים הזמנה 'pending' אצלנו קודם, שולחים ל-Grow עם מזהה
+// פנימי (paymentRef) שאמור לחזור אלינו ב-callback, ומחזירים לפרונט את
+// כתובת דף התשלום של Grow.
 
 async function handleCheckout(request, env, origin) {
   const body = await request.json().catch(() => null);
@@ -80,7 +88,8 @@ async function handleCheckout(request, env, origin) {
   if (!productsRes.ok) return json({ error: "catalog_unavailable" }, 502, origin);
   const products = ((await productsRes.json()).items || []);
 
-  const lineItems = [];
+  const orderItems = [];
+  let totalIls = 0;
   for (const raw of body.items) {
     const qty = Math.max(1, Math.min(20, parseInt(raw.qty, 10) || 0));
     if (!qty) continue;
@@ -96,125 +105,104 @@ async function handleCheckout(request, env, origin) {
       name = product.name + " — " + variant.label;
     }
 
-    const unitAmount = Math.round(Number(priceIls) * 100);
-    if (!unitAmount || unitAmount <= 0) continue;
-
-    lineItems.push({ name, unitAmount, qty });
+    const lineTotal = Number(priceIls) * qty;
+    if (!lineTotal || lineTotal <= 0) continue;
+    orderItems.push({ name, qty, lineTotal });
+    totalIls += lineTotal;
   }
 
-  if (lineItems.length === 0) return json({ error: "no_valid_items" }, 400, origin);
+  if (orderItems.length === 0) return json({ error: "no_valid_items" }, 400, origin);
 
+  const paymentRef = crypto.randomUUID();
+
+  await env.ORDERS_DB
+    .prepare(`INSERT INTO orders (payment_ref, items_json, total_agorot, status) VALUES (?, ?, ?, 'pending')`)
+    .bind(paymentRef, JSON.stringify(orderItems), Math.round(totalIls * 100))
+    .run();
+
+  // TODO: לוודא מול תיעוד Grow בפועל:
+  //  - שמות השדות המדויקים (יכול להיות userId/pageCode/apiKey/sum/successUrl/
+  //    cancelUrl/description, אך יש לאמת מול "createPaymentProcess" האמיתי)
+  //  - שם הפרמטר הנכון להעברת מזהה פנימי (paymentRef) שחוזר אלינו ב-callback
+  //    (למשל cField1, pageField, custom field אחר)
+  //  - איך מפעילים bit / תשלומים (paymentsNum?) אם רוצים לאפשר ללקוח לבחור
   const params = new URLSearchParams();
-  params.set("mode", "payment");
-  params.set("locale", "he");
-  params.set("success_url", STORE_URL + "/order-confirmation.html?session_id={CHECKOUT_SESSION_ID}");
-  params.set("cancel_url", STORE_URL + "/shop.html");
-  params.set("phone_number_collection[enabled]", "true");
-  params.set("custom_fields[0][key]", "full_name");
-  params.set("custom_fields[0][label][type]", "custom");
-  params.set("custom_fields[0][label][custom]", "שם מלא");
-  params.set("custom_fields[0][type]", "text");
+  params.set("userId", env.GROW_USER_ID);
+  params.set("pageCode", env.GROW_PAGE_CODE);
+  if (env.GROW_API_KEY) params.set("apiKey", env.GROW_API_KEY);
+  params.set("sum", totalIls.toFixed(2));
+  params.set("description", "הזמנה מ-" + STORE_URL);
+  params.set("successUrl", STORE_URL + "/order-confirmation.html?ref=" + paymentRef);
+  params.set("cancelUrl", STORE_URL + "/shop.html");
+  params.set("cField1", paymentRef); // TODO: לוודא שזה השם הנכון של השדה
 
-  lineItems.forEach((li, i) => {
-    params.set(`line_items[${i}][quantity]`, String(li.qty));
-    params.set(`line_items[${i}][price_data][currency]`, "ils");
-    params.set(`line_items[${i}][price_data][unit_amount]`, String(li.unitAmount));
-    params.set(`line_items[${i}][price_data][product_data][name]`, li.name);
-  });
-
-  const stripeRes = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+  const growRes = await fetch(GROW_API_BASE + "/createPaymentProcess", {
     method: "POST",
-    headers: {
-      Authorization: "Bearer " + env.STRIPE_SECRET_KEY,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params.toString(),
   });
-  const session = await stripeRes.json();
-  if (!stripeRes.ok) return json({ error: "stripe_error", message: session.error && session.error.message }, 502, origin);
+  const growData = await growRes.json().catch(() => null);
 
-  return json({ url: session.url }, 200, origin);
+  // TODO: לוודא את מבנה התגובה המדויק — באיזה שדה נמצאת כתובת דף התשלום
+  const paymentUrl = growData && (growData.url || (growData.data && growData.data.url));
+  if (!growRes.ok || !paymentUrl) {
+    return json({ error: "grow_error", message: growData && growData.message }, 502, origin);
+  }
+
+  return json({ url: paymentUrl }, 200, origin);
 }
 
-/* ============ WEBHOOK ============ */
+/* ============ CALLBACK (Grow -> אנחנו, על תשלום) ============ */
 
-async function handleWebhook(request, env) {
-  const signatureHeader = request.headers.get("Stripe-Signature") || "";
-  const payload = await request.text();
+async function handleGrowCallback(request, env) {
+  // ⚠️ TODO קריטי לאבטחה: לוודא מול Grow איך מאמתים שהבקשה הזו באמת הגיעה
+  // מהם ולא זויפה (חתימה בהדר? סוד משותף בגוף הבקשה? allowlist כתובות IP?).
+  // כרגע אין שום אימות — אסור לפרוס ל-production במצב הזה.
 
-  const valid = await verifyStripeSignature(payload, signatureHeader, env.STRIPE_WEBHOOK_SECRET);
-  if (!valid) return new Response("invalid signature", { status: 400 });
+  const contentType = request.headers.get("Content-Type") || "";
+  const payload = contentType.includes("application/json")
+    ? await request.json().catch(() => null)
+    : Object.fromEntries(new URLSearchParams(await request.text()));
 
-  const event = JSON.parse(payload);
-  if (event.type !== "checkout.session.completed") {
+  if (!payload) return new Response("bad payload", { status: 400 });
+
+  const paymentRef = payload.cField1 || payload.paymentRef; // TODO: לוודא שם השדה בפועל
+  if (!paymentRef) return new Response("missing ref", { status: 400 });
+
+  const order = await env.ORDERS_DB.prepare("SELECT * FROM orders WHERE payment_ref = ?").bind(paymentRef).first();
+  if (!order) return new Response("order not found", { status: 404 });
+  if (order.status !== "pending") return new Response("ok", { status: 200 }); // כבר טופל
+
+  // TODO: לוודא את הערך/שדה המדויק שמסמן הצלחה (status? statusCode? "1"?)
+  const paid = payload.statusCode === "1" || payload.status === "success" || payload.status === "הצליח";
+
+  if (!paid) {
+    await env.ORDERS_DB
+      .prepare("UPDATE orders SET status = 'cancelled', updated_at = datetime('now') WHERE id = ?")
+      .bind(order.id)
+      .run();
     return new Response("ok", { status: 200 });
   }
 
-  const session = event.data.object;
-
-  const existing = await env.ORDERS_DB
-    .prepare("SELECT id FROM orders WHERE stripe_session_id = ?")
-    .bind(session.id)
-    .first();
-  if (existing) return new Response("ok", { status: 200 });
-
-  const lineItemsRes = await fetch(
-    `https://api.stripe.com/v1/checkout/sessions/${session.id}/line_items?limit=100`,
-    { headers: { Authorization: "Bearer " + env.STRIPE_SECRET_KEY } }
-  );
-  const lineItemsData = await lineItemsRes.json();
-  const items = (lineItemsData.data || []).map((li) => ({
-    name: li.description,
-    qty: li.quantity,
-    lineTotal: li.amount_total / 100,
-  }));
-
-  const customerName =
-    (session.custom_fields || []).find((f) => f.key === "full_name")?.text?.value || "";
-  const customerEmail = (session.customer_details && session.customer_details.email) || "";
-  const customerPhone = (session.customer_details && session.customer_details.phone) || "";
+  const customerName = payload.fullName || "";
+  const customerEmail = payload.payerEmail || "";
+  const customerPhone = payload.payerPhone || "";
 
   await env.ORDERS_DB
     .prepare(
-      `INSERT INTO orders (stripe_session_id, customer_name, customer_email, customer_phone, items_json, total_agorot, status)
-       VALUES (?, ?, ?, ?, ?, ?, 'paid')`
+      `UPDATE orders SET status = 'paid', customer_name = ?, customer_email = ?, customer_phone = ?, updated_at = datetime('now') WHERE id = ?`
     )
-    .bind(session.id, customerName, customerEmail, customerPhone, JSON.stringify(items), session.amount_total)
+    .bind(customerName, customerEmail, customerPhone, order.id)
     .run();
 
-  await sendOrderEmails(env, { customerName, customerEmail, items, totalIls: session.amount_total / 100 });
+  await sendOrderEmails(env, {
+    customerName,
+    customerEmail,
+    items: JSON.parse(order.items_json),
+    totalIls: order.total_agorot / 100,
+  });
 
   return new Response("ok", { status: 200 });
-}
-
-async function verifyStripeSignature(payload, signatureHeader, secret) {
-  const parts = Object.fromEntries(
-    signatureHeader.split(",").map((p) => {
-      const [k, v] = p.split("=");
-      return [k, v];
-    })
-  );
-  if (!parts.t || !parts.v1) return false;
-
-  const signedPayload = `${parts.t}.${payload}`;
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
-  const sigBuffer = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(signedPayload));
-  const expected = [...new Uint8Array(sigBuffer)].map((b) => b.toString(16).padStart(2, "0")).join("");
-
-  return timingSafeEqual(expected, parts.v1);
-}
-
-function timingSafeEqual(a, b) {
-  if (a.length !== b.length) return false;
-  let result = 0;
-  for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return result === 0;
 }
 
 /* ============ EMAIL (Resend) ============ */
@@ -254,15 +242,16 @@ function escHtml(s) {
 
 /* ============ ORDER LOOKUP (public, confirmation page) ============ */
 
-async function handleOrderBySession(url, env, origin) {
-  const sessionId = url.searchParams.get("session_id");
-  if (!sessionId) return json({ error: "missing_session_id" }, 400, origin);
+async function handleOrderByRef(url, env, origin) {
+  const ref = url.searchParams.get("ref");
+  if (!ref) return json({ error: "missing_ref" }, 400, origin);
 
   const row = await env.ORDERS_DB
-    .prepare("SELECT id, items_json, total_agorot FROM orders WHERE stripe_session_id = ?")
-    .bind(sessionId)
+    .prepare("SELECT id, status, items_json, total_agorot FROM orders WHERE payment_ref = ?")
+    .bind(ref)
     .first();
   if (!row) return json({ error: "not_found" }, 404, origin);
+  if (row.status === "pending") return json({ error: "not_ready" }, 202, origin);
 
   return json({ id: row.id, items: JSON.parse(row.items_json), totalIls: row.total_agorot / 100 }, 200, origin);
 }
@@ -281,7 +270,7 @@ async function withAuth(request, env, origin, handler) {
   const user = await userRes.json();
 
   const permRes = await fetch(
-    `https://api.github.com/repos/${GITHUB_REPO}/collaborators/${user.login}/permission`,
+    `https://api.github.com/repos/nhftk154/-pashutlitzor/collaborators/${user.login}/permission`,
     { headers: { Authorization: "Bearer " + token, "User-Agent": "pashutlitzor-shop-worker" } }
   );
   if (!permRes.ok) return json({ error: "forbidden" }, 403, origin);
@@ -337,7 +326,7 @@ async function handleUpdateOrder(id, request, env, origin) {
   const body = await request.json().catch(() => null);
   if (!body) return json({ error: "invalid_body" }, 400, origin);
 
-  const allowedStatuses = ["paid", "preparing", "ready", "shipped", "completed", "cancelled", "refunded"];
+  const allowedStatuses = ["pending", "paid", "preparing", "ready", "shipped", "completed", "cancelled", "refunded"];
   if (body.status && !allowedStatuses.includes(body.status)) {
     return json({ error: "invalid_status" }, 400, origin);
   }
