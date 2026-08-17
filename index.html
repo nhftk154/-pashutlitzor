@@ -340,65 +340,59 @@ body::before{
 .w-card .w-link svg{width:16px;height:16px;transition:transform .2s}
 .w-card:hover .w-link svg{transform:translateX(-4px)}
 
-/* ============ GALLERY ============ */
+/* ============ GALLERY (horizontal scroll-snap strip, all breakpoints) ============ */
 #gallery{background:var(--bg)}
-.masonry{columns:2;column-gap:14px}
-@media(max-width:680px){.masonry{columns:1}}
-@media(min-width:900px){.masonry{columns:3;column-gap:16px}}
-.masonry figure{
-  break-inside:avoid;margin-bottom:14px;border-radius:var(--r-md);
-  overflow:hidden;box-shadow:var(--shadow-sm);position:relative;
-  background:var(--bg-warm);cursor:pointer;
+.gallery-wrap{position:relative}
+#gallery-grid{
+  display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;
+  gap:14px;padding-inline:4px;padding-block:14px 6px;margin-inline:-4px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
 }
-.masonry figure img{
-  width:100%;height:auto;object-fit:cover;
+#gallery-grid::-webkit-scrollbar{display:none}
+#gallery-grid figure{
+  flex:0 0 min(72%,300px);scroll-snap-align:center;margin:0;
+  aspect-ratio:4/5;border-radius:var(--r-md);overflow:hidden;
+  box-shadow:var(--shadow-sm);position:relative;background:var(--bg-warm);cursor:pointer;
+  transform:rotate(var(--tilt,0deg));
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+}
+#gallery-grid figure img{
+  width:100%;height:100%;object-fit:cover;display:block;
   transition:transform .5s var(--ease);
 }
-/* staggered reveal per tile */
-.masonry figure:nth-child(2){transition-delay:.07s}
-.masonry figure:nth-child(3){transition-delay:.14s}
-.masonry figure:nth-child(4){transition-delay:.21s}
-.masonry figure:nth-child(5){transition-delay:.28s}
-.masonry figure:nth-child(6){transition-delay:.35s}
-.masonry figure:nth-child(7){transition-delay:.42s}
-.masonry figure:hover img{transform:scale(1.05)}
-.masonry .ph{
-  width:100%;display:flex;align-items:center;justify-content:center;
+#gallery-grid figure.is-focus{
+  transform:rotate(0deg) scale(1.06);
+  box-shadow:var(--shadow-lg);
+  z-index:1;
+}
+#gallery-grid .ph{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
   color:var(--green-primary);
   background:linear-gradient(135deg,var(--sand),var(--sand-light));
 }
-.masonry .ph svg{width:40px;height:40px;opacity:.4;stroke:currentColor;stroke-width:1.4;fill:none}
+#gallery-grid .ph svg{width:40px;height:40px;opacity:.4;stroke:currentColor;stroke-width:1.4;fill:none}
+.gallery-viewall{
+  display:flex;flex:0 0 min(42%,175px);scroll-snap-align:center;aspect-ratio:4/5;
+  align-items:center;justify-content:center;text-align:center;line-height:1.5;
+  border-radius:var(--r-md);border:1.5px solid var(--text);color:var(--text);
+  font-weight:600;font-size:.95rem;padding:16px;background:var(--bg-warm);
+  transition:background .2s;
+}
+.gallery-viewall:hover,.gallery-viewall:active{background:rgba(26,20,16,.06)}
 
-/* gallery "view all" tile — hidden unless the mobile strip layout is active */
-.gallery-viewall{display:none}
-
-/* mobile only: horizontal scroll-snap strip instead of a single tall column */
-@media(max-width:680px){
-  #gallery-grid{
-    display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
-    gap:14px;padding-inline:4px;padding-block:14px 6px;margin-inline:-4px;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+/* nav arrows — only for pointer devices that can hover (mouse/trackpad); touch relies on swipe */
+.gallery-arrow{display:none}
+@media(hover:hover) and (pointer:fine){
+  .gallery-arrow{
+    display:flex;position:absolute;top:50%;transform:translateY(-50%);
+    width:46px;height:46px;border-radius:50%;z-index:2;
+    background:var(--white);color:var(--text);box-shadow:var(--shadow-sm);
+    align-items:center;justify-content:center;transition:background .2s,box-shadow .2s;
   }
-  #gallery-grid::-webkit-scrollbar{display:none}
-  #gallery-grid figure{
-    flex:0 0 72%;scroll-snap-align:center;margin-bottom:0;
-    aspect-ratio:4/5;
-    transform:rotate(var(--tilt,0deg));
-    transition:transform .35s var(--ease),box-shadow .35s var(--ease);
-  }
-  #gallery-grid figure img{height:100%}
-  #gallery-grid figure.is-focus{
-    transform:rotate(0deg) scale(1.06);
-    box-shadow:var(--shadow-lg);
-    z-index:1;
-  }
-  .gallery-viewall{
-    display:flex;flex:0 0 42%;scroll-snap-align:center;aspect-ratio:4/5;
-    align-items:center;justify-content:center;text-align:center;line-height:1.5;
-    border-radius:var(--r-md);border:1.5px solid var(--text);color:var(--text);
-    font-weight:600;font-size:.95rem;padding:16px;background:var(--bg-warm);
-  }
-  .gallery-viewall:active{background:rgba(26,20,16,.06)}
+  .gallery-arrow:hover{background:var(--bg-warm);box-shadow:var(--shadow-lg)}
+  .gallery-arrow svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none}
+  .gallery-arrow-prev{inset-inline-start:-6px}
+  .gallery-arrow-next{inset-inline-end:-6px}
 }
 
 /* ============ LIGHTBOX ============ */
@@ -763,7 +757,15 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       <h2 class="reveal" data-delay="1" id="gallery-heading">יצירות, ידיים וחיוכים</h2>
       <p class="reveal" data-delay="2" id="gallery-text">הצצה לסדנאות אמיתיות ולתוצאות שיצרו המשתתפות שלנו.</p>
     </div>
-    <div class="masonry" id="gallery-grid"></div>
+    <div class="gallery-wrap">
+      <div id="gallery-grid"></div>
+      <button type="button" class="gallery-arrow gallery-arrow-prev" aria-label="תמונות קודמות">
+        <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button type="button" class="gallery-arrow gallery-arrow-next" aria-label="תמונות נוספות">
+        <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -998,6 +1000,29 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       }, {root: grid, threshold: [0, 0.6, 1]});
       figures.forEach(function(fig){ focusObserver.observe(fig); });
     }
+
+    /* desktop: a plain vertical mouse-wheel gesture over the strip scrolls it sideways */
+    grid.addEventListener('wheel', function(e){
+      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+        e.preventDefault();
+        grid.scrollLeft -= e.deltaY;
+      }
+    }, {passive:false});
+
+    /* desktop: hover-only nav arrows (RTL: scrollLeft grows more negative toward later items) */
+    var wrap = grid.closest('.gallery-wrap');
+    var prevBtn = wrap && wrap.querySelector('.gallery-arrow-prev');
+    var nextBtn = wrap && wrap.querySelector('.gallery-arrow-next');
+    function tileStep(){
+      var fig = grid.querySelector('figure');
+      return (fig ? fig.getBoundingClientRect().width : grid.clientWidth * 0.7) + 14;
+    }
+    if(prevBtn) prevBtn.addEventListener('click', function(){
+      grid.scrollBy({left: tileStep(), behavior: 'auto'});
+    });
+    if(nextBtn) nextBtn.addEventListener('click', function(){
+      grid.scrollBy({left: -tileStep(), behavior: 'auto'});
+    });
   }
 
   function extractYouTubeId(url){
