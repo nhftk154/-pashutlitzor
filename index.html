@@ -1002,12 +1002,18 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       figures.forEach(function(fig){ focusObserver.observe(fig); });
     }
 
-    /* desktop: a plain vertical mouse-wheel gesture over the strip scrolls it sideways */
+    /* desktop: a plain vertical mouse-wheel gesture over the strip scrolls it sideways —
+       but only while the strip actually has room to move that way, so scrolling past the
+       gallery with the wheel still works normally once you hit either end */
     grid.addEventListener('wheel', function(e){
-      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
-        e.preventDefault();
-        grid.scrollLeft -= e.deltaY;
-      }
+      if(Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      var maxNegative = -(grid.scrollWidth - grid.clientWidth);
+      var wantsNext = e.deltaY > 0;
+      var atStart = grid.scrollLeft >= -1;
+      var atEnd = grid.scrollLeft <= maxNegative + 1;
+      if((wantsNext && atEnd) || (!wantsNext && atStart)) return;
+      e.preventDefault();
+      grid.scrollLeft -= e.deltaY;
     }, {passive:false});
 
     /* desktop: hover-only nav arrows (RTL: scrollLeft grows more negative toward later items) */
