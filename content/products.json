@@ -61,7 +61,11 @@
       "variants": [],
       "badges": [],
       "delivery": "איסוף עצמי מהסטודיו או משלוח בתיאום מראש.",
-      "images": [],
+      "images": [
+        "/assets/gallery/fullsizerender.jpeg",
+        "/assets/gallery/fullsizerender.jpeg",
+        "/assets/gallery/fullsizerender.jpeg"
+      ],
       "type": "finished",
       "howToUse": "",
       "description": "מתאימים רק לנרות שעווה.",
