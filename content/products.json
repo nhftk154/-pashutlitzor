@@ -44,7 +44,9 @@
       "variants": [],
       "badges": [],
       "delivery": "איסוף עצמי מהסטודיו או משלוח בתיאום מראש.",
-      "images": [],
+      "images": [
+        "/assets/gallery/fullsizerender.jpeg"
+      ],
       "type": "finished",
       "howToUse": "",
       "description": "זמינים בכמה גדלים. TODO: לוודא מול הקטלוג המחיר לכל גודל בנפרד (בקטלוג מופיע רק מחיר אחד).",
