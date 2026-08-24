@@ -132,7 +132,9 @@
       "variants": [],
       "badges": [],
       "delivery": "איסוף עצמי מהסטודיו או משלוח בתיאום מראש.",
-      "images": [],
+      "images": [
+        "/assets/gallery/fullsizerender.jpeg"
+      ],
       "type": "finished",
       "howToUse": "",
       "description": "בית מזוזה בעיצוב \"ואהבת\".",
