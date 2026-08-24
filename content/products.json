@@ -97,7 +97,9 @@
       "variants": [],
       "badges": [],
       "delivery": "איסוף עצמי מהסטודיו או משלוח בתיאום מראש.",
-      "images": [],
+      "images": [
+        ""
+      ],
       "type": "finished",
       "howToUse": "",
       "description": "זוג פמוטים ומגש.",
@@ -112,7 +114,10 @@
       "variants": [],
       "badges": [],
       "delivery": "איסוף עצמי מהסטודיו או משלוח בתיאום מראש.",
-      "images": [],
+      "images": [
+        "/assets/gallery/img_9924.jpeg",
+        "/assets/gallery/img_9920.jpeg"
+      ],
       "type": "finished",
       "howToUse": "",
       "description": "שילוב של בטון פולימרי.",
