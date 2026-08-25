@@ -143,6 +143,15 @@
     background: rgba(0,0,0,.6); color: #fff; font-size: .65rem;
     padding: 1px 6px; border-radius: 10px;
   }
+  .order-item .remove {
+    position: absolute; top: 4px; left: 4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(0,0,0,.55); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; border: 1px solid rgba(255,255,255,.4);
+    padding: 0; line-height: 1; cursor: pointer;
+  }
+  .order-item .remove:hover { background: var(--danger); border-color: var(--danger); }
   .order-controls { display: flex; justify-content: center; gap: 4px; margin-top: 4px; }
   .order-controls button { padding: 2px 9px; font-size: .75rem; }
   .log { font-size: .82rem; color: var(--muted); margin-top: 10px; white-space: pre-wrap; }
@@ -155,7 +164,7 @@
     .thumb .name { font-size: .72rem; padding: 4px 6px; }
     .pending-item, .order-item { width: 108px; }
     .pending-item img, .order-item img { width: 108px; height: 108px; }
-    .pending-item button { width: 28px; height: 28px; font-size: 1rem; }
+    .pending-item button, .order-item .remove { width: 28px; height: 28px; font-size: 1rem; }
     .order-controls button { padding: 6px 14px; font-size: .85rem; }
   }
 </style>
@@ -242,6 +251,7 @@
     gallerySha: null,
     existingAssets: [],    // [{path, download_url, name, sha}]
     existingByKey: {},     // normalizedPath -> asset
+    existingThumbEls: {},  // normalizedPath -> thumb DOM element in section 3
     originalStrings: {},   // normalizedPath -> exact string as stored in target's array (if present)
     pendingFiles: {},      // id -> File
     nextPendingId: 1,
@@ -369,6 +379,7 @@
       state.order.push(n);
     });
 
+    state.existingThumbEls = {};
     state.existingAssets.forEach(function (asset) {
       var n = normalize(asset.path);
       var thumb = document.createElement('div');
@@ -378,16 +389,10 @@
         '<span class="name">' + asset.name + '</span>';
       var img = thumb.querySelector('img');
       loadThumb(img, asset.download_url);
+      state.existingThumbEls[n] = thumb;
 
       thumb.addEventListener('click', function () {
-        var idx = state.order.indexOf(n);
-        if (idx === -1) { state.order.push(n); thumb.classList.add('checked'); }
-        else {
-          state.order = state.order.filter(function (k) { return k !== n; });
-          thumb.classList.remove('checked');
-        }
-        updateExistingCount();
-        renderOrderStrip();
+        toggleExisting(n, state.order.indexOf(n) === -1);
       });
       thumb.querySelector('.del').addEventListener('click', function (e) {
         e.stopPropagation();
@@ -418,6 +423,30 @@
     els.existingCount.textContent = n;
   }
 
+  function toggleExisting(key, checked) {
+    if (checked) {
+      if (state.order.indexOf(key) === -1) state.order.push(key);
+    } else {
+      state.order = state.order.filter(function (k) { return k !== key; });
+    }
+    var thumb = state.existingThumbEls[key];
+    if (thumb) thumb.classList.toggle('checked', checked);
+    updateExistingCount();
+    renderOrderStrip();
+  }
+
+  function removeOrderEntry(key) {
+    if (key.indexOf('pending:') === 0) {
+      delete state.pendingFiles[key];
+      state.order = state.order.filter(function (k) { return k !== key; });
+      renderPendingGrid();
+      updateExistingCount();
+      renderOrderStrip();
+    } else {
+      toggleExisting(key, false);
+    }
+  }
+
   function orderEntryInfo(key) {
     if (key.indexOf('pending:') === 0) {
       var file = state.pendingFiles[key];
@@ -436,11 +465,15 @@
       item.className = 'order-item';
       item.innerHTML =
         '<span class="order-num">' + (idx + 1) + '</span>' +
+        '<button type="button" class="remove" title="הסרה מהבחירה">✕</button>' +
         '<img src="' + info.src + '" alt="' + info.name + '">' +
         '<div class="order-controls">' +
           '<button type="button" class="secondary move-up" title="הזזה קדימה">▲</button>' +
           '<button type="button" class="secondary move-down" title="הזזה אחורה">▼</button>' +
         '</div>';
+      item.querySelector('.remove').addEventListener('click', function () {
+        removeOrderEntry(key);
+      });
       item.querySelector('.move-up').addEventListener('click', function () {
         if (idx > 0) {
           var t = state.order[idx]; state.order[idx] = state.order[idx - 1]; state.order[idx - 1] = t;
