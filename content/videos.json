@@ -2,17 +2,24 @@
   "items": [
     {
       "type": "youtube",
-      "aspect": "landscape",
       "title": "סדנת יומולדת",
       "youtube_url": "https://youtube.com/shorts/HQaFRDRLF2w?si=Amxzf5LUDuxNumw6",
-      "poster": "/assets/videos/img_4732.jpeg"
+      "poster": "/assets/videos/img_4732.jpeg",
+      "aspect": "landscape"
     },
     {
       "type": "youtube",
-      "aspect": "landscape",
       "title": "סדנת סיכום לבנות שירות",
       "youtube_url": "https://youtube.com/shorts/NJCDUmPQgVQ?si=XW-wk5pIaFirIU_1",
-      "poster": "/assets/videos/img_4921.jpeg"
+      "poster": "/assets/videos/img_4921.jpeg",
+      "aspect": "landscape"
+    },
+    {
+      "type": "file",
+      "title": "",
+      "poster": "/assets/gallery/1787657461111-gophc-dsp_review_A4.png",
+      "aspect": "portrait",
+      "file_src": "/assets/gallery/לוגו אמא סרטון.mp4"
     }
   ]
 }
