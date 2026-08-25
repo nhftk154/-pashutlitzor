@@ -360,7 +360,14 @@
       initialChecked[n] = true;
       state.originalStrings[n] = p;
     });
-    state.order = targetImages.map(function (p) { return normalize(p); });
+    state.order = [];
+    var seenExisting = {};
+    targetImages.forEach(function (p) {
+      var n = normalize(p);
+      if (seenExisting[n]) return;
+      seenExisting[n] = true;
+      state.order.push(n);
+    });
 
     state.existingAssets.forEach(function (asset) {
       var n = normalize(asset.path);
@@ -375,7 +382,10 @@
       thumb.addEventListener('click', function () {
         var idx = state.order.indexOf(n);
         if (idx === -1) { state.order.push(n); thumb.classList.add('checked'); }
-        else { state.order.splice(idx, 1); thumb.classList.remove('checked'); }
+        else {
+          state.order = state.order.filter(function (k) { return k !== n; });
+          thumb.classList.remove('checked');
+        }
         updateExistingCount();
         renderOrderStrip();
       });
