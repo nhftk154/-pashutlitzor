@@ -66,8 +66,8 @@
   .status.err { color: var(--danger); }
   .hidden { display: none !important; }
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin-top: 6px;
     max-height: 360px;
@@ -76,7 +76,9 @@
   }
   .thumb {
     position: relative;
-    aspect-ratio: 1;
+    flex: 0 0 auto;
+    width: 96px;
+    height: 96px;
     border-radius: 6px;
     overflow: hidden;
     border: 2px solid var(--border);
@@ -147,7 +149,8 @@
   a { color: var(--accent); }
 
   @media (max-width: 600px) {
-    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .grid { gap: 12px; }
+    .thumb { width: 140px; height: 140px; }
     .thumb .mark, .thumb .del { width: 30px; height: 30px; font-size: 1rem; }
     .thumb .name { font-size: .72rem; padding: 4px 6px; }
     .pending-item, .order-item { width: 108px; }
