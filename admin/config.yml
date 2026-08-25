@@ -37,6 +37,7 @@ collections:
             name: "items"
             widget: "image"
             multiple: true
+            required: false
             hint: "כאן אפשר להוסיף/להחליף תמונה אחת. להעלאת כמה תמונות בבת אחת יש כלי נפרד: admin/bulk-images.html"
 
   - name: "testimonials"
@@ -202,6 +203,7 @@ collections:
                 name: "images"
                 widget: "image"
                 multiple: true
+                required: false
                 hint: "כאן אפשר להוסיף/להחליף תמונה אחת. להעלאת כמה תמונות בבת אחת יש כלי נפרד: admin/bulk-images.html"
               - label: "תגיות (אופציונלי)"
                 name: "badges"
