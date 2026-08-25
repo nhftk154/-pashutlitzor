@@ -115,7 +115,20 @@
     root.innerHTML =
       '<div class="pdp-grid">' +
         '<div class="pdp-gallery">' +
-          '<div class="pdp-gallery-main">' + (images[0] ? '<img id="pdp-main-img" src="' + esc(images[0]) + '" alt="' + esc(product.name) + '" onerror="this.remove()">' : '') + '</div>' +
+          '<div class="pdp-gallery-main">' +
+            (images[0] ? '<img id="pdp-main-img" src="' + esc(images[0]) + '" alt="' + esc(product.name) + '" onerror="this.remove()">' : '') +
+            (images.length > 1 ?
+              '<button type="button" class="pdp-gallery-arrow prev" id="pdp-arrow-prev" aria-label="תמונה קודמת">‹</button>' +
+              '<button type="button" class="pdp-gallery-arrow next" id="pdp-arrow-next" aria-label="תמונה הבאה">›</button>'
+              : '') +
+          '</div>' +
+          (images.length > 1 ?
+            '<div class="pdp-gallery-thumbs" id="pdp-thumbs">' +
+              images.map(function(src, i){
+                return '<button type="button" class="pdp-thumb' + (i === 0 ? ' active' : '') + '" data-idx="' + i + '" aria-label="תמונה ' + (i + 1) + '"><img src="' + esc(src) + '" alt="" onerror="this.closest(\'.pdp-thumb\').remove()"></button>';
+              }).join('') +
+            '</div>'
+            : '') +
         '</div>' +
         '<div class="pdp-info">' +
           '<span class="pdp-cat">' + esc(product.category) + '</span>' +
@@ -165,6 +178,24 @@
       sync();
       window.addEventListener('resize', sync);
     });
+
+    if (images.length > 1) {
+      var currentImgIdx = 0;
+      var mainImg = document.getElementById('pdp-main-img');
+      var thumbs = root.querySelectorAll('.pdp-thumb');
+      function showImage(idx){
+        currentImgIdx = (idx + images.length) % images.length;
+        if (mainImg) mainImg.src = images[currentImgIdx];
+        thumbs.forEach(function(t){ t.classList.toggle('active', Number(t.getAttribute('data-idx')) === currentImgIdx); });
+      }
+      thumbs.forEach(function(t){
+        t.addEventListener('click', function(){ showImage(Number(t.getAttribute('data-idx'))); });
+      });
+      var prevBtn = document.getElementById('pdp-arrow-prev');
+      var nextBtn = document.getElementById('pdp-arrow-next');
+      if (prevBtn) prevBtn.addEventListener('click', function(){ showImage(currentImgIdx - 1); });
+      if (nextBtn) nextBtn.addEventListener('click', function(){ showImage(currentImgIdx + 1); });
+    }
 
     var selectedVariant = hasVariants ? product.variants[0] : null;
     var qty = 1;
