@@ -160,6 +160,11 @@
         <input type="file" id="fileInput" accept="image/*" multiple class="hidden" />
       </div>
       <div class="pending-grid" id="pendingGrid"></div>
+      <div class="row" style="margin-top:14px;">
+        <button id="uploadOnlyBtn" class="secondary">העלאה למאגר בלבד (בלי לשייך ליעד)</button>
+      </div>
+      <p class="sub" style="margin:6px 0 0;font-size:.8rem;">מעלה את התמונות לספריית התמונות בלבד, בלי לשייך אותן לגלריה/מוצר עכשיו — אחר כך אפשר לבחור אותן בסעיף 3, לכל יעד שרוצים.</p>
+      <div class="status" id="uploadOnlyStatus"></div>
     </div>
 
     <div class="card">
@@ -183,7 +188,7 @@
   var els = {};
   ['tokenCard','tokenInput','connectBtn','disconnectBtn','tokenStatus','mainArea',
    'targetSelect','targetStatus','existingGrid','existingCount','dropzone','fileInput',
-   'pendingGrid','pendingCount','saveBtn','saveStatus','log'
+   'pendingGrid','pendingCount','uploadOnlyBtn','uploadOnlyStatus','saveBtn','saveStatus','log'
   ].forEach(function (id) { els[id] = document.getElementById(id); });
 
   var state = {
@@ -475,6 +480,34 @@
         setStatus(els.saveStatus, err.message, 'err');
       })
       .then(function () {
+        els.saveBtn.disabled = false;
+      });
+  });
+
+  els.uploadOnlyBtn.addEventListener('click', function () {
+    if (!state.pendingFiles.length) {
+      setStatus(els.uploadOnlyStatus, 'לא נבחרו קבצים להעלאה', 'err');
+      return;
+    }
+    els.uploadOnlyBtn.disabled = true;
+    els.saveBtn.disabled = true;
+    els.log.textContent = '';
+    setStatus(els.uploadOnlyStatus, 'מעלה למאגר...', '');
+
+    uploadPendingFilesSequentially()
+      .then(function (uploadedPaths) {
+        log('✓ הועלו ' + uploadedPaths.length + ' תמונות למאגר (בלי שיוך לגלריה/מוצר)');
+        setStatus(els.uploadOnlyStatus, 'הועלה בהצלחה למאגר ✓ — אפשר לבחור אותן עכשיו בסעיף 3, לכל יעד', 'ok');
+        state.pendingFiles = [];
+        renderPendingGrid();
+        return loadAll();
+      })
+      .catch(function (err) {
+        log('✗ ' + err.message);
+        setStatus(els.uploadOnlyStatus, err.message, 'err');
+      })
+      .then(function () {
+        els.uploadOnlyBtn.disabled = false;
         els.saveBtn.disabled = false;
       });
   });
