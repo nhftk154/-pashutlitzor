@@ -99,6 +99,15 @@
     background: rgba(0,0,0,.6); color: #fff;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
+  .thumb .del {
+    position: absolute; top: 4px; left: 4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(0,0,0,.55); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; border: 1px solid rgba(255,255,255,.4);
+    padding: 0; line-height: 1; cursor: pointer;
+  }
+  .thumb .del:hover { background: var(--danger); border-color: var(--danger); }
   .dropzone {
     border: 2px dashed var(--border);
     border-radius: 8px;
@@ -121,6 +130,19 @@
     display: inline-block; background: var(--bg); border: 1px solid var(--border);
     color: var(--muted); font-size: .78rem; padding: 2px 8px; border-radius: 20px;
   }
+  .order-strip { display: flex; flex-wrap: wrap; gap: 10px; max-height: 340px; overflow-y: auto; padding: 2px; }
+  .order-item { position: relative; width: 88px; text-align: center; }
+  .order-item img {
+    width: 88px; height: 88px; object-fit: cover; border-radius: 6px;
+    display: block; border: 2px solid var(--border); background: #14161a;
+  }
+  .order-num {
+    position: absolute; top: 4px; right: 4px;
+    background: rgba(0,0,0,.6); color: #fff; font-size: .65rem;
+    padding: 1px 6px; border-radius: 10px;
+  }
+  .order-controls { display: flex; justify-content: center; gap: 4px; margin-top: 4px; }
+  .order-controls button { padding: 2px 9px; font-size: .75rem; }
   .log { font-size: .82rem; color: var(--muted); margin-top: 10px; white-space: pre-wrap; }
   a { color: var(--accent); }
 </style>
@@ -150,6 +172,7 @@
 
     <div class="card">
       <h2>3. תמונות קיימות בגלריה — סמני את הרלוונטיות <span class="count-badge" id="existingCount">0</span></h2>
+      <p class="sub" style="margin:0 0 10px;font-size:.8rem;">לחיצה על תמונה מסמנת/מבטלת סימון. ה-✕ בפינה מוחקת את הקובץ לצמיתות מ-GitHub.</p>
       <div class="grid" id="existingGrid"></div>
     </div>
 
@@ -168,7 +191,13 @@
     </div>
 
     <div class="card">
-      <h2>5. שמירה</h2>
+      <h2>5. סדר התמונות הסופי <span class="count-badge" id="orderCount">0</span></h2>
+      <p class="sub" style="margin:0 0 10px;font-size:.8rem;">ככה התמונות יסודרו ביעד שנבחר. לחצי על ▲/▼ כדי להזיז תמונה קדימה/אחורה בסדר.</p>
+      <div class="order-strip" id="orderGrid"></div>
+    </div>
+
+    <div class="card">
+      <h2>6. שמירה</h2>
       <button id="saveBtn">שמירת התמונות ליעד שנבחר</button>
       <div class="status" id="saveStatus"></div>
       <div class="log" id="log"></div>
@@ -188,19 +217,22 @@
   var els = {};
   ['tokenCard','tokenInput','connectBtn','disconnectBtn','tokenStatus','mainArea',
    'targetSelect','targetStatus','existingGrid','existingCount','dropzone','fileInput',
-   'pendingGrid','pendingCount','uploadOnlyBtn','uploadOnlyStatus','saveBtn','saveStatus','log'
+   'pendingGrid','pendingCount','uploadOnlyBtn','uploadOnlyStatus',
+   'orderGrid','orderCount','saveBtn','saveStatus','log'
   ].forEach(function (id) { els[id] = document.getElementById(id); });
 
   var state = {
     token: null,
-    products: null,      // parsed content/products.json
+    products: null,       // parsed content/products.json
     productsSha: null,
-    gallery: null,        // parsed content/gallery.json
+    gallery: null,         // parsed content/gallery.json
     gallerySha: null,
-    existingAssets: [],   // [{path, download_url, name}]
-    checked: {},           // normalizedPath -> true
+    existingAssets: [],    // [{path, download_url, name, sha}]
+    existingByKey: {},     // normalizedPath -> asset
     originalStrings: {},   // normalizedPath -> exact string as stored in target's array (if present)
-    pendingFiles: []       // File objects queued for upload
+    pendingFiles: {},      // id -> File
+    nextPendingId: 1,
+    order: []              // ordered list of keys: normalizedPath (existing) or 'pending:<id>' (new file)
   };
 
   function log(msg) {
@@ -265,6 +297,17 @@
     });
   }
 
+  function ghDeleteFile(path, sha, message) {
+    return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + path, {
+      method: 'DELETE',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders()),
+      body: JSON.stringify({ message: message, sha: sha, branch: BRANCH })
+    }).then(function (r) {
+      if (!r.ok) return r.json().then(function (j) { throw new Error((j && j.message) || ('מחיקה נכשלה (' + r.status + ')')); });
+      return r.json();
+    });
+  }
+
   function fileToBase64(file) {
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
@@ -294,57 +337,134 @@
   function renderExistingGrid() {
     els.existingGrid.innerHTML = '';
     var targetImages = currentTargetImages();
-    state.checked = {};
     state.originalStrings = {};
+    state.existingByKey = {};
+    state.existingAssets.forEach(function (asset) { state.existingByKey[normalize(asset.path)] = asset; });
+
+    var initialChecked = {};
     targetImages.forEach(function (p) {
       var n = normalize(p);
-      state.checked[n] = true;
+      initialChecked[n] = true;
       state.originalStrings[n] = p;
     });
+    state.order = targetImages.map(function (p) { return normalize(p); });
 
     state.existingAssets.forEach(function (asset) {
       var n = normalize(asset.path);
       var thumb = document.createElement('div');
-      thumb.className = 'thumb' + (state.checked[n] ? ' checked' : '');
-      thumb.innerHTML = '<img alt="' + asset.name + '"><span class="mark">✓</span><span class="name">' + asset.name + '</span>';
+      thumb.className = 'thumb' + (initialChecked[n] ? ' checked' : '');
+      thumb.innerHTML = '<img alt="' + asset.name + '"><span class="mark">✓</span>' +
+        '<button type="button" class="del" title="מחיקה לצמיתות">✕</button>' +
+        '<span class="name">' + asset.name + '</span>';
       var img = thumb.querySelector('img');
       loadThumb(img, asset.download_url);
+
       thumb.addEventListener('click', function () {
-        state.checked[n] = !state.checked[n];
-        thumb.classList.toggle('checked', !!state.checked[n]);
+        var idx = state.order.indexOf(n);
+        if (idx === -1) { state.order.push(n); thumb.classList.add('checked'); }
+        else { state.order.splice(idx, 1); thumb.classList.remove('checked'); }
         updateExistingCount();
+        renderOrderStrip();
+      });
+      thumb.querySelector('.del').addEventListener('click', function (e) {
+        e.stopPropagation();
+        deleteExistingAsset(asset);
       });
       els.existingGrid.appendChild(thumb);
     });
     updateExistingCount();
+    renderOrderStrip();
+  }
+
+  function deleteExistingAsset(asset) {
+    var ok = confirm('למחוק לצמיתות את "' + asset.name + '" מ-GitHub?\nאם התמונה משמשת בגלריה או במוצר אחר, היא תיעלם משם גם (יש להסיר אותה משם קודם אם צריך).');
+    if (!ok) return;
+    setStatus(els.saveStatus, 'מוחקת את ' + asset.name + '...', '');
+    ghDeleteFile(asset.path, asset.sha, 'מחיקת תמונה: ' + asset.name + ' (bulk-images tool)')
+      .then(function () {
+        setStatus(els.saveStatus, 'נמחק ✓ — ' + asset.name, 'ok');
+        return loadAll();
+      })
+      .catch(function (err) {
+        setStatus(els.saveStatus, err.message, 'err');
+      });
   }
 
   function updateExistingCount() {
-    var n = Object.keys(state.checked).filter(function (k) { return state.checked[k]; }).length;
+    var n = state.order.filter(function (k) { return k.indexOf('pending:') !== 0; }).length;
     els.existingCount.textContent = n;
+  }
+
+  function orderEntryInfo(key) {
+    if (key.indexOf('pending:') === 0) {
+      var file = state.pendingFiles[key];
+      return file ? { src: URL.createObjectURL(file), name: file.name } : null;
+    }
+    var asset = state.existingByKey[key];
+    return asset ? { src: asset.download_url, name: asset.name } : { src: '', name: key };
+  }
+
+  function renderOrderStrip() {
+    els.orderGrid.innerHTML = '';
+    state.order.forEach(function (key, idx) {
+      var info = orderEntryInfo(key);
+      if (!info) return;
+      var item = document.createElement('div');
+      item.className = 'order-item';
+      item.innerHTML =
+        '<span class="order-num">' + (idx + 1) + '</span>' +
+        '<img src="' + info.src + '" alt="' + info.name + '">' +
+        '<div class="order-controls">' +
+          '<button type="button" class="secondary move-up" title="הזזה קדימה">▲</button>' +
+          '<button type="button" class="secondary move-down" title="הזזה אחורה">▼</button>' +
+        '</div>';
+      item.querySelector('.move-up').addEventListener('click', function () {
+        if (idx > 0) {
+          var t = state.order[idx]; state.order[idx] = state.order[idx - 1]; state.order[idx - 1] = t;
+          renderOrderStrip();
+        }
+      });
+      item.querySelector('.move-down').addEventListener('click', function () {
+        if (idx < state.order.length - 1) {
+          var t = state.order[idx]; state.order[idx] = state.order[idx + 1]; state.order[idx + 1] = t;
+          renderOrderStrip();
+        }
+      });
+      els.orderGrid.appendChild(item);
+    });
+    els.orderCount.textContent = state.order.length;
   }
 
   function renderPendingGrid() {
     els.pendingGrid.innerHTML = '';
-    state.pendingFiles.forEach(function (file, idx) {
+    Object.keys(state.pendingFiles).forEach(function (id) {
+      var file = state.pendingFiles[id];
       var item = document.createElement('div');
       item.className = 'pending-item';
       var url = URL.createObjectURL(file);
       item.innerHTML = '<img src="' + url + '" alt="' + file.name + '"><button title="הסרה">✕</button>';
       item.querySelector('button').addEventListener('click', function () {
-        state.pendingFiles.splice(idx, 1);
+        delete state.pendingFiles[id];
+        var idx = state.order.indexOf(id);
+        if (idx !== -1) state.order.splice(idx, 1);
         renderPendingGrid();
+        renderOrderStrip();
       });
       els.pendingGrid.appendChild(item);
     });
-    els.pendingCount.textContent = state.pendingFiles.length;
+    els.pendingCount.textContent = Object.keys(state.pendingFiles).length;
   }
 
   function addFiles(fileList) {
     Array.prototype.forEach.call(fileList, function (f) {
-      if (f.type.indexOf('image/') === 0) state.pendingFiles.push(f);
+      if (f.type.indexOf('image/') === 0) {
+        var id = 'pending:' + (state.nextPendingId++);
+        state.pendingFiles[id] = f;
+        state.order.push(id);
+      }
     });
     renderPendingGrid();
+    renderOrderStrip();
   }
 
   els.dropzone.addEventListener('click', function () { els.fileInput.click(); });
@@ -422,22 +542,24 @@
     setStatus(els.tokenStatus, 'נותקת', '');
   });
 
-  function uploadPendingFilesSequentially() {
-    var uploadedPaths = [];
+  function uploadPendingFilesSequentially(ids) {
+    var uploadedPathById = {};
     // sequential (not Promise.all) to stay well under GitHub's secondary rate limits
-    return state.pendingFiles.reduce(function (chain, file) {
+    return ids.reduce(function (chain, id) {
       return chain.then(function () {
+        var file = state.pendingFiles[id];
+        if (!file) return;
         log('מעלה ' + file.name + '...');
         return fileToBase64(file).then(function (b64) {
           var fname = safeFilename(file.name);
           var path = ASSETS_PATH + '/' + fname;
           return ghPutNewFile(path, b64, 'העלאת תמונה: ' + fname + ' (bulk-images tool)').then(function () {
-            uploadedPaths.push('/' + path);
+            uploadedPathById[id] = '/' + path;
             log('✓ הועלה: ' + fname);
           });
         });
       });
-    }, Promise.resolve()).then(function () { return uploadedPaths; });
+    }, Promise.resolve()).then(function () { return uploadedPathById; });
   }
 
   els.saveBtn.addEventListener('click', function () {
@@ -445,12 +567,14 @@
     els.log.textContent = '';
     setStatus(els.saveStatus, 'שומרת...', '');
 
-    uploadPendingFilesSequentially()
-      .then(function (uploadedPaths) {
-        var finalPaths = Object.keys(state.checked)
-          .filter(function (k) { return state.checked[k]; })
-          .map(function (k) { return state.originalStrings[k] || ('/' + k); });
-        finalPaths = finalPaths.concat(uploadedPaths);
+    var pendingIdsInOrder = state.order.filter(function (k) { return k.indexOf('pending:') === 0; });
+
+    uploadPendingFilesSequentially(pendingIdsInOrder)
+      .then(function (uploadedPathById) {
+        var finalPaths = state.order.map(function (k) {
+          if (k.indexOf('pending:') === 0) return uploadedPathById[k];
+          return state.originalStrings[k] || ('/' + k);
+        }).filter(Boolean);
 
         var val = els.targetSelect.value;
         if (val === 'gallery') {
@@ -471,7 +595,7 @@
       .then(function () {
         log('✓ נשמר בהצלחה');
         setStatus(els.saveStatus, 'נשמר בהצלחה ✓', 'ok');
-        state.pendingFiles = [];
+        state.pendingFiles = {};
         renderPendingGrid();
         return loadAll();
       })
@@ -485,7 +609,8 @@
   });
 
   els.uploadOnlyBtn.addEventListener('click', function () {
-    if (!state.pendingFiles.length) {
+    var ids = Object.keys(state.pendingFiles);
+    if (!ids.length) {
       setStatus(els.uploadOnlyStatus, 'לא נבחרו קבצים להעלאה', 'err');
       return;
     }
@@ -494,11 +619,16 @@
     els.log.textContent = '';
     setStatus(els.uploadOnlyStatus, 'מעלה למאגר...', '');
 
-    uploadPendingFilesSequentially()
-      .then(function (uploadedPaths) {
-        log('✓ הועלו ' + uploadedPaths.length + ' תמונות למאגר (בלי שיוך לגלריה/מוצר)');
+    uploadPendingFilesSequentially(ids)
+      .then(function (uploadedPathById) {
+        var n = Object.keys(uploadedPathById).length;
+        log('✓ הועלו ' + n + ' תמונות למאגר (בלי שיוך לגלריה/מוצר)');
         setStatus(els.uploadOnlyStatus, 'הועלה בהצלחה למאגר ✓ — אפשר לבחור אותן עכשיו בסעיף 3, לכל יעד', 'ok');
-        state.pendingFiles = [];
+        ids.forEach(function (id) {
+          delete state.pendingFiles[id];
+          var idx = state.order.indexOf(id);
+          if (idx !== -1) state.order.splice(idx, 1);
+        });
         renderPendingGrid();
         return loadAll();
       })
