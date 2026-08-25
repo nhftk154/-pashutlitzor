@@ -209,7 +209,10 @@
       "variants": [],
       "badges": [],
       "delivery": "איסוף עצמי מהסטודיו או משלוח בתיאום מראש.",
-      "images": [],
+      "images": [
+        "/assets/gallery/img_6664.jpeg",
+        "/assets/gallery/img_6403.png"
+      ],
       "type": "finished",
       "howToUse": "",
       "description": "בסגנון טרצו ושיש.",
