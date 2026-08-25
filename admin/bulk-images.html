@@ -145,6 +145,16 @@
   .order-controls button { padding: 2px 9px; font-size: .75rem; }
   .log { font-size: .82rem; color: var(--muted); margin-top: 10px; white-space: pre-wrap; }
   a { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .thumb .mark, .thumb .del { width: 30px; height: 30px; font-size: 1rem; }
+    .thumb .name { font-size: .72rem; padding: 4px 6px; }
+    .pending-item, .order-item { width: 108px; }
+    .pending-item img, .order-item img { width: 108px; height: 108px; }
+    .pending-item button { width: 28px; height: 28px; font-size: 1rem; }
+    .order-controls button { padding: 6px 14px; font-size: .85rem; }
+  }
 </style>
 </head>
 <body>
