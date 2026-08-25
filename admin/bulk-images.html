@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>העלאת כמה תמונות בבת אחת — פשוט ליצור</title>
+<style>
+  :root {
+    --bg: #1b1e22;
+    --panel: #24282d;
+    --border: #383e45;
+    --text: #e6e8eb;
+    --muted: #9aa1a9;
+    --accent: #3b6fe0;
+    --accent-hover: #4d7de8;
+    --danger: #d9534f;
+    --ok: #4caf6e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px 80px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.3rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; font-size: .92rem; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+  .card h2 { font-size: 1rem; margin: 0 0 12px; }
+  label { display: block; font-size: .88rem; color: var(--muted); margin-bottom: 6px; }
+  input[type=password], input[type=text], select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 10px;
+    border-radius: 6px;
+    font-size: .95rem;
+  }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: .92rem;
+    cursor: pointer;
+  }
+  button:hover { background: var(--accent-hover); }
+  button.secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  button.secondary:hover { background: #2f353c; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .status { font-size: .85rem; margin-top: 8px; }
+  .status.ok { color: var(--ok); }
+  .status.err { color: var(--danger); }
+  .hidden { display: none !important; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 10px;
+    margin-top: 6px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding: 2px;
+  }
+  .thumb {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    background: #14161a;
+  }
+  .thumb.checked { border-color: var(--accent); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .mark {
+    position: absolute; top: 4px; right: 4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(0,0,0,.55); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .8rem; border: 1px solid rgba(255,255,255,.4);
+  }
+  .thumb.checked .mark { background: var(--accent); border-color: var(--accent); }
+  .thumb .name {
+    position: absolute; bottom: 0; right: 0; left: 0;
+    font-size: .62rem; padding: 2px 4px;
+    background: rgba(0,0,0,.6); color: #fff;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .dropzone {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 24px 12px;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: .9rem;
+  }
+  .dropzone.drag { border-color: var(--accent); color: var(--text); }
+  .pending-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .pending-item { position: relative; width: 88px; }
+  .pending-item img { width: 88px; height: 88px; object-fit: cover; border-radius: 6px; display: block; }
+  .pending-item button {
+    position: absolute; top: -6px; left: -6px;
+    background: var(--danger); width: 22px; height: 22px; padding: 0;
+    border-radius: 50%; font-size: .8rem; line-height: 1;
+  }
+  .count-badge {
+    display: inline-block; background: var(--bg); border: 1px solid var(--border);
+    color: var(--muted); font-size: .78rem; padding: 2px 8px; border-radius: 20px;
+  }
+  .log { font-size: .82rem; color: var(--muted); margin-top: 10px; white-space: pre-wrap; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>העלאת כמה תמונות בבת אחת</h1>
+  <p class="sub">כלי נפרד מ-Sveltia CMS: מאפשר לבחור כמה תמונות קיימות ולהעלות כמה תמונות חדשות בפעולה אחת, לגלריה או למוצר. הכול נשמר ישירות בריפו של GitHub — בדיוק כמו מהעריכה הרגילה.</p>
+
+  <div class="card" id="tokenCard">
+    <h2>1. חיבור ל-GitHub</h2>
+    <label for="tokenInput">Personal Access Token (Fine-grained), עם הרשאת Contents: Read and write על הריפו nhftk154/-pashutlitzor בלבד</label>
+    <div class="row">
+      <input type="password" id="tokenInput" placeholder="github_pat_..." style="flex:1;min-width:220px;" />
+      <button id="connectBtn">התחברות</button>
+      <button id="disconnectBtn" class="secondary hidden">ניתוק</button>
+    </div>
+    <div class="status" id="tokenStatus"></div>
+  </div>
+
+  <div id="mainArea" class="hidden">
+    <div class="card">
+      <h2>2. יעד</h2>
+      <select id="targetSelect"></select>
+      <div class="status" id="targetStatus"></div>
+    </div>
+
+    <div class="card">
+      <h2>3. תמונות קיימות בגלריה — סמני את הרלוונטיות <span class="count-badge" id="existingCount">0</span></h2>
+      <div class="grid" id="existingGrid"></div>
+    </div>
+
+    <div class="card">
+      <h2>4. תמונות חדשות מהמחשב <span class="count-badge" id="pendingCount">0</span></h2>
+      <div class="dropzone" id="dropzone">
+        גררי לכאן כמה קבצים, או לחצי לבחירה (אפשר לסמן כמה ביחד בחלון הבחירה)
+        <input type="file" id="fileInput" accept="image/*" multiple class="hidden" />
+      </div>
+      <div class="pending-grid" id="pendingGrid"></div>
+    </div>
+
+    <div class="card">
+      <h2>5. שמירה</h2>
+      <button id="saveBtn">שמירת התמונות ליעד שנבחר</button>
+      <div class="status" id="saveStatus"></div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var OWNER = 'nhftk154';
+  var REPO = '-pashutlitzor';
+  var BRANCH = 'main';
+  var API = 'https://api.github.com';
+  var ASSETS_PATH = 'assets/gallery';
+  var TOKEN_KEY = 'bulkImagesGithubToken';
+
+  var els = {};
+  ['tokenCard','tokenInput','connectBtn','disconnectBtn','tokenStatus','mainArea',
+   'targetSelect','targetStatus','existingGrid','existingCount','dropzone','fileInput',
+   'pendingGrid','pendingCount','saveBtn','saveStatus','log'
+  ].forEach(function (id) { els[id] = document.getElementById(id); });
+
+  var state = {
+    token: null,
+    products: null,      // parsed content/products.json
+    productsSha: null,
+    gallery: null,        // parsed content/gallery.json
+    gallerySha: null,
+    existingAssets: [],   // [{path, download_url, name}]
+    checked: {},           // normalizedPath -> true
+    originalStrings: {},   // normalizedPath -> exact string as stored in target's array (if present)
+    pendingFiles: []       // File objects queued for upload
+  };
+
+  function log(msg) {
+    els.log.textContent += (els.log.textContent ? '\n' : '') + msg;
+  }
+  function setStatus(el, msg, kind) {
+    el.textContent = msg || '';
+    el.className = 'status' + (kind ? ' ' + kind : '');
+  }
+  function normalize(p) { return String(p || '').replace(/^\/+/, ''); }
+  function ghHeaders() {
+    return {
+      'Authorization': 'Bearer ' + state.token,
+      'Accept': 'application/vnd.github+json'
+    };
+  }
+  function b64EncodeUnicode(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (m, p1) {
+      return String.fromCharCode('0x' + p1);
+    }));
+  }
+  function b64DecodeUnicode(str) {
+    return decodeURIComponent(atob(str).split('').map(function (c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+  }
+
+  function ghGetJson(path) {
+    return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + path + '?ref=' + BRANCH, { headers: ghHeaders() })
+      .then(function (r) {
+        if (!r.ok) throw new Error('שגיאה בטעינת ' + path + ' (' + r.status + ')');
+        return r.json();
+      });
+  }
+  function ghGetJsonFile(path) {
+    return ghGetJson(path).then(function (data) {
+      return { data: JSON.parse(b64DecodeUnicode(data.content)), sha: data.sha };
+    });
+  }
+  function ghPutJsonFile(path, sha, obj, message) {
+    var content = b64EncodeUnicode(JSON.stringify(obj, null, 2) + '\n');
+    return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + path, {
+      method: 'PUT',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders()),
+      body: JSON.stringify({ message: message, content: content, sha: sha, branch: BRANCH })
+    }).then(function (r) {
+      if (r.status === 409 || r.status === 422) {
+        throw new Error('מישהו ערך את הקובץ בינתיים — רעננו את הדף ונסו שוב.');
+      }
+      if (!r.ok) throw new Error('שמירה נכשלה (' + r.status + ')');
+      return r.json();
+    });
+  }
+  function ghPutNewFile(path, base64Content, message) {
+    return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + path, {
+      method: 'PUT',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders()),
+      body: JSON.stringify({ message: message, content: base64Content, branch: BRANCH })
+    }).then(function (r) {
+      if (!r.ok) return r.json().then(function (j) { throw new Error((j && j.message) || ('העלאה נכשלה (' + r.status + ')')); });
+      return r.json();
+    });
+  }
+
+  function fileToBase64(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () { resolve(reader.result.split(',')[1]); };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function safeFilename(name) {
+    var cleaned = name.replace(/[^a-zA-Z0-9._-]+/g, '-');
+    return Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '-' + cleaned;
+  }
+
+  function currentTargetImages() {
+    var val = els.targetSelect.value;
+    if (val === 'gallery') return state.gallery.items || [];
+    var product = (state.products.items || []).find(function (p) { return p.slug === val; });
+    return product ? (product.images || []) : [];
+  }
+
+  function loadThumb(imgEl, downloadUrl) {
+    fetch(downloadUrl, { headers: ghHeaders() })
+      .then(function (r) { return r.blob(); })
+      .then(function (blob) { imgEl.src = URL.createObjectURL(blob); })
+      .catch(function () { imgEl.alt = 'שגיאה בטעינת תמונה'; });
+  }
+
+  function renderExistingGrid() {
+    els.existingGrid.innerHTML = '';
+    var targetImages = currentTargetImages();
+    state.checked = {};
+    state.originalStrings = {};
+    targetImages.forEach(function (p) {
+      var n = normalize(p);
+      state.checked[n] = true;
+      state.originalStrings[n] = p;
+    });
+
+    state.existingAssets.forEach(function (asset) {
+      var n = normalize(asset.path);
+      var thumb = document.createElement('div');
+      thumb.className = 'thumb' + (state.checked[n] ? ' checked' : '');
+      thumb.innerHTML = '<img alt="' + asset.name + '"><span class="mark">✓</span><span class="name">' + asset.name + '</span>';
+      var img = thumb.querySelector('img');
+      loadThumb(img, asset.download_url);
+      thumb.addEventListener('click', function () {
+        state.checked[n] = !state.checked[n];
+        thumb.classList.toggle('checked', !!state.checked[n]);
+        updateExistingCount();
+      });
+      els.existingGrid.appendChild(thumb);
+    });
+    updateExistingCount();
+  }
+
+  function updateExistingCount() {
+    var n = Object.keys(state.checked).filter(function (k) { return state.checked[k]; }).length;
+    els.existingCount.textContent = n;
+  }
+
+  function renderPendingGrid() {
+    els.pendingGrid.innerHTML = '';
+    state.pendingFiles.forEach(function (file, idx) {
+      var item = document.createElement('div');
+      item.className = 'pending-item';
+      var url = URL.createObjectURL(file);
+      item.innerHTML = '<img src="' + url + '" alt="' + file.name + '"><button title="הסרה">✕</button>';
+      item.querySelector('button').addEventListener('click', function () {
+        state.pendingFiles.splice(idx, 1);
+        renderPendingGrid();
+      });
+      els.pendingGrid.appendChild(item);
+    });
+    els.pendingCount.textContent = state.pendingFiles.length;
+  }
+
+  function addFiles(fileList) {
+    Array.prototype.forEach.call(fileList, function (f) {
+      if (f.type.indexOf('image/') === 0) state.pendingFiles.push(f);
+    });
+    renderPendingGrid();
+  }
+
+  els.dropzone.addEventListener('click', function () { els.fileInput.click(); });
+  els.fileInput.addEventListener('change', function (e) { addFiles(e.target.files); e.target.value = ''; });
+  ['dragenter', 'dragover'].forEach(function (evt) {
+    els.dropzone.addEventListener(evt, function (e) { e.preventDefault(); els.dropzone.classList.add('drag'); });
+  });
+  ['dragleave', 'drop'].forEach(function (evt) {
+    els.dropzone.addEventListener(evt, function (e) { e.preventDefault(); els.dropzone.classList.remove('drag'); });
+  });
+  els.dropzone.addEventListener('drop', function (e) {
+    if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
+  });
+
+  els.targetSelect.addEventListener('change', renderExistingGrid);
+
+  function populateTargetSelect() {
+    var opts = ['<option value="gallery">גלריה</option>'];
+    (state.products.items || []).forEach(function (p) {
+      opts.push('<option value="' + p.slug + '">' + p.name + '</option>');
+    });
+    els.targetSelect.innerHTML = opts.join('');
+  }
+
+  function loadAll() {
+    setStatus(els.tokenStatus, 'טוען נתונים...', '');
+    return Promise.all([
+      ghGetJson(ASSETS_PATH),
+      ghGetJsonFile('content/products.json'),
+      ghGetJsonFile('content/gallery.json')
+    ]).then(function (results) {
+      state.existingAssets = results[0].filter(function (f) {
+        return f.type === 'file' && /\.(jpe?g|png|webp|gif|svg)$/i.test(f.name);
+      });
+      state.products = results[1].data;
+      state.productsSha = results[1].sha;
+      state.gallery = results[2].data;
+      state.gallerySha = results[2].sha;
+
+      populateTargetSelect();
+      renderExistingGrid();
+      setStatus(els.tokenStatus, 'מחוברת ✓', 'ok');
+      els.mainArea.classList.remove('hidden');
+      els.tokenInput.value = '';
+    });
+  }
+
+  function connect(token) {
+    state.token = token;
+    return fetch(API + '/repos/' + OWNER + '/' + REPO, { headers: ghHeaders() })
+      .then(function (r) {
+        if (!r.ok) throw new Error('לא הצלחתי להתחבר לריפו (בדקי שה-Token תקין ויש לו הרשאה על ' + OWNER + '/' + REPO + ')');
+        return loadAll();
+      })
+      .then(function () {
+        localStorage.setItem(TOKEN_KEY, token);
+        els.disconnectBtn.classList.remove('hidden');
+      })
+      .catch(function (err) {
+        state.token = null;
+        setStatus(els.tokenStatus, err.message, 'err');
+      });
+  }
+
+  els.connectBtn.addEventListener('click', function () {
+    var t = els.tokenInput.value.trim();
+    if (!t) { setStatus(els.tokenStatus, 'יש להזין Token קודם', 'err'); return; }
+    connect(t);
+  });
+  els.disconnectBtn.addEventListener('click', function () {
+    localStorage.removeItem(TOKEN_KEY);
+    state.token = null;
+    els.mainArea.classList.add('hidden');
+    els.disconnectBtn.classList.add('hidden');
+    setStatus(els.tokenStatus, 'נותקת', '');
+  });
+
+  function uploadPendingFilesSequentially() {
+    var uploadedPaths = [];
+    // sequential (not Promise.all) to stay well under GitHub's secondary rate limits
+    return state.pendingFiles.reduce(function (chain, file) {
+      return chain.then(function () {
+        log('מעלה ' + file.name + '...');
+        return fileToBase64(file).then(function (b64) {
+          var fname = safeFilename(file.name);
+          var path = ASSETS_PATH + '/' + fname;
+          return ghPutNewFile(path, b64, 'העלאת תמונה: ' + fname + ' (bulk-images tool)').then(function () {
+            uploadedPaths.push('/' + path);
+            log('✓ הועלה: ' + fname);
+          });
+        });
+      });
+    }, Promise.resolve()).then(function () { return uploadedPaths; });
+  }
+
+  els.saveBtn.addEventListener('click', function () {
+    els.saveBtn.disabled = true;
+    els.log.textContent = '';
+    setStatus(els.saveStatus, 'שומרת...', '');
+
+    uploadPendingFilesSequentially()
+      .then(function (uploadedPaths) {
+        var finalPaths = Object.keys(state.checked)
+          .filter(function (k) { return state.checked[k]; })
+          .map(function (k) { return state.originalStrings[k] || ('/' + k); });
+        finalPaths = finalPaths.concat(uploadedPaths);
+
+        var val = els.targetSelect.value;
+        if (val === 'gallery') {
+          log('מעדכנת את קובץ הגלריה...');
+          return ghGetJsonFile('content/gallery.json').then(function (fresh) {
+            fresh.data.items = finalPaths;
+            return ghPutJsonFile('content/gallery.json', fresh.sha, fresh.data, 'עדכון תמונות גלריה (bulk-images tool)');
+          });
+        }
+        log('מעדכנת את קובץ המוצרים...');
+        return ghGetJsonFile('content/products.json').then(function (fresh) {
+          var product = (fresh.data.items || []).find(function (p) { return p.slug === val; });
+          if (!product) throw new Error('המוצר לא נמצא — ייתכן שהוא נערך/נמחק בינתיים');
+          product.images = finalPaths;
+          return ghPutJsonFile('content/products.json', fresh.sha, fresh.data, 'עדכון תמונות מוצר: ' + product.name + ' (bulk-images tool)');
+        });
+      })
+      .then(function () {
+        log('✓ נשמר בהצלחה');
+        setStatus(els.saveStatus, 'נשמר בהצלחה ✓', 'ok');
+        state.pendingFiles = [];
+        renderPendingGrid();
+        return loadAll();
+      })
+      .catch(function (err) {
+        log('✗ ' + err.message);
+        setStatus(els.saveStatus, err.message, 'err');
+      })
+      .then(function () {
+        els.saveBtn.disabled = false;
+      });
+  });
+
+  var saved = localStorage.getItem(TOKEN_KEY);
+  if (saved) {
+    els.disconnectBtn.classList.remove('hidden');
+    connect(saved);
+  }
+})();
+</script>
+</body>
+</html>

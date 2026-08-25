@@ -1,60 +1,18 @@
 {
   "items": [
-    {
-      "src": "assets/gallery/photo-1.jpg",
-      "alt": "אגרטל ואובייקט גבס פולימרי עם פרחים יבשים"
-    },
-    {
-      "src": "assets/gallery/photo-2.jpg",
-      "alt": "מגשי גבס פולימרי בטקסטורות שונות"
-    },
-    {
-      "src": "assets/gallery/photo-3.jpg",
-      "alt": "יצירות גבס פולימרי צבעוניות"
-    },
-    {
-      "src": "assets/gallery/photo-4.jpg",
-      "alt": "קבוצת משתתפות מציגות את יצירותיהן"
-    },
-    {
-      "src": "assets/gallery/photo-5.jpg",
-      "alt": "מגש שיש ורוד עם קופסה"
-    },
-    {
-      "src": "assets/gallery/photo-6.jpg",
-      "alt": "מגש שיש עם פמוט ונר"
-    },
-    {
-      "src": "assets/gallery/photo-7.jpg",
-      "alt": "אירוע סדנה קבוצתי"
-    },
-    {
-      "src": "/assets/gallery/img_4732.jpeg",
-      "alt": "תוצרים מסדנה משפחתית"
-    },
-    {
-      "src": "/assets/gallery/img_4733.jpeg",
-      "alt": "תוצרים"
-    },
-    {
-      "src": "/assets/gallery/img_8653.jpeg",
-      "alt": "סדנה פרטית"
-    },
-    {
-      "src": "/assets/gallery/1f8e7f21-6533-4b14-933d-3dd14fc50e9b.jpeg",
-      "alt": "ערב נשות מילואים מודיען"
-    },
-    {
-      "src": "/assets/gallery/img_9948.png",
-      "alt": "כלים שונים"
-    },
-    {
-      "src": "/assets/gallery/whatsapp-image-2026-08-11-at-20.33.06-2-.jpeg",
-      "alt": "כלים"
-    },
-    {
-      "src": "/assets/gallery/whatsapp-image-2026-08-11-at-20.33.05.jpeg",
-      "alt": "אגרטל טרצו"
-    }
+    "assets/gallery/photo-1.jpg",
+    "assets/gallery/photo-2.jpg",
+    "assets/gallery/photo-3.jpg",
+    "assets/gallery/photo-4.jpg",
+    "assets/gallery/photo-5.jpg",
+    "assets/gallery/photo-6.jpg",
+    "assets/gallery/photo-7.jpg",
+    "/assets/gallery/img_4732.jpeg",
+    "/assets/gallery/img_4733.jpeg",
+    "/assets/gallery/img_8653.jpeg",
+    "/assets/gallery/1f8e7f21-6533-4b14-933d-3dd14fc50e9b.jpeg",
+    "/assets/gallery/img_9948.png",
+    "/assets/gallery/whatsapp-image-2026-08-11-at-20.33.06-2-.jpeg",
+    "/assets/gallery/whatsapp-image-2026-08-11-at-20.33.05.jpeg"
   ]
 }

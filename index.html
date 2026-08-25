@@ -913,7 +913,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     galleryItems = list;
     grid.innerHTML = list.map(function(p, i){
       var tilt = GALLERY_TILTS[i % GALLERY_TILTS.length];
-      return '<figure class="reveal" style="--tilt:' + tilt + 'deg" data-index="' + i + '"><img src="' + esc(p.src) + '" alt="' + esc(p.alt) + '" loading="lazy"></figure>';
+      return '<figure class="reveal" style="--tilt:' + tilt + 'deg" data-index="' + i + '"><img src="' + esc(p) + '" alt="תמונה מגלריית הסטודיו" loading="lazy"></figure>';
     }).join('') + '<button type="button" class="gallery-viewall" data-index="0">לצפייה<br>בכל התמונות</button>';
   }
 
@@ -960,8 +960,8 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     function show(i){
       if(!items.length) return;
       idx = (i % items.length + items.length) % items.length;
-      imgEl.src = items[idx].src;
-      imgEl.alt = items[idx].alt || '';
+      imgEl.src = items[idx];
+      imgEl.alt = 'תמונה מגלריית הסטודיו';
       counterEl.textContent = (idx + 1) + ' / ' + items.length;
     }
 

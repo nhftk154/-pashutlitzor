@@ -7,94 +7,30 @@
   <title>עריכת האתר — פשוט ליצור</title>
 </head>
 <body>
-  <!-- גרסה מקובעת (3.15.1, העדכנית ביותר נכון ל-2026-08) במקום ^3.0.0 —
-       כך עדכון חדש של Decap לא נטען אוטומטית בלי בדיקה, מה שעלול לשבור
-       את התאמות המובייל הידניות למטה שתלויות במחלקות הפנימיות של Decap. -->
-  <script src="https://unpkg.com/decap-cms@3.15.1/dist/decap-cms.js"></script>
+  <!-- עברנו מ-Decap CMS ל-Sveltia CMS (2026-08): אותו config.yml ואותו
+       פרוקסי OAuth ממשיכים לעבוד ללא שינוי. בפועל, גם ספריית המדיה
+       המובנית של Sveltia (בדיוק כמו של Decap) לא תומכת בבחירה/העלאה
+       אמיתית של כמה תמונות בבת אחת — לזה יש כלי נפרד, bulk-images.html
+       (ראו הקישור הצף למטה), שכותב ישירות ל-GitHub. -->
+  <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
   <script>
-    /*
-      Decap CMS's entry editor hardcodes min-width:800px on its container and
-      splits into a 50/50 edit-form / live-preview pane, and each list-item
-      row has its own fixed width too — none of it responsive. On a phone
-      this pushes the actual form fields (and even the collapsed item
-      summary text) off-screen to the right, leaving only an oversized,
-      read-only preview visible with no way to reach edit/delete/reorder
-      controls. Below 900px this drops the min-width, collapses the split to
-      a single full-width pane (hiding the preview), and caps list-item rows
-      to 100% width so the whole form — image upload, text fields, expand/
-      drag/remove controls — fits and works on a phone screen.
-      Injected via JS + MutationObserver (not a plain <style> tag) as a
-      defensive measure since Decap re-renders parts of the shell.
-    */
     (function () {
-      var CSS_TEXT = [
-        '@media (max-width: 900px) {',
-        '  [class*="EditorContainer"], [class*="-Editor "], [class*="-Editor"] {',
-        '    min-width: 0 !important;',
-        '    width: 100% !important;',
-        '    overflow-y: auto !important;',
-        '    overflow-x: hidden !important;',
-        '    -webkit-overflow-scrolling: touch !important;',
-        '  }',
-        '  .SplitPane { position: relative !important; }',
-        '  .SplitPane .Pane1 { width: 100% !important; flex: 1 1 100% !important; }',
-        '  .SplitPane .Resizer, .SplitPane .Pane2 { display: none !important; }',
-        '  .SplitPane .Pane1 [class*="ListItem"] {',
-        '    width: 100% !important;',
-        '    max-width: 100% !important;',
-        '    box-sizing: border-box !important;',
-        '  }',
-        // The entry-editor toolbar (back arrow, title, save status,
-        // publish button) is position:absolute with a hardcoded ~800px
-        // width, so most of it sits off-screen on a phone in portrait
-        // (only reachable in landscape, where the viewport is wide
-        // enough). Make it a normal, wrapping, sticky-at-top element.
-        '  [class*="ToolbarContainer"] {',
-        '    position: sticky !important;',
-        '    top: 0 !important;',
-        '    min-width: 0 !important;',
-        '    width: 100% !important;',
-        '    height: auto !important;',
-        '    min-height: 66px !important;',
-        '    flex-wrap: wrap !important;',
-        '    z-index: 300 !important;',
-        '  }',
-        '}',
-        // Decap's own CSS makes the collections "categories" sidebar
-        // position:fixed at 800px+ wide, so it floats over the entries
-        // list instead of sitting beside it (an upstream layout bug,
-        // unrelated to the mobile override above — reproduces at any
-        // desktop width). Force it back into normal flex flow.
-        '@media (min-width: 800px) {',
-        '  [class*="CollectionContainer"] {',
-        '    flex-direction: row !important;',
-        '    align-items: flex-start !important;',
-        '    gap: 20px !important;',
-        '  }',
-        '  [class*="SidebarContainer"] {',
-        '    position: static !important;',
-        '    width: 260px !important;',
-        '    max-width: 260px !important;',
-        '    flex: 0 0 260px !important;',
-        '  }',
-        '  [class*="CollectionMain"] {',
-        '    flex: 1 1 auto !important;',
-        '    min-width: 0 !important;',
-        '  }',
-        '}'
-      ].join('\n');
-      var ID = 'mobile-admin-overrides';
-
-      function ensureStyle() {
-        if (document.getElementById(ID)) return;
-        var style = document.createElement('style');
-        style.id = ID;
-        style.textContent = CSS_TEXT;
-        document.head.appendChild(style);
+      function addBulkImagesLink() {
+        if (document.getElementById('bulk-images-link')) return;
+        var a = document.createElement('a');
+        a.id = 'bulk-images-link';
+        a.href = 'bulk-images.html';
+        a.textContent = 'העלאת כמה תמונות בבת אחת';
+        a.style.cssText = [
+          'position:fixed', 'bottom:16px', 'left:16px', 'z-index:9999',
+          'background:#3b6fe0', 'color:#fff', 'padding:10px 16px',
+          'border-radius:20px', 'font-family:-apple-system,"Segoe UI",Arial,sans-serif',
+          'font-size:13px', 'text-decoration:none', 'box-shadow:0 2px 8px rgba(0,0,0,.3)'
+        ].join(';');
+        document.body.appendChild(a);
       }
-
-      ensureStyle();
-      new MutationObserver(ensureStyle).observe(document.head, { childList: true });
+      addBulkImagesLink();
+      new MutationObserver(addBulkImagesLink).observe(document.body, { childList: true });
     })();
   </script>
 </body>

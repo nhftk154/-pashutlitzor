@@ -35,17 +35,9 @@ collections:
         fields:
           - label: "תמונות"
             name: "items"
-            widget: "list"
-            label_singular: "תמונה"
-            summary: "{{fields.alt}}"
-            fields:
-              - label: "תמונה"
-                name: "src"
-                widget: "image"
-              - label: "תיאור קצר של התמונה"
-                name: "alt"
-                widget: "string"
-                hint: "משפט קצר שמתאר מה רואים בתמונה"
+            widget: "image"
+            multiple: true
+            hint: "כאן אפשר להוסיף/להחליף תמונה אחת. להעלאת כמה תמונות בבת אחת יש כלי נפרד: admin/bulk-images.html"
 
   - name: "testimonials"
     label: "המלצות לקוחות"
@@ -208,9 +200,9 @@ collections:
                 default: "איסוף עצמי מהסטודיו או משלוח בתיאום מראש."
               - label: "תמונות"
                 name: "images"
-                widget: "list"
-                label_singular: "תמונה"
-                field: { label: "תמונה", name: "src", widget: "image" }
+                widget: "image"
+                multiple: true
+                hint: "כאן אפשר להוסיף/להחליף תמונה אחת. להעלאת כמה תמונות בבת אחת יש כלי נפרד: admin/bulk-images.html"
               - label: "תגיות (אופציונלי)"
                 name: "badges"
                 widget: "select"
