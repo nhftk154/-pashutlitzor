@@ -115,8 +115,8 @@
     root.innerHTML =
       '<div class="pdp-grid">' +
         '<div class="pdp-gallery">' +
-          '<div class="pdp-gallery-main">' +
-            (images[0] ? '<img id="pdp-main-img" src="' + esc(images[0]) + '" alt="' + esc(product.name) + '" onerror="this.remove()">' : '') +
+          '<div class="pdp-gallery-main' + (images[0] ? ' zoomable' : '') + '">' +
+            (images[0] ? '<img id="pdp-main-img" src="' + esc(images[0]) + '" alt="' + esc(product.name) + '" onerror="this.remove()"><div class="pdp-zoom-lens" id="pdp-zoom-lens"></div>' : '') +
             (images.length > 1 ?
               '<button type="button" class="pdp-gallery-arrow prev" id="pdp-arrow-prev" aria-label="תמונה קודמת">‹</button>' +
               '<button type="button" class="pdp-gallery-arrow next" id="pdp-arrow-next" aria-label="תמונה הבאה">›</button>'
@@ -195,6 +195,24 @@
       var nextBtn = document.getElementById('pdp-arrow-next');
       if (prevBtn) prevBtn.addEventListener('click', function(){ showImage(currentImgIdx - 1); });
       if (nextBtn) nextBtn.addEventListener('click', function(){ showImage(currentImgIdx + 1); });
+    }
+
+    if (images[0] && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      var galleryMain = root.querySelector('.pdp-gallery-main');
+      var zoomLens = document.getElementById('pdp-zoom-lens');
+      galleryMain.addEventListener('mousemove', function(e){
+        var rect = galleryMain.getBoundingClientRect();
+        var mainImgEl = document.getElementById('pdp-main-img');
+        if (!mainImgEl) return;
+        var xPct = ((e.clientX - rect.left) / rect.width) * 100;
+        var yPct = ((e.clientY - rect.top) / rect.height) * 100;
+        zoomLens.style.backgroundImage = 'url(' + mainImgEl.src + ')';
+        zoomLens.style.backgroundPosition = xPct + '% ' + yPct + '%';
+        zoomLens.classList.add('active');
+      });
+      galleryMain.addEventListener('mouseleave', function(){
+        zoomLens.classList.remove('active');
+      });
     }
 
     var selectedVariant = hasVariants ? product.variants[0] : null;
