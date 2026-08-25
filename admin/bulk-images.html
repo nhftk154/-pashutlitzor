@@ -282,10 +282,8 @@
   }
 
   function loadThumb(imgEl, downloadUrl) {
-    fetch(downloadUrl, { headers: ghHeaders() })
-      .then(function (r) { return r.blob(); })
-      .then(function (blob) { imgEl.src = URL.createObjectURL(blob); })
-      .catch(function () { imgEl.alt = 'שגיאה בטעינת תמונה'; });
+    imgEl.onerror = function () { imgEl.alt = 'שגיאה בטעינת תמונה'; };
+    imgEl.src = downloadUrl;
   }
 
   function renderExistingGrid() {
