@@ -86,6 +86,7 @@
     background: #14161a;
   }
   .thumb.checked { border-color: var(--accent); }
+  .thumb.deleting { opacity: .45; pointer-events: none; }
   .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .thumb .mark {
     position: absolute; top: 4px; right: 4px;
@@ -196,6 +197,7 @@
       <h2>3. תמונות קיימות בגלריה — סמני את הרלוונטיות <span class="count-badge" id="existingCount">0</span></h2>
       <p class="sub" style="margin:0 0 10px;font-size:.8rem;">לחיצה על תמונה מסמנת/מבטלת סימון. ה-✕ בפינה מוחקת את הקובץ לצמיתות מ-GitHub.</p>
       <div class="grid" id="existingGrid"></div>
+      <div class="status" id="existingStatus"></div>
     </div>
 
     <div class="card">
@@ -238,7 +240,7 @@
 
   var els = {};
   ['tokenCard','tokenInput','connectBtn','disconnectBtn','tokenStatus','mainArea',
-   'targetSelect','targetStatus','existingGrid','existingCount','dropzone','fileInput',
+   'targetSelect','targetStatus','existingGrid','existingCount','existingStatus','dropzone','fileInput',
    'pendingGrid','pendingCount','uploadOnlyBtn','uploadOnlyStatus',
    'orderGrid','orderCount','saveBtn','saveStatus','log'
   ].forEach(function (id) { els[id] = document.getElementById(id); });
@@ -396,7 +398,8 @@
       });
       thumb.querySelector('.del').addEventListener('click', function (e) {
         e.stopPropagation();
-        deleteExistingAsset(asset);
+        e.preventDefault();
+        deleteExistingAsset(asset, thumb);
       });
       els.existingGrid.appendChild(thumb);
     });
@@ -404,17 +407,20 @@
     renderOrderStrip();
   }
 
-  function deleteExistingAsset(asset) {
+  function deleteExistingAsset(asset, thumb) {
+    if (thumb && thumb.classList.contains('deleting')) return; // already in progress — ignore repeat taps
     var ok = confirm('למחוק לצמיתות את "' + asset.name + '" מ-GitHub?\nאם התמונה משמשת בגלריה או במוצר אחר, היא תיעלם משם גם (יש להסיר אותה משם קודם אם צריך).');
     if (!ok) return;
-    setStatus(els.saveStatus, 'מוחקת את ' + asset.name + '...', '');
+    if (thumb) thumb.classList.add('deleting');
+    setStatus(els.existingStatus, 'מוחקת את ' + asset.name + '...', '');
     ghDeleteFile(asset.path, asset.sha, 'מחיקת תמונה: ' + asset.name + ' (bulk-images tool)')
       .then(function () {
-        setStatus(els.saveStatus, 'נמחק ✓ — ' + asset.name, 'ok');
+        setStatus(els.existingStatus, 'נמחק ✓ — ' + asset.name, 'ok');
         return loadAll();
       })
       .catch(function (err) {
-        setStatus(els.saveStatus, err.message, 'err');
+        setStatus(els.existingStatus, err.message, 'err');
+        if (thumb) thumb.classList.remove('deleting');
       });
   }
 
