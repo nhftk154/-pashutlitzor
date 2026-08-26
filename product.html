@@ -201,6 +201,10 @@
       var galleryMain = root.querySelector('.pdp-gallery-main');
       var zoomLens = document.getElementById('pdp-zoom-lens');
       galleryMain.addEventListener('mousemove', function(e){
+        if (e.target.closest('.pdp-gallery-arrow')) {
+          zoomLens.classList.remove('active');
+          return;
+        }
         var rect = galleryMain.getBoundingClientRect();
         var mainImgEl = document.getElementById('pdp-main-img');
         if (!mainImgEl) return;
