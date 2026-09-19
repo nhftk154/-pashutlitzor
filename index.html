@@ -77,7 +77,7 @@ section{position:relative}
 /* grain overlay */
 body::before{
   content:"";position:fixed;inset:0;z-index:9990;pointer-events:none;
-  opacity:.05;mix-blend-mode:multiply;
+  opacity:.035;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -601,7 +601,6 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     background:rgba(26,20,16,.05);
     transform:translate(-50%,-50%);
     transition:width .18s var(--ease),height .18s var(--ease),background .18s var(--ease);
-    mix-blend-mode:multiply;
     will-change:transform;
   }
   #cursor.hover{
@@ -1311,7 +1310,8 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   var images = [];
   var loadedCount = 0;
   var lastExact = -1;
-  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var redrawQueued = false;
+  var dpr = Math.min(window.devicePixelRatio || 1, 1);
 
   function resizeCanvas(){
     var rect = canvas.getBoundingClientRect();
@@ -1399,12 +1399,19 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     for(var i = FRAME_COUNT; i >= 1; i--){
       (function(idx){
         var img = new Image();
+        img.decoding = 'async';
         img.onload = function(){
           loadedCount++;
-          // redraw whenever a frame finishes loading, so the
-          // currently-needed frame paints as soon as it's ready
-          lastExact = -1; // reset guard so the redraw actually runs
-          updateCanvas();
+          // redraw when a frame finishes loading, but coalesce bursts of
+          // loads into a single redraw per animation frame
+          if(!redrawQueued){
+            redrawQueued = true;
+            requestAnimationFrame(function(){
+              redrawQueued = false;
+              lastExact = -1; // reset guard so the redraw actually runs
+              updateCanvas();
+            });
+          }
         };
         img.src = framePath(idx);
         images[idx-1] = img;
@@ -1416,7 +1423,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     resizeCanvas();
     preloadFrames();
     window.addEventListener('resize', function(){
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, 1);
       resizeCanvas();
       updateCanvas();
     });
@@ -1426,17 +1433,20 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   }
 
   /* ---------- UNIFIED SCROLL (continuous rAF loop) ---------- */
-  var lastScrollY = -1;
-  function rafLoop(){
+  var lastScrollY = -1, scrollTicking = false;
+  function onScrollFrame(){
+    scrollTicking = false;
     var sy = window.scrollY;
     if(sy !== lastScrollY){
       lastScrollY = sy;
       updateCanvas();
       onNavScroll();
     }
-    requestAnimationFrame(rafLoop);
   }
-  requestAnimationFrame(rafLoop);
+  window.addEventListener('scroll', function(){
+    if(!scrollTicking){ scrollTicking = true; requestAnimationFrame(onScrollFrame); }
+  }, {passive:true});
+  requestAnimationFrame(onScrollFrame);
   onNavScroll();
 
   /* ---------- SCROLL REVEAL ---------- */
@@ -1489,20 +1499,23 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     var cx=mx, cy=my;
 
     function setCursorPos(el, x, y){
-      el.style.left = x + 'px';
-      el.style.top  = y + 'px';
+      el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) translate(-50%,-50%)';
     }
 
     window.addEventListener('mousemove', function(e){
       mx = e.clientX; my = e.clientY;
       setCursorPos(dotC, mx, my);
+      if(!cursorRaf) cursorRaf = requestAnimationFrame(loop);
     }, {passive:true});
 
+    var cursorRaf = 0;
     function loop(){
       cx += (mx - cx) * 0.16;
       cy += (my - cy) * 0.16;
       setCursorPos(cur, cx, cy);
-      requestAnimationFrame(loop);
+      // stop the loop once the ring has caught up; mousemove restarts it
+      if(Math.abs(mx - cx) > 0.3 || Math.abs(my - cy) > 0.3) cursorRaf = requestAnimationFrame(loop);
+      else cursorRaf = 0;
     }
     setCursorPos(cur, cx, cy);
     setCursorPos(dotC, mx, my);
