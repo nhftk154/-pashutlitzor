@@ -14,9 +14,7 @@
 <meta property="og:image" content="assets/branding/og-image.jpg">
 <link rel="icon" type="image/png" href="assets/branding/logo-removebg-preview.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Frank+Ruhl+Libre:wght@500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/shop.css">
 
 <style>
@@ -105,8 +103,8 @@ body::before{
 .btn-wa:hover{background:#234a55;transform:translateY(-2px);box-shadow:0 12px 30px rgba(45,91,104,.42)}
 .btn-wa:active{transform:translateY(0)}
 /* on the teal corporate section the teal button would vanish — use terracotta */
-#corporate .btn-wa{background:var(--accent);box-shadow:0 8px 22px rgba(206,134,108,.35)}
-#corporate .btn-wa:hover{background:#bd7159;box-shadow:0 12px 30px rgba(206,134,108,.45)}
+#corporate .btn-wa{background:var(--sand-light);color:var(--teal);box-shadow:0 8px 22px rgba(0,0,0,.25)}
+#corporate .btn-wa:hover{background:var(--sand);color:var(--text);box-shadow:0 12px 30px rgba(0,0,0,.3)}
 .btn-lg{font-size:20px;padding:20px 42px;min-height:64px;border-radius:999px}
 .btn-ghost{background:transparent;border:1.5px solid rgba(255,255,255,.55);color:#fff}
 .btn-ghost:hover{background:rgba(255,255,255,.12)}
@@ -196,7 +194,7 @@ body::before{
   color:var(--text);font-size:clamp(2.4rem,7vw,4.4rem);font-weight:700;
   letter-spacing:-.02em;margin-bottom:18px;line-height:1.1;
 }
-#hero h1 .accent-word{color:var(--accent);font-weight:500}
+#hero h1 .accent-word{color:#A8563C;font-weight:500}
 .hero-sub{
   color:var(--text-soft);font-size:clamp(1rem,2.8vw,1.25rem);
   font-weight:300;max-width:48ch;margin-bottom:36px;line-height:1.7;
@@ -453,7 +451,7 @@ body::before{
 #corporate{background:var(--green-primary);color:#fff;overflow:hidden}
 .corp-grid{display:grid;grid-template-columns:1fr;gap:40px;align-items:center}
 @media(min-width:920px){.corp-grid{grid-template-columns:1.1fr .9fr;gap:60px}}
-#corporate .eyebrow{color:var(--accent)}
+#corporate .eyebrow{color:var(--sand-light)}
 #corporate h2{font-size:clamp(2rem,6vw,3.1rem);margin-bottom:18px}
 .corp-lead{color:rgba(255,255,255,.88);font-size:1.15rem;font-weight:300;margin-bottom:30px;max-width:48ch}
 .corp-list{list-style:none;display:flex;flex-direction:column;gap:18px;margin-bottom:34px}
@@ -569,11 +567,13 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 .foot-social a:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
 .foot-social svg{width:20px;height:20px;fill:#fff}
 .foot-copy{font-size:.85rem;font-weight:300}
+.foot-biz{font-size:.8rem;font-weight:300;opacity:.9}
+.foot-biz a{text-decoration:underline}
 
 /* ============ FAB ============ */
 .fab{
   position:fixed;inset-block-end:calc(22px + env(safe-area-inset-bottom));inset-inline-end:22px;z-index:1100;
-  width:60px;height:60px;border-radius:50%;background:var(--wa);
+  width:60px;height:60px;border-radius:50%;background:#0E7A3E;
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 8px 24px rgba(37,211,102,.4);
   animation:pulse 2.4s var(--ease) infinite;
@@ -660,16 +660,11 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     <nav class="nav-links" aria-label="ניווט ראשי">
       <a href="#concept" data-navkey="concept">מה זה</a>
       <a href="#workshops" data-navkey="workshops">הסדנאות</a>
-      <a href="shop.html">חנות</a>
       <a href="#gallery" data-navkey="gallery">גלריה</a>
       <a href="#videos" data-navkey="videos">סרטונים</a>
       <a href="#corporate" data-navkey="corporate">לארגונים</a>
       <a href="#testimonials" data-navkey="testimonials">המלצות</a>
     </nav>
-    <button class="nav-icon-btn" type="button" data-cart-open aria-label="פתיחת עגלה">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
-      <span class="nav-cart-badge" data-count="0"></span>
-    </button>
     <button class="nav-burger" id="nav-burger" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="nav-mobile">
       <span></span><span></span><span></span>
     </button>
@@ -678,7 +673,6 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <nav class="nav-mobile" id="nav-mobile" aria-label="ניווט נייד">
   <a href="#concept" data-navkey="concept">מה זה</a>
   <a href="#workshops" data-navkey="workshops">הסדנאות</a>
-  <a href="shop.html">חנות</a>
   <a href="#gallery" data-navkey="gallery">גלריה</a>
   <a href="#videos" data-navkey="videos">סרטונים</a>
   <a href="#corporate" data-navkey="corporate">לארגונים</a>
@@ -801,7 +795,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
         </a>
       </div>
       <div class="corp-visual reveal" data-delay="2">
-        <img id="corporate-img" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <img id="corporate-img" alt="ערב יצירה בגבס פולימרי לקבוצה" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="ph" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l6-3 6 3v13M15 21V11l6 0v10"/><path d="M2 21h20"/></svg></div>
       </div>
     </div>
@@ -870,6 +864,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       </a>
     </div>
     <div class="foot-copy">© <span id="year"></span> <span id="footer-brand-copy">פשוט ליצור</span> · <span id="footer-rights">כל הזכויות שמורות</span></div>
+    <div class="foot-biz">דינה איבגי · עוסק מס' 203956578 · חיספין, רמת הגולן · 052-547-7845 · <a href="mailto:pshotlizor@gmail.com">pshotlizor@gmail.com</a></div>
   </div>
 </footer>
 
@@ -883,7 +878,6 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 <div id="cursor" aria-hidden="true"></div>
 <div id="cursor-dot" aria-hidden="true"></div>
 
-<script src="assets/js/cart.js" defer></script>
 <script>
 (async function(){
   "use strict";
@@ -913,13 +907,13 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     galleryItems = list;
     grid.innerHTML = list.map(function(p, i){
       var tilt = GALLERY_TILTS[i % GALLERY_TILTS.length];
-      return '<figure class="reveal" style="--tilt:' + tilt + 'deg" data-index="' + i + '"><img src="' + esc(p) + '" alt="תמונה מגלריית הסטודיו" loading="lazy"></figure>';
+      return '<figure class="reveal" style="--tilt:' + tilt + 'deg" data-index="' + i + '"><img src="' + esc(p) + '" alt="יצירה בגבס פולימרי מסדנאות הסטודיו — תמונה ' + (i + 1) + ' מתוך ' + list.length + '" loading="lazy"></figure>';
     }).join('') + '<button type="button" class="gallery-viewall" data-index="0">לצפייה<br>בכל התמונות</button>';
   }
 
   /* ---------- GALLERY LIGHTBOX ---------- */
   var Lightbox = (function(){
-    var overlay, imgEl, counterEl, items = [], idx = 0;
+    var overlay, imgEl, counterEl, lastFocus, items = [], idx = 0;
 
     function ensure(){
       if(overlay) return;
@@ -944,6 +938,13 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       document.addEventListener('keydown', function(e){
         if(!overlay.classList.contains('open')) return;
         if(e.key === 'Escape') close();
+        else if(e.key === 'Tab'){
+          var f = overlay.querySelectorAll('button');
+          var first = f[0], last = f[f.length - 1];
+          if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+          else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+          else if(!overlay.contains(document.activeElement)){ e.preventDefault(); first.focus(); }
+        }
         else if(e.key === 'ArrowLeft') show(idx + 1);
         else if(e.key === 'ArrowRight') show(idx - 1);
       });
@@ -961,15 +962,17 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       if(!items.length) return;
       idx = (i % items.length + items.length) % items.length;
       imgEl.src = items[idx];
-      imgEl.alt = 'תמונה מגלריית הסטודיו';
+      imgEl.alt = 'יצירה בגבס פולימרי מסדנאות הסטודיו — תמונה ' + (idx + 1) + ' מתוך ' + items.length;
       counterEl.textContent = (idx + 1) + ' / ' + items.length;
     }
 
     function open(list, startIndex){
       ensure();
+      lastFocus = document.activeElement;
       items = list || [];
       show(startIndex || 0);
       overlay.classList.add('open');
+      overlay.querySelector('.lightbox-close').focus();
       document.body.style.overflow = 'hidden';
     }
 
@@ -977,6 +980,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       if(!overlay) return;
       overlay.classList.remove('open');
       document.body.style.overflow = '';
+      if(lastFocus && lastFocus.focus) lastFocus.focus();
     }
 
     return { open: open };

@@ -59,6 +59,7 @@ collections:
               - label: "שם הלקוחה / הלקוח"
                 name: "name"
                 widget: "string"
+                hint: "שם פרטי + אות ראשונה בלבד (למשל: חלי ש׳). לפרסם רק עם הסכמה בכתב מהלקוחה."
               - label: "פרטים נוספים (סוג סדנה, תפקיד וכו')"
                 name: "meta"
                 widget: "string"
