@@ -25,6 +25,18 @@ locale: "he"
 media_folder: "assets/gallery"
 public_folder: "/assets/gallery"
 
+# כיווץ אוטומטי של תמונות בעת העלאה דרך ה-CMS (Sveltia): WebP, עד 1200px, איכות 80.
+# בלי זה תמונות ישירות מהטלפון (3–5MB) מאטות את האתר.
+media_libraries:
+  default:
+    config:
+      transformations:
+        raster_image:
+          format: webp
+          quality: 80
+          width: 1200
+          height: 1200
+
 collections:
   - name: "gallery"
     label: "תמונות גלריה"

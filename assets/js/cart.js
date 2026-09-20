@@ -183,7 +183,7 @@
 
       bodyEl.innerHTML = lines.map(function(l){
         return '<div class="cart-line" data-slug="' + esc(l.slug) + '" data-variant="' + esc(l.variantSku || '') + '">' +
-          '<img src="' + esc(l.image) + '" alt="" loading="lazy">' +
+          '<img src="' + esc(l.image) + '" alt="" loading="lazy" decoding="async">' +
           '<div class="cart-line-info">' +
             '<span class="cart-line-name">' + esc(l.name) + '</span>' +
             (l.variantLabel ? '<span class="cart-line-variant">' + esc(l.variantLabel) + '</span>' : '') +

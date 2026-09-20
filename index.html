@@ -791,7 +791,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
         </a>
       </div>
       <div class="corp-visual reveal" data-delay="2">
-        <img id="corporate-img" alt="ערב יצירה בגבס פולימרי לקבוצה" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <img id="corporate-img" alt="ערב יצירה בגבס פולימרי לקבוצה" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="ph" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l6-3 6 3v13M15 21V11l6 0v10"/><path d="M2 21h20"/></svg></div>
       </div>
     </div>
@@ -903,7 +903,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     galleryItems = list;
     grid.innerHTML = list.map(function(p, i){
       var tilt = GALLERY_TILTS[i % GALLERY_TILTS.length];
-      return '<figure class="reveal" style="--tilt:' + tilt + 'deg" data-index="' + i + '"><img src="' + esc(p) + '" alt="יצירה בגבס פולימרי מסדנאות הסטודיו — תמונה ' + (i + 1) + ' מתוך ' + list.length + '" loading="lazy"></figure>';
+      return '<figure class="reveal" style="--tilt:' + tilt + 'deg" data-index="' + i + '"><img src="' + esc(p) + '" alt="יצירה בגבס פולימרי מסדנאות הסטודיו — תמונה ' + (i + 1) + ' מתוך ' + list.length + '" loading="lazy" decoding="async"></figure>';
     }).join('') + '<button type="button" class="gallery-viewall" data-index="0">לצפייה<br>בכל התמונות</button>';
   }
 
@@ -921,7 +921,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       overlay.innerHTML =
         '<button type="button" class="lightbox-close" aria-label="סגירה"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
         '<button type="button" class="lightbox-nav lightbox-prev" aria-label="התמונה הקודמת"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>' +
-        '<img class="lightbox-img" alt="">' +
+        '<img class="lightbox-img" alt="" decoding="async">' +
         '<button type="button" class="lightbox-nav lightbox-next" aria-label="התמונה הבאה"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>' +
         '<div class="lightbox-counter" dir="ltr"></div>';
       document.body.appendChild(overlay);
@@ -1054,7 +1054,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
         '<div class="video-facade" style="aspect-ratio:' + aspect + '" role="button" tabindex="0" ' +
         'data-type="' + esc(v.type) + '" data-yt="' + esc(ytId) + '" data-src="' + esc(v.file_src || '') + '" ' +
         'aria-label="' + esc(label) + '">' +
-        (poster ? '<img src="' + esc(poster) + '" alt="" loading="lazy">' : '') +
+        (poster ? '<img src="' + esc(poster) + '" alt="" loading="lazy" decoding="async">' : '') +
         '<span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>' +
         (v.title ? '<span class="video-caption">' + esc(v.title) + '</span>' : '') +
         '</div></figure>';
@@ -1308,6 +1308,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   var loadedCount = 0;
   var lastExact = -1;
   var redrawQueued = false;
+  var wantedExact = FRAME_COUNT - 1;
   var dpr = Math.min(window.devicePixelRatio || 1, 1);
 
   function resizeCanvas(){
@@ -1323,20 +1324,31 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     return {dx:(cw-iw*scale)/2, dy:(ch-ih*scale)/2, dw:iw*scale, dh:ih*scale};
   }
 
+  function frameReady(img){ return img && img.complete && img.naturalWidth; }
+  // frames arrive progressively — fall back to the closest frame that is loaded
+  function nearestLoaded(i){
+    for(var d = 0; d < FRAME_COUNT; d++){
+      if(i - d >= 0 && frameReady(images[i - d])) return images[i - d];
+      if(i + d < FRAME_COUNT && frameReady(images[i + d])) return images[i + d];
+    }
+    return null;
+  }
+
   function drawCrossfade(exact){
     if(Math.abs(exact - lastExact) < 0.001) return;
     var lo = Math.floor(exact);
     var hi = Math.min(lo + 1, FRAME_COUNT - 1);
     var blend = exact - lo;
-    var imgLo = images[lo], imgHi = images[hi];
-    if(!imgLo || !imgLo.complete || !imgLo.naturalWidth) return;
+    var imgLo = frameReady(images[lo]) ? images[lo] : nearestLoaded(lo);
+    var imgHi = frameReady(images[hi]) ? images[hi] : null;
+    if(!imgLo) return;
     lastExact = exact;
     var cw = canvas.width, ch = canvas.height;
     var r = coverRect(imgLo, cw, ch);
     ctx.clearRect(0, 0, cw, ch);
     ctx.globalAlpha = 1;
     ctx.drawImage(imgLo, r.dx, r.dy, r.dw, r.dh);
-    if(blend > 0.001 && imgHi && imgHi.complete && imgHi.naturalWidth){
+    if(blend > 0.001 && imgHi && imgHi !== imgLo){
       var r2 = coverRect(imgHi, cw, ch);
       ctx.globalAlpha = blend;
       ctx.drawImage(imgHi, r2.dx, r2.dy, r2.dw, r2.dh);
@@ -1358,6 +1370,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     var p = getProgress();
     // REVERSE playback: top (p=0) -> last frame; bottom (p=1) -> first frame
     var exact = (1 - p) * (FRAME_COUNT - 1);
+    wantedExact = exact;
     drawCrossfade(exact);
     updateExpand(p);
     fab.classList.toggle('fab--visible', p >= 1);
@@ -1391,30 +1404,44 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   }
 
   function preloadFrames(){
-    // Playback runs reversed (frame FRAME_COUNT is needed first, at scroll
-    // top), so request frames in that same order — the frames needed
-    // earliest should also arrive earliest over the network.
-    for(var i = FRAME_COUNT; i >= 1; i--){
-      (function(idx){
-        var img = new Image();
-        img.decoding = 'async';
-        img.onload = function(){
-          loadedCount++;
-          // redraw when a frame finishes loading, but coalesce bursts of
-          // loads into a single redraw per animation frame
-          if(!redrawQueued){
-            redrawQueued = true;
-            requestAnimationFrame(function(){
-              redrawQueued = false;
-              lastExact = -1; // reset guard so the redraw actually runs
-              updateCanvas();
-            });
-          }
-        };
-        img.src = framePath(idx);
-        images[idx-1] = img;
-      })(i);
+    // Playback runs reversed (the last frame is needed first, at scroll top).
+    // Load a sparse set first (every 4th frame, last one first) so scrubbing
+    // works early, then fill the gaps. Only a few requests in flight at once,
+    // and not before the page itself has finished loading.
+    var order = [], seen = {};
+    for(var i = FRAME_COUNT; i >= 1; i -= 4){ order.push(i); seen[i] = true; }
+    for(var j = FRAME_COUNT; j >= 1; j--){ if(!seen[j]) order.push(j); }
+    var next = 0, MAX_INFLIGHT = 3, started = false;
+
+    function loadNext(){
+      if(next >= order.length) return;
+      var idx = order[next++];
+      var img = new Image();
+      img.decoding = 'async';
+      function done(){
+        loadedCount++;
+        // redraw only if this frame is close to the one currently on screen,
+        // and coalesce bursts of loads into one redraw per animation frame
+        if(!redrawQueued && Math.abs((idx - 1) - wantedExact) <= 4){
+          redrawQueued = true;
+          requestAnimationFrame(function(){
+            redrawQueued = false;
+            lastExact = -1; // reset guard so the redraw actually runs
+            updateCanvas();
+          });
+        }
+        if(started) loadNext();
+      }
+      img.onload = done;
+      img.onerror = done;
+      img.src = framePath(idx);
+      images[idx-1] = img;
     }
+
+    function start(){ started = true; for(var k = 0; k < MAX_INFLIGHT; k++) loadNext(); }
+    loadNext(); // first needed frame straight away so the hero isn't empty
+    if(document.readyState === 'complete') start();
+    else window.addEventListener('load', start, {once:true});
   }
 
   if(!reduceMotion){
