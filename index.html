@@ -113,9 +113,7 @@ body::before{
 #navbar{
   position:fixed;inset-block-start:0;inset-inline:0;z-index:1000;
   height:var(--nav-h);display:flex;align-items:center;
-  background:rgba(246,241,232,.88);
-  backdrop-filter:blur(16px) saturate(1.3);
-  -webkit-backdrop-filter:blur(16px) saturate(1.3);
+  background:rgba(246,241,232,.96);
   box-shadow:0 1px 0 rgba(26,20,16,.06),var(--shadow-sm);
   opacity:0;visibility:hidden;pointer-events:none;
   transition:opacity .35s var(--ease),visibility .35s;
@@ -146,7 +144,7 @@ body::before{
 .nav-burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 .nav-mobile{
   position:fixed;inset-inline:0;inset-block-start:var(--nav-h);z-index:999;
-  background:rgba(246,241,232,.97);backdrop-filter:blur(16px);
+  background:rgba(246,241,232,.98);
   display:flex;flex-direction:column;padding:18px 22px 26px;gap:4px;
   box-shadow:var(--shadow-md);
   opacity:0;visibility:hidden;transform:translateY(-8px);
@@ -280,7 +278,6 @@ body::before{
 #frame-canvas{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   width:100vw;height:100svh;object-fit:cover;display:block;
-  transition:filter .05s linear;
 }
 .canvas-fallback{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .canvas-logo{
@@ -1378,7 +1375,8 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   function updateExpand(p){
     var pe = Math.min(p/0.7, 1);
     expandP = pe;
-    var blur = Math.max(0, 18 * (1 - pe/0.35));
+    // quantised to 3px steps so the full-screen canvas is re-filtered far less often
+    var blur = Math.max(0, Math.round(18 * (1 - pe/0.35) / 3) * 3);
     var filter = blur > 0.2 ? 'blur(' + blur.toFixed(1) + 'px)' : '';
     if(filter !== lastFilter){
       canvas.style.filter = filter;
