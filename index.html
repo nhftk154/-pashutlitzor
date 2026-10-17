@@ -1832,13 +1832,13 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       store('s','s','raffleDismissed','1');
       if(prev && prev.focus) prev.focus();
     }
-    function openPopup(){
+    function openPopup(auto){
       prev = document.activeElement;
       ov.classList.add('open');
       document.addEventListener('keydown', onKey);
-      var f = form && form.name; if(f && f.focus) f.focus({preventScroll:true}); else ov.querySelector('.raffle-close').focus();
+      var f = form && form.name; if(auto !== true && f && f.focus) f.focus({preventScroll:true}); else ov.querySelector('.raffle-close').focus();
     }
-    pill.addEventListener('click', openPopup);
+    pill.addEventListener('click', function(){ openPopup(); });
     function onKey(e){
       if(e.key === 'Escape'){ close(); return; }
       if(e.key !== 'Tab') return;
@@ -1888,7 +1888,16 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 
     tick(); timer = setInterval(tick, 1000);
     if(done) thanks('כבר נרשמת להגרלה. בהצלחה! 🍀');
-    else if(autoOpen) setTimeout(openPopup, 600);
+    else if(autoOpen){
+      // open once, after the visitor has scrolled past the intro animation (not over the first screen)
+      var introEnd = function(){ var sec = document.getElementById('canvas-sequence'); return sec ? sec.offsetHeight + 200 : window.innerHeight * 2; };
+      var onRaffleScroll = function(){
+        if(window.scrollY < introEnd()) return;
+        window.removeEventListener('scroll', onRaffleScroll);
+        openPopup(true);
+      };
+      window.addEventListener('scroll', onRaffleScroll, {passive:true});
+    }
   }
 })();
 </script>
