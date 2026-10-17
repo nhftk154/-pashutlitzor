@@ -89,7 +89,7 @@
     (function(){
       fetch('../content/raffle.json',{cache:'no-cache'}).then(function(r){return r.json();}).then(function(c){
         var prize=c.prizeTitle?c.prizeTitle+(c.prizeValueIls?' (שוויו '+Number(c.prizeValueIls).toLocaleString('he-IL')+' ש"ח)':''):'יפורסם באתר';
-        document.getElementById('rf-prize').textContent=prize;
+        document.getElementById('rf-prize').textContent=prize+(c.prizeDetails?', הכולל: '+c.prizeDetails:'');
         if(c.drawText) document.getElementById('rf-draw').textContent=c.drawText;
         var m=(c.endsAt||'').match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
         if(m) document.getElementById('rf-ends').textContent=m[3]+'/'+m[2]+'/'+m[1]+' בשעה '+m[4]+':'+m[5];

@@ -370,6 +370,8 @@ collections:
         fields:
           - { label: "הגרלה פעילה (מציג את הפופ-אפ)", name: "enabled", widget: "boolean", default: false, hint: "להפעיל רק אחרי שמילאת פרס, תאריך סיום וכתובת סקריפט. השעון מתחיל לרוץ מרגע ההפעלה ועד תאריך הסיום." }
           - { label: "שם הפרס", name: "prizeTitle", widget: "string", required: false }
+          - { label: "פירוט הפרס (מה כלול בו)", name: "prizeDetails", widget: "text", required: false }
+          - { label: "תמונת הפרס", name: "prizeImage", widget: "image", required: false }
           - { label: "שווי הפרס בש\"ח", name: "prizeValueIls", widget: "number", value_type: "int", min: 0, required: false }
           - { label: "תאריך ושעת סיום (שעון ישראל)", name: "endsAt", widget: "datetime", format: "YYYY-MM-DDTHH:mm:ss", date_format: "DD/MM/YYYY", time_format: "HH:mm", required: false, hint: "אותו תאריך חייב להיות מוגדר גם בסקריפט של גוגל (ENDS_AT). ההרשמה נסגרת בצד השרת לפי התאריך שם." }
           - { label: "מועד ואופן ביצוע ההגרלה", name: "drawText", widget: "text" }

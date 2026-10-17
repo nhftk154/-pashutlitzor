@@ -655,11 +655,13 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   box-shadow:var(--shadow-lg);padding:32px 26px 24px;text-align:center;color:var(--text);
 }
 .raffle-close{
-  position:absolute;top:10px;inset-inline-end:10px;width:40px;height:40px;border:0;border-radius:50%;
-  background:rgba(37,51,58,.08);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  position:absolute;z-index:1;top:10px;inset-inline-end:10px;width:40px;height:40px;border:0;border-radius:50%;
+  background:rgba(246,241,232,.9);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;
 }
 .raffle-close:hover{background:rgba(37,51,58,.16)}
 .raffle-close svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none}
+.raffle-img{display:block;width:calc(100% + 52px);margin:-32px -26px 16px;height:170px;object-fit:cover;object-position:50% 62%;border-radius:var(--r-lg) var(--r-lg) 0 0}
+.raffle-details{font-size:.88rem;color:var(--text-soft);margin:-10px 0 16px}
 .raffle-eyebrow{font-family:'DM Mono',monospace;font-size:.78rem;letter-spacing:.08em;color:var(--terracotta)}
 .raffle-card h2{font-size:1.7rem;line-height:1.25;margin:6px 0 4px;color:var(--teal)}
 .raffle-prize{font-size:1.02rem;color:var(--text-soft);margin-bottom:16px}
@@ -1636,13 +1638,15 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     var ov = document.createElement('div');
     ov.className = 'raffle-overlay';
     ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-labelledby','raffle-title');
+    var details = cfg.prizeDetails ? '<p class="raffle-details">' + esc(cfg.prizeDetails) + '</p>' : '';
     var prize = cfg.prizeTitle ? esc(cfg.prizeTitle) + (cfg.prizeValueIls ? ' (שווי ' + Number(cfg.prizeValueIls).toLocaleString('he-IL') + ' ₪)' : '') : '';
     ov.innerHTML =
       '<div class="raffle-card">' +
         '<button type="button" class="raffle-close" aria-label="סגירה"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+        (cfg.prizeImage ? '<img class="raffle-img" src="' + esc(cfg.prizeImage) + '" alt="הפרס: ' + esc(cfg.prizeTitle || 'סט מתנה') + '" decoding="async">' : '') +
         '<div class="raffle-eyebrow">הגרלה</div>' +
         '<h2 id="raffle-title">הצטרפו להגרלה</h2>' +
-        (prize ? '<p class="raffle-prize">הפרס: ' + prize + '</p>' : '') +
+        (prize ? '<p class="raffle-prize">הפרס: ' + prize + '</p>' : '') + details +
         '<div class="raffle-timer" role="timer" aria-label="הזמן שנותר להגרלה">' +
           '<div class="raffle-unit"><b data-u="d">00</b><span>ימים</span></div>' +
           '<div class="raffle-unit"><b data-u="h">00</b><span>שעות</span></div>' +

@@ -1,8 +1,10 @@
 {
   "enabled": false,
-  "prizeTitle": "סט הדלקת נרות מפואר: נר הבדלה עבודת יד, כוס קידוש משילוב של בטון ואלומיניום, קופסת בשמים ומחזיק גפרורים",
+  "prizeTitle": "סט הדלקת נרות מפואר",
   "prizeValueIls": 350,
   "endsAt": "2026-10-31T20:00:00",
   "drawText": "ההגרלה תתבצע בהגרלה אקראית אחת מתוך כלל הנרשמות הזכאיות, מיד לאחר סיום תקופת ההרשמה. הזוכה תקבל הודעה בוואטסאפ או בשיחת טלפון.",
-  "scriptUrl": "https://script.google.com/macros/s/AKfycbzN6hJldgEPRv7jdn6bv_eh52y0YXUVP_uRloUJorkrMFV0J_mJYpoeyOlDcuvwaZQirQ/exec"
+  "scriptUrl": "https://script.google.com/macros/s/AKfycbzN6hJldgEPRv7jdn6bv_eh52y0YXUVP_uRloUJorkrMFV0J_mJYpoeyOlDcuvwaZQirQ/exec",
+  "prizeDetails": "נר הבדלה עבודת יד, כוס קידוש משילוב של בטון ואלומיניום, קופסת בשמים ומחזיק גפרורים",
+  "prizeImage": "assets/gallery/raffle-prize.webp"
 }
