@@ -1426,6 +1426,16 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   });
   mobileNav.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
 
+  /* menu links jump straight to the section: the page-wide smooth scroll would
+     race through the whole pinned canvas section and every section in between */
+  document.querySelectorAll('.nav-links a[href^="#"], #nav-mobile a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(){
+      var root = document.documentElement;
+      root.style.scrollBehavior = 'auto';
+      setTimeout(function(){ root.style.scrollBehavior = ''; }, 100);
+    });
+  });
+
   /* ---------- CANVAS FRAME SEQUENCE ---------- */
   var FRAME_COUNT = 45;
   var framePath = function(i){
