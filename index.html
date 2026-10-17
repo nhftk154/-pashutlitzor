@@ -17,6 +17,15 @@
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/shop.css">
 
+<script>/* perf diagnostics: ?off=canvas,fab,pill,anim,reveal */
+(function(){var m=location.search.match(/[?&]off=([^&]*)/);if(!m)return;var o=m[1].split(','),css='';
+if(o.indexOf('canvas')>-1)css+='#canvas-sequence{display:none!important}';
+if(o.indexOf('fab')>-1)css+='.fab{display:none!important}';
+if(o.indexOf('pill')>-1)css+='.raffle-pill{display:none!important}';
+if(o.indexOf('anim')>-1)css+='*{animation:none!important}';
+if(o.indexOf('reveal')>-1)css+='.reveal{opacity:1!important;transform:none!important;transition:none!important}';
+if(o.indexOf('smooth')>-1)css+='html{scroll-behavior:auto!important}';
+var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);})();</script>
 <style>
 /* ============ TOKENS ============ */
 :root{
