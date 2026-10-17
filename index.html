@@ -693,7 +693,10 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;
   padding:16px;background:rgba(37,51,58,.72);opacity:0;transition:opacity .3s var(--ease);overflow-y:auto;
 }
-.raffle-overlay.open{display:flex;opacity:1}
+.raffle-overlay.open{display:flex;opacity:1;animation:raffle-fade .55s var(--ease) both}
+.raffle-overlay.open .raffle-card{animation:raffle-rise .7s var(--ease) .08s both}
+@keyframes raffle-fade{from{opacity:0}to{opacity:1}}
+@keyframes raffle-rise{from{opacity:0;transform:translateY(26px) scale(.97)}to{opacity:1;transform:none}}
 .raffle-card{
   position:relative;width:min(100%,440px);margin:auto;background:var(--bg);border-radius:var(--r-lg);
   box-shadow:var(--shadow-lg);padding:32px 22px 24px;text-align:center;color:var(--text);
@@ -1888,13 +1891,20 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 
     tick(); timer = setInterval(tick, 1000);
     if(done) thanks('כבר נרשמת להגרלה. בהצלחה! 🍀');
-    if(autoOpen){
-      // open once, after the visitor has scrolled past the intro animation (not over the first screen)
+    if(autoOpen && !store('s','g','raffleShown')){
+      // once per visit: after the visitor has scrolled past the intro animation and then
+      // paused for a moment, so it never pops up in the middle of a scroll
       var introEnd = function(){ var sec = document.getElementById('canvas-sequence'); return sec ? sec.offsetHeight + 200 : window.innerHeight * 2; };
+      var settle = 0;
       var onRaffleScroll = function(){
+        clearTimeout(settle);
         if(window.scrollY < introEnd()) return;
-        window.removeEventListener('scroll', onRaffleScroll);
-        openPopup(true);
+        settle = setTimeout(function(){
+          if(window.scrollY < introEnd()) return;
+          window.removeEventListener('scroll', onRaffleScroll);
+          store('s','s','raffleShown','1');
+          openPopup(true);
+        }, 700);
       };
       window.addEventListener('scroll', onRaffleScroll, {passive:true});
     }
