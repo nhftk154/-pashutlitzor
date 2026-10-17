@@ -1759,7 +1759,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     if(link) link.hidden = false;
     var doneKey = 'raffleDone:' + cfg.endsAt;
     var done = !!store('l','g',doneKey);
-    build(cfg, ends, doneKey, done, !done && !store('s','g','raffleDismissed'));
+    build(cfg, ends, doneKey, done, true);
   }).catch(function(){});
 
   function build(cfg, ends, doneKey, done, autoOpen){
@@ -1852,7 +1852,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 
     function setMsg(t, cls){ msg.textContent = t; msg.className = 'raffle-msg ' + (cls||''); }
     function thanks(text){
-      form.outerHTML = '<p class="raffle-done" role="status">' + text + '</p>';
+      form.outerHTML = '<p class="raffle-done" role="status">' + text + '<br><a href="legal/raffle-terms.html" target="_blank" rel="noopener">לתקנון ההגרלה</a></p>';
       ov.querySelector('.raffle-note').remove();
       store('l','s',doneKey,'1');
       form = null;
@@ -1888,7 +1888,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 
     tick(); timer = setInterval(tick, 1000);
     if(done) thanks('כבר נרשמת להגרלה. בהצלחה! 🍀');
-    else if(autoOpen){
+    if(autoOpen){
       // open once, after the visitor has scrolled past the intro animation (not over the first screen)
       var introEnd = function(){ var sec = document.getElementById('canvas-sequence'); return sec ? sec.offsetHeight + 200 : window.innerHeight * 2; };
       var onRaffleScroll = function(){
