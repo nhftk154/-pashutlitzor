@@ -644,6 +644,47 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   transition:inset-block-start .2s;
 }
 .skip-link:focus{inset-block-start:14px}
+/* ===== RAFFLE POPUP ===== */
+.raffle-overlay{
+  position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;
+  padding:16px;background:rgba(37,51,58,.72);opacity:0;transition:opacity .3s var(--ease);overflow-y:auto;
+}
+.raffle-overlay.open{display:flex;opacity:1}
+.raffle-card{
+  position:relative;width:min(100%,440px);margin:auto;background:var(--bg);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg);padding:32px 26px 24px;text-align:center;color:var(--text);
+}
+.raffle-close{
+  position:absolute;top:10px;inset-inline-end:10px;width:40px;height:40px;border:0;border-radius:50%;
+  background:rgba(37,51,58,.08);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.raffle-close:hover{background:rgba(37,51,58,.16)}
+.raffle-close svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none}
+.raffle-eyebrow{font-family:'DM Mono',monospace;font-size:.78rem;letter-spacing:.08em;color:var(--terracotta)}
+.raffle-card h2{font-size:1.7rem;line-height:1.25;margin:6px 0 4px;color:var(--teal)}
+.raffle-prize{font-size:1.02rem;color:var(--text-soft);margin-bottom:16px}
+.raffle-timer{display:flex;gap:8px;justify-content:center;margin-bottom:18px;direction:rtl}
+.raffle-unit{flex:1;max-width:84px;background:#fff;border-radius:var(--r-md);padding:10px 4px;box-shadow:var(--shadow-sm)}
+.raffle-unit b{display:block;font-family:'DM Mono',monospace;font-size:1.6rem;font-weight:500;color:var(--teal);font-variant-numeric:tabular-nums}
+.raffle-unit span{font-size:.78rem;color:var(--text-soft)}
+.raffle-form{display:grid;gap:10px;text-align:start}
+.raffle-form label.fld{font-size:.88rem;font-weight:500}
+.raffle-form input[type=text],.raffle-form input[type=tel]{
+  width:100%;margin-top:4px;padding:12px 14px;font:inherit;font-size:1rem;border:1.5px solid var(--sand);
+  border-radius:var(--r-sm);background:#fff;color:var(--text);
+}
+.raffle-form input:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.raffle-chk{display:flex;gap:10px;align-items:flex-start;font-size:.84rem;line-height:1.45;color:var(--text-soft)}
+.raffle-chk input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--teal)}
+.raffle-chk a{color:var(--teal);text-decoration:underline}
+.raffle-hp{position:absolute;inset-inline-start:-9999px;width:1px;height:1px;overflow:hidden}
+.raffle-msg{min-height:1.3em;font-size:.9rem;text-align:center}
+.raffle-msg.err{color:#a8321f}
+.raffle-msg.ok{color:var(--olive);font-weight:500}
+.raffle-form button[type=submit][disabled]{opacity:.6;cursor:wait}
+.raffle-done{padding:8px 0 4px;font-size:1.05rem;line-height:1.6}
+.raffle-note{margin-top:10px;font-size:.78rem;color:var(--text-soft)}
+@media(prefers-reduced-motion:reduce){.raffle-overlay{transition:none}}
 </style>
 </head>
 <body>
@@ -850,6 +891,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       <a href="legal/privacy.html">מדיניות פרטיות</a>
       <a href="legal/accessibility.html">הצהרת נגישות</a>
       <a href="legal/terms.html">תנאי שימוש</a>
+      <a href="legal/raffle-terms.html" id="foot-raffle-link" hidden>תקנון ההגרלה</a>
     </div>
     <div class="foot-social">
       <a href="https://www.instagram.com/dina_evgi?igsh=NWgyeW82cmZkeXp0" target="_blank" rel="noopener" aria-label="עמוד האינסטגרם שלנו">
@@ -1552,6 +1594,148 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     });
   }
 
+})();
+</script>
+
+<script>
+/* ===== RAFFLE POPUP — הגדרות ב-content/raffle.json ===== */
+(function(){
+  "use strict";
+  function store(kind, op, key, val){
+    try { var s = kind === 'l' ? localStorage : sessionStorage; return op === 'g' ? s.getItem(key) : s.setItem(key, val); } catch(e){ return null; }
+  }
+  // endsAt ללא היסט נחשב לשעון ישראל, בלי תלות באזור הזמן של הגולשת
+  function parseEnds(str){
+    if(!str) return NaN;
+    if(/[zZ]$|[+-]\d{2}:?\d{2}$/.test(str)) return new Date(str).getTime();
+    var m = str.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?/);
+    if(!m) return NaN;
+    var guess = Date.UTC(+m[1], m[2]-1, +m[3], +m[4], +m[5], +(m[6]||0));
+    function off(t){
+      var p = new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Jerusalem',hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'}).formatToParts(new Date(t)).reduce(function(a,x){a[x.type]=+x.value;return a;},{});
+      return Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second) - Math.floor(t/1000)*1000;
+    }
+    var t = guess - off(guess);
+    return guess - off(t);
+  }
+  function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+
+  fetch('content/raffle.json', {cache:'no-cache'}).then(function(r){ return r.json(); }).then(function(cfg){
+    var ends = parseEnds(cfg.endsAt);
+    if(!cfg.enabled || !cfg.scriptUrl || isNaN(ends) || Date.now() >= ends) return;
+    var link = document.getElementById('foot-raffle-link');
+    if(link) link.hidden = false;
+    var doneKey = 'raffleDone:' + cfg.endsAt;
+    if(store('l','g',doneKey) || store('s','g','raffleDismissed')) return;
+    build(cfg, ends, doneKey);
+  }).catch(function(){});
+
+  function build(cfg, ends, doneKey){
+    var prev = null, timer = null;
+    var ov = document.createElement('div');
+    ov.className = 'raffle-overlay';
+    ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-labelledby','raffle-title');
+    var prize = cfg.prizeTitle ? esc(cfg.prizeTitle) + (cfg.prizeValueIls ? ' (שווי ' + Number(cfg.prizeValueIls).toLocaleString('he-IL') + ' ₪)' : '') : '';
+    ov.innerHTML =
+      '<div class="raffle-card">' +
+        '<button type="button" class="raffle-close" aria-label="סגירה"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+        '<div class="raffle-eyebrow">הגרלה</div>' +
+        '<h2 id="raffle-title">הצטרפו להגרלה</h2>' +
+        (prize ? '<p class="raffle-prize">הפרס: ' + prize + '</p>' : '') +
+        '<div class="raffle-timer" role="timer" aria-label="הזמן שנותר להגרלה">' +
+          '<div class="raffle-unit"><b data-u="d">00</b><span>ימים</span></div>' +
+          '<div class="raffle-unit"><b data-u="h">00</b><span>שעות</span></div>' +
+          '<div class="raffle-unit"><b data-u="m">00</b><span>דקות</span></div>' +
+          '<div class="raffle-unit"><b data-u="s">00</b><span>שניות</span></div>' +
+        '</div>' +
+        '<form class="raffle-form" novalidate>' +
+          '<label class="fld">שם מלא<input type="text" name="name" autocomplete="name" maxlength="60" required></label>' +
+          '<label class="fld">טלפון נייד<input type="tel" name="phone" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="050-0000000" required></label>' +
+          '<div class="raffle-hp" aria-hidden="true"><label>אל תמלאו<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' +
+          '<label class="raffle-chk"><input type="checkbox" name="terms" required><span>אני בת/בן 18 ומעלה, תושב/ת ישראל, ואישרתי את <a href="legal/raffle-terms.html" target="_blank" rel="noopener">תקנון ההגרלה</a>. ההשתתפות חינמית וללא חובת רכישה.</span></label>' +
+          '<label class="raffle-chk"><input type="checkbox" name="marketing"><span>אשמח לקבל עדכונים והטבות בוואטסאפ/SMS (לא חובה, ניתן להסיר בכל עת).</span></label>' +
+          '<div class="raffle-msg" role="status" aria-live="polite"></div>' +
+          '<button type="submit" class="btn btn-primary btn-lg btn-block">אני רוצה להשתתף</button>' +
+        '</form>' +
+        '<p class="raffle-note">הפרטים נשמרים להגרלה בלבד. פרטים נוספים ב<a href="legal/privacy.html" style="text-decoration:underline">מדיניות הפרטיות</a>.</p>' +
+      '</div>';
+    document.body.appendChild(ov);
+
+    var card = ov.querySelector('.raffle-card'), form = ov.querySelector('form'), msg = ov.querySelector('.raffle-msg');
+    var units = {}; ov.querySelectorAll('[data-u]').forEach(function(b){ units[b.getAttribute('data-u')] = b; });
+
+    function tick(){
+      var left = Math.max(0, Math.floor((ends - Date.now())/1000));
+      if(left === 0){ close(true); return; }
+      units.d.textContent = pad(Math.floor(left/86400));
+      units.h.textContent = pad(Math.floor(left%86400/3600));
+      units.m.textContent = pad(Math.floor(left%3600/60));
+      units.s.textContent = pad(left%60);
+    }
+    function close(ended){
+      clearInterval(timer);
+      ov.classList.remove('open');
+      document.removeEventListener('keydown', onKey);
+      if(!ended) store('s','s','raffleDismissed','1');
+      setTimeout(function(){ ov.remove(); }, 300);
+      if(prev && prev.focus) prev.focus();
+    }
+    function onKey(e){
+      if(e.key === 'Escape'){ close(); return; }
+      if(e.key !== 'Tab') return;
+      var f = card.querySelectorAll('button,input:not([tabindex="-1"]),a[href]');
+      var first = f[0], last = f[f.length-1];
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+    ov.addEventListener('click', function(e){ if(e.target === ov) close(); });
+    ov.querySelector('.raffle-close').addEventListener('click', function(){ close(); });
+
+    function setMsg(t, cls){ msg.textContent = t; msg.className = 'raffle-msg ' + (cls||''); }
+    function thanks(text){
+      form.outerHTML = '<p class="raffle-done" role="status">' + text + '</p>';
+      ov.querySelector('.raffle-note').remove();
+      store('l','s',doneKey,'1');
+      clearInterval(timer);
+      ov.querySelector('.raffle-timer').style.opacity = '.85';
+      timer = setInterval(tick, 1000);
+    }
+    var errors = {
+      invalid_phone: 'מספר הטלפון אינו תקין. נא להזין מספר נייד ישראלי (למשל 050-0000000).',
+      invalid_name: 'נא להזין שם מלא.',
+      terms: 'יש לאשר את התקנון כדי להשתתף.',
+      closed: 'ההרשמה להגרלה הסתיימה.',
+      busy: 'המערכת עמוסה, נסו שוב בעוד רגע.'
+    };
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = form.name.value.replace(/\s+/g,' ').trim();
+      var digits = form.phone.value.replace(/\D/g,'').replace(/^972/,'0');
+      if(name.length < 2){ setMsg(errors.invalid_name,'err'); form.name.focus(); return; }
+      if(!/^05\d{8}$/.test(digits)){ setMsg(errors.invalid_phone,'err'); form.phone.focus(); return; }
+      if(!form.terms.checked){ setMsg(errors.terms,'err'); form.terms.focus(); return; }
+      var btn = form.querySelector('button[type=submit]');
+      btn.disabled = true; setMsg('שולחים…');
+      fetch(cfg.scriptUrl, {
+        method: 'POST',
+        headers: {'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({name:name, phone:digits, terms:true, marketing:form.marketing.checked, website:form.website.value})
+      }).then(function(r){ return r.json(); }).then(function(res){
+        if(res.ok){ thanks('נרשמת להגרלה בהצלחה! בהצלחה 🍀<br>הזוכה תקבל הודעה בטלפון שהשארת.'); }
+        else if(res.error === 'duplicate'){ thanks('המספר הזה כבר רשום להגרלה, אין צורך להירשם שוב. בהצלחה! 🍀'); }
+        else { btn.disabled = false; setMsg(errors[res.error] || 'משהו השתבש. נסו שוב מאוחר יותר.','err'); }
+      }).catch(function(){ btn.disabled = false; setMsg('לא הצלחנו לשלוח. בדקו את החיבור ונסו שוב.','err'); });
+    });
+
+    tick(); timer = setInterval(tick, 1000);
+    prev = document.activeElement;
+    setTimeout(function(){
+      ov.classList.add('open');
+      document.addEventListener('keydown', onKey);
+      form.name.focus({preventScroll:true});
+    }, 600);
+  }
 })();
 </script>
 </body>
