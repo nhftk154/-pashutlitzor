@@ -22,6 +22,13 @@ function setup() {
   }
   // עמודת טלפון כטקסט כדי ש-0 בתחילת המספר לא יימחק
   sh.getRange('C:D').setNumberFormat('@');
+  // תיקון שורות קיימות שבהן ה-0 נמחק
+  var last = sh.getLastRow();
+  if (last > 1) {
+    var rng = sh.getRange(2, 3, last - 1, 2);
+    var vals = rng.getValues().map(function (r) { return [phoneText_(r[0]), phoneText_(r[1])]; });
+    rng.setNumberFormat('@').setValues(vals);
+  }
 }
 
 function onOpen() {
@@ -37,6 +44,12 @@ function normalizePhone_(raw) {
   var d = String(raw || '').replace(/\D/g, '');
   if (d.indexOf('972') === 0) d = '0' + d.slice(3);
   return /^05\d{8}$/.test(d) ? d : null;
+}
+
+// מחזיר טלפון כטקסט בן 10 ספרות (משחזר 0 שנמחק אם הגיליון הפך את התא למספר)
+function phoneText_(v) {
+  var s = String(v === null || v === undefined ? '' : v).replace(/\D/g, '');
+  return s.length === 9 ? '0' + s : s;
 }
 
 // מונע הזרקת נוסחאות בגיליון
@@ -73,13 +86,15 @@ function doPost(e) {
     if (last > 1) {
       var existing = sh.getRange(2, 4, last - 1, 1).getValues();
       for (var i = 0; i < existing.length; i++) {
-        if (String(existing[i][0]) === phone) return json_({ ok: false, error: 'duplicate' });
+        if (phoneText_(existing[i][0]) === phone) return json_({ ok: false, error: 'duplicate' });
       }
     }
 
     var now = new Date();
     var marketing = data.marketing === true;
-    sh.appendRow([now, safeCell_(name), phone, phone, marketing ? 'כן' : 'לא', marketing ? now : '']);
+    var row = sh.getLastRow() + 1;
+    sh.getRange(row, 3, 1, 2).setNumberFormat('@');
+    sh.getRange(row, 1, 1, 6).setValues([[now, safeCell_(name), phone, phone, marketing ? 'כן' : 'לא', marketing ? now : '']]);
     return json_({ ok: true });
   } catch (err) {
     return json_({ ok: false, error: 'server' });
@@ -105,7 +120,7 @@ function pickWinner() {
   do { second = Math.floor(Math.random() * rows.length); } while (second === first);
   var ws = ss.getSheetByName(WINNER_SHEET) || ss.insertSheet(WINNER_SHEET);
   var now = new Date();
-  ws.appendRow([now, 'מקום ראשון', rows[first][1], rows[first][2], 'מתוך ' + rows.length + ' נרשמות']);
-  ws.appendRow([now, 'מקום שני', rows[second][1], rows[second][2], 'מתוך ' + rows.length + ' נרשמות']);
-  ui.alert('מקום ראשון: ' + rows[first][1] + ' — ' + rows[first][2] + '\nמקום שני: ' + rows[second][1] + ' — ' + rows[second][2]);
+  ws.appendRow([now, 'מקום ראשון', rows[first][1], phoneText_(rows[first][2]), 'מתוך ' + rows.length + ' נרשמות']);
+  ws.appendRow([now, 'מקום שני', rows[second][1], phoneText_(rows[second][2]), 'מתוך ' + rows.length + ' נרשמות']);
+  ui.alert('מקום ראשון: ' + rows[first][1] + ' — ' + phoneText_(rows[first][2]) + '\nמקום שני: ' + rows[second][1] + ' — ' + phoneText_(rows[second][2]));
 }
