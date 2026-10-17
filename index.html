@@ -26,6 +26,9 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"LocalBusiness","name":"פשוט ליצור","description":"סדנאות יצירה בוטיק בגבס פולימרי: סדנאות פרטיות, ערבי בנות, חגיגות קבוצתיות ואירועי חברה, בסטודיו או אצלכם.","url":"https://pashutlitzor.com/","telephone":"+972525477845","address":{"@type":"PostalAddress","addressLocality":"חספין","addressRegion":"רמת הגולן","addressCountry":"IL"},"areaServed":{"@type":"Country","name":"ישראל"},"image":"https://pashutlitzor.com/assets/branding/og-image.jpg","logo":"https://pashutlitzor.com/assets/branding/logo-removebg-preview.png","inLanguage":"he","sameAs":["https://www.instagram.com/dina_evgi","https://www.facebook.com/share/1DS9hV27x7/"],"makesOffer":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"סדנאות פרטיות"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"ערב בנות"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"חגיגות קבוצתיות"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"אירועי חברה"}}]}
 </script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"איפה מתקיימות הסדנאות?","acceptedAnswer":{"@type":"Answer","text":"הסדנאות מתקיימות בסטודיו בחספין שברמת הגולן. אפשר גם להזמין סדנה אליכם, והסטודיו מגיע לכל רחבי הארץ עם כל הציוד."}},{"@type":"Question","name":"אילו סוגי סדנאות יש?","acceptedAnswer":{"@type":"Answer","text":"סדנאות פרטיות, ערב בנות, חגיגות קבוצתיות (ימי הולדת, מסיבות רווקות וגיבושים) ואירועי חברה."}},{"@type":"Question","name":"מה זה גבס פולימרי?","acceptedAnswer":{"@type":"Answer","text":"חומר יצירה ועיצוב לבית על בסיס מים וללא ריחות חזקים. הוא חזק, עם מגע חלק שמזכיר שיש או אבן, ומתקשה מהר, ולכן אפשר ליצוק, לעצב ולקחת את היצירה הביתה כבר בסוף הסדנה."}},{"@type":"Question","name":"אני צריכה ניסיון קודם ביצירה?","acceptedAnswer":{"@type":"Answer","text":"לא. הסדנה מלווה בהדרכה, ומתאימה גם למי שלא יצרה מעולם."}},{"@type":"Question","name":"כמה משתתפות אפשר להביא?","acceptedAnswer":{"@type":"Answer","text":"תלוי בסוג הסדנה. לאירועי חברה אנחנו מתאימים את החוויה לקבוצות של 5 ועד 100 משתתפים. לשאר הסדנאות כדאי לשלוח הודעה בוואטסאפ ונמצא את הפורמט שמתאים לכן."}},{"@type":"Question","name":"כמה עולה סדנה, ואיך מזמינים?","acceptedAnswer":{"@type":"Answer","text":"המחיר תלוי בסוג הסדנה ובגודל הקבוצה. שולחות הודעה בוואטסאפ למספר 052-547-7845, ומקבלות הצעה והתאמה אישית, בלי טפסים ובלי התחייבות."}}]}
+</script>
 <link rel="icon" type="image/png" href="assets/branding/logo-removebg-preview.png">
 
 <link rel="stylesheet" href="assets/css/fonts.css">
@@ -285,6 +288,15 @@ body::before{
 .scroll-hint svg{width:20px;height:20px;animation:bob 1.8s var(--ease) infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
 
+#faq .wrap{max-width:740px}
+#faq h2{font-size:clamp(2rem,6vw,3rem)}
+.faq-list{display:grid;gap:12px}
+.faq-item{background:var(--white);border:1px solid rgba(37,51,58,.12);border-radius:var(--r-md);padding:0 20px}
+.faq-item summary{cursor:pointer;list-style:none;padding:18px 0;font-weight:600;font-size:1.05rem;color:var(--text);min-height:44px;touch-action:manipulation}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+";float:inline-end;color:var(--accent);font-size:1.4rem;line-height:1}
+.faq-item[open] summary::after{content:"\2212"}
+.faq-item p{color:var(--text-soft);font-size:1.05rem;line-height:1.7;padding-bottom:18px}
 /* ============ CANVAS SEQUENCE (scroll-expand hero) ============ */
 #canvas-sequence{height:260vh;background:var(--bg)}
 @media(max-width:680px){#canvas-sequence{height:180vh}}
@@ -818,7 +830,8 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   <div class="wrap">
     <span class="eyebrow reveal" id="concept-eyebrow">נעים להכיר</span>
     <h2 class="reveal" data-delay="1" id="concept-heading">גבס פולימרי</h2>
-    <p class="reveal" data-delay="2" id="concept-body"></p>
+    <p class="reveal" data-delay="2" id="concept-body">אם עדיין לא שמעתם על גבס פולימרי, תתכוננו להפתעה. 
+מדובר בדור החדש של חומרי היצירה והעיצוב לבית, והוא שונה לחלוטין מכל מה שהכרתם:<br><br><strong>ידידותי ואקולוגי:</strong> הוא מבוסס על מים וללא ריחות חזקים, ומתאים לעבודה יצירתית בהתאם להנחיות היצרן.<br><br><strong>חזק ואיכותי:</strong> השילוב הפולימרי מעניק לו עמידות טובה, ומגע חלק, נעים ויוקרתי שמזכיר שיש או אבן חלקה.<br><br><strong>קסם מהיר:</strong> בניגוד לחומרים אחרים שלוקח להם ימים להתייבש, הגבס הפולימרי מתקשה במהירות מדהימה — מה שמאפשר לנו ליצוק אותו, לעצב אותו, וגם לחלץ אותו מהתבנית ולקחת אותו הביתה כבר בסוף הסדנה!</p>
     <div class="concept-divider reveal" data-delay="3"></div>
   </div>
 </section>
@@ -831,7 +844,12 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       <h2 class="reveal" data-delay="1" id="workshops-heading">חוויה שמתאימה לכל רגע</h2>
       <p class="reveal" data-delay="2" id="workshops-text">בין אם בא לך לפנק את עצמך, לחגוג עם החברות או להפיק אירוע. יש לנו את הפורמט המושלם.</p>
     </div>
-    <div class="cards-grid" id="workshops-grid"></div>
+    <div class="cards-grid" id="workshops-grid">
+      <article class="w-card reveal" data-delay="0"><div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13a4 4 0 100-8 4 4 0 000 8z"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></div><h3>סדנאות פרטיות</h3><p>חוויה אישית ורגועה, ללמוד וליצור בקצב שלך אובייקט ייחודי משלך. מתנה מושלמת או פינוק עצמי.</p><a class="w-link" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%2C%20%D7%91%D7%90%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8.%20%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%AA%20%D7%91%D7%A1%D7%93%D7%A0%D7%94%20%D7%A4%D7%A8%D7%98%D7%99%D7%AA" target="_blank" rel="noopener">לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a></article>
+      <article class="w-card reveal" data-delay="1"><div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.6 4.2L18 8l-3.2 3 .9 4.5L12 13.6 8.3 15.5l.9-4.5L6 8l4.4-.8z"/></svg></div><h3>ערב בנות</h3><p>ערב יצירה כיפי עם החברות, יצירה, מוזיקה והמון צחוקים. כל אחת חוזרת הביתה עם כלים שיצרה ועיצבה בעצמה.</p><a class="w-link" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%2C%20%D7%91%D7%90%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8.%20%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%AA%20%D7%91%D7%A2%D7%A8%D7%91%20%D7%91%D7%A0%D7%95%D7%AA" target="_blank" rel="noopener">לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a></article>
+      <article class="w-card reveal" data-delay="2"><div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3 3 0 100-6 3 3 0 000 6zM17 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/><path d="M2 20c0-3 2.5-5 6-5s6 2 6 5M14.5 20c0-2 1-3.5 3.5-3.5s3.5 1.5 3.5 3.5"/></svg></div><h3>חגיגות קבוצתיות</h3><p>ימי הולדת, מסיבות רווקות וגיבושים. מעצבים את החוויה לפי הקבוצה, האווירה והתקציב שלכם.</p><a class="w-link" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%2C%20%D7%91%D7%90%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8.%20%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%AA%20%D7%91%D7%97%D7%92%D7%99%D7%92%D7%94%20%D7%A7%D7%91%D7%95%D7%A6%D7%AA%D7%99%D7%AA" target="_blank" rel="noopener">לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a></article>
+      <article class="w-card reveal" data-delay="3"><div class="w-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l6-3 6 3v13M15 21V11l6 0v10"/><path d="M2 21h20M7 11h0M11 11h0M7 15h0M11 15h0"/></svg></div><h3>אירועי חברה</h3><p>ימי גיבוש, אירועי סוף שנה ופעילויות צוות. אנחנו מגיעים אליכם עם כל הציוד לחוויה רגועה ויוקרתית.</p><a class="w-link" href="https://wa.me/972525477845?text=%D7%94%D7%99%D7%99%2C%20%D7%91%D7%90%D7%AA%D7%99%20%D7%93%D7%A8%D7%9A%20%D7%94%D7%90%D7%AA%D7%A8.%20%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%91%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%97%D7%91%D7%A8%D7%94" target="_blank" rel="noopener">לפרטים <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a></article>
+    </div>
   </div>
 </section>
 
@@ -910,6 +928,23 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 </section>
 
 <!-- ===== CLOSING CTA ===== -->
+<!-- ===== FAQ ===== -->
+<section id="faq" class="section-pad">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="reveal" id="faq-heading">שאלות נפוצות</h2>
+    </div>
+    <div class="faq-list reveal" data-delay="1">
+      <details class="faq-item"><summary>איפה מתקיימות הסדנאות?</summary><p>הסדנאות מתקיימות בסטודיו בחספין שברמת הגולן. אפשר גם להזמין סדנה אליכם, והסטודיו מגיע לכל רחבי הארץ עם כל הציוד.</p></details>
+      <details class="faq-item"><summary>אילו סוגי סדנאות יש?</summary><p>סדנאות פרטיות, ערב בנות, חגיגות קבוצתיות (ימי הולדת, מסיבות רווקות וגיבושים) ואירועי חברה.</p></details>
+      <details class="faq-item"><summary>מה זה גבס פולימרי?</summary><p>חומר יצירה ועיצוב לבית על בסיס מים וללא ריחות חזקים. הוא חזק, עם מגע חלק שמזכיר שיש או אבן, ומתקשה מהר, ולכן אפשר ליצוק, לעצב ולקחת את היצירה הביתה כבר בסוף הסדנה.</p></details>
+      <details class="faq-item"><summary>אני צריכה ניסיון קודם ביצירה?</summary><p>לא. הסדנה מלווה בהדרכה, ומתאימה גם למי שלא יצרה מעולם.</p></details>
+      <details class="faq-item"><summary>כמה משתתפות אפשר להביא?</summary><p>תלוי בסוג הסדנה. לאירועי חברה אנחנו מתאימים את החוויה לקבוצות של 5 ועד 100 משתתפים. לשאר הסדנאות כדאי לשלוח הודעה בוואטסאפ ונמצא את הפורמט שמתאים לכן.</p></details>
+      <details class="faq-item"><summary>כמה עולה סדנה, ואיך מזמינים?</summary><p>המחיר תלוי בסוג הסדנה ובגודל הקבוצה. שולחות הודעה בוואטסאפ למספר 052-547-7845, ומקבלות הצעה והתאמה אישית, בלי טפסים ובלי התחייבות.</p></details>
+    </div>
+  </div>
+</section>
+
 <section id="contact" class="section-pad">
   <div class="wrap">
     <span class="eyebrow reveal" id="contact-eyebrow">מוכנה להתחיל?</span>
