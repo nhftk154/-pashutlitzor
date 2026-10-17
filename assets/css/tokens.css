@@ -121,8 +121,8 @@ section{position:relative}
 .nav-icon-btn:hover{background:rgba(37,51,58,.06)}
 .nav-icon-btn svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none}
 .nav-cart-badge{
-  position:absolute;top:2px;inset-inline-end:2px;min-width:17px;height:17px;padding:0 4px;
-  border-radius:999px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;
+  position:absolute;top:2px;inset-inline-end:2px;min-width:19px;height:19px;padding:0 4px;
+  border-radius:999px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;
   display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;
 }
 .nav-cart-badge:empty,.nav-cart-badge[data-count="0"]{display:none}
