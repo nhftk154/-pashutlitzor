@@ -13,6 +13,20 @@
       "youtube_url": "https://youtube.com/shorts/NJCDUmPQgVQ?si=XW-wk5pIaFirIU_1",
       "poster": "/assets/videos/img_4921.jpeg",
       "aspect": "landscape"
+    },
+    {
+      "type": "youtube",
+      "title": "סדנה שכולה חויה",
+      "youtube_url": "https://pashutlitzor.com/",
+      "poster": "",
+      "aspect": "portrait"
+    },
+    {
+      "type": "youtube",
+      "title": "סדנת טרצו",
+      "youtube_url": "https://youtube.com/shorts/Aa7k4vl1VfY?si=oxw2-Q0uq6z-i2gA",
+      "poster": "",
+      "aspect": "portrait"
     }
   ]
 }
