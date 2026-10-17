@@ -691,7 +691,20 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 .raffle-form button[type=submit][disabled]{opacity:.6;cursor:wait}
 .raffle-done{padding:8px 0 4px;font-size:1.05rem;line-height:1.6}
 .raffle-note{margin-top:10px;font-size:.78rem;color:var(--text-soft)}
-@media(prefers-reduced-motion:reduce){.raffle-overlay{transition:none}}
+/* שעון קבוע בצד — פתיחה מחדש של הפופ-אפ */
+.raffle-pill{
+  position:fixed;z-index:1090;inset-block-end:calc(22px + env(safe-area-inset-bottom));inset-inline-start:16px;
+  display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 14px;border:0;border-radius:var(--r-md);
+  background:var(--teal);color:#fff;font:inherit;cursor:pointer;box-shadow:var(--shadow-md);line-height:1.2;
+  transition:transform .2s var(--ease);
+}
+.raffle-pill:hover{transform:translateY(-2px)}
+.raffle-pill:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.raffle-pill .rp-l{font-size:.78rem;opacity:.92}
+.raffle-pill .rp-t{font-family:'DM Mono',monospace;font-weight:500;font-size:.92rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.raffle-pill.done{background:var(--olive)}
+@media(max-width:480px){.raffle-pill{inset-inline-start:10px;padding:7px 11px}.raffle-pill .rp-t{font-size:.82rem}}
+@media(prefers-reduced-motion:reduce){.raffle-overlay,.raffle-pill{transition:none}}
 </style>
 </head>
 <body>
@@ -1634,11 +1647,11 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     var link = document.getElementById('foot-raffle-link');
     if(link) link.hidden = false;
     var doneKey = 'raffleDone:' + cfg.endsAt;
-    if(store('l','g',doneKey) || store('s','g','raffleDismissed')) return;
-    build(cfg, ends, doneKey);
+    var done = !!store('l','g',doneKey);
+    build(cfg, ends, doneKey, done, !done && !store('s','g','raffleDismissed'));
   }).catch(function(){});
 
-  function build(cfg, ends, doneKey){
+  function build(cfg, ends, doneKey, done, autoOpen){
     var prev = null, timer = null;
     var ov = document.createElement('div');
     ov.className = 'raffle-overlay';
@@ -1678,6 +1691,14 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       '</div>';
     document.body.appendChild(ov);
 
+    var pill = document.createElement('button');
+    pill.type = 'button';
+    pill.className = 'raffle-pill';
+    pill.innerHTML = '<span class="rp-l">🎁 הגרלה</span><b class="rp-t" dir="ltr">--</b>';
+    pill.setAttribute('aria-label', 'הגרלה — לפתיחת טופס ההרשמה');
+    document.body.appendChild(pill);
+    var pillT = pill.querySelector('.rp-t');
+
     var card = ov.querySelector('.raffle-card'), form = ov.querySelector('form'), msg = ov.querySelector('.raffle-msg');
     var units = {}; ov.querySelectorAll('[data-u]').forEach(function(b){ units[b.getAttribute('data-u')] = b; });
 
@@ -1688,15 +1709,22 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       units.h.textContent = pad(Math.floor(left%86400/3600));
       units.m.textContent = pad(Math.floor(left%3600/60));
       units.s.textContent = pad(left%60);
+      pillT.textContent = Math.floor(left/86400) + ' ימים ' + pad(Math.floor(left%86400/3600)) + ':' + pad(Math.floor(left%3600/60)) + ':' + pad(left%60);
     }
     function close(ended){
-      clearInterval(timer);
       ov.classList.remove('open');
       document.removeEventListener('keydown', onKey);
-      if(!ended) store('s','s','raffleDismissed','1');
-      setTimeout(function(){ ov.remove(); }, 300);
+      if(ended){ clearInterval(timer); setTimeout(function(){ ov.remove(); pill.remove(); }, 300); return; }
+      store('s','s','raffleDismissed','1');
       if(prev && prev.focus) prev.focus();
     }
+    function openPopup(){
+      prev = document.activeElement;
+      ov.classList.add('open');
+      document.addEventListener('keydown', onKey);
+      var f = form && form.name; if(f && f.focus) f.focus({preventScroll:true}); else ov.querySelector('.raffle-close').focus();
+    }
+    pill.addEventListener('click', openPopup);
     function onKey(e){
       if(e.key === 'Escape'){ close(); return; }
       if(e.key !== 'Tab') return;
@@ -1713,9 +1741,9 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       form.outerHTML = '<p class="raffle-done" role="status">' + text + '</p>';
       ov.querySelector('.raffle-note').remove();
       store('l','s',doneKey,'1');
-      clearInterval(timer);
-      ov.querySelector('.raffle-timer').style.opacity = '.85';
-      timer = setInterval(tick, 1000);
+      form = null;
+      pill.classList.add('done');
+      pill.querySelector('.rp-l').textContent = '✓ נרשמת להגרלה';
     }
     var errors = {
       invalid_phone: 'מספר הטלפון אינו תקין. נא להזין מספר נייד ישראלי (למשל 050-0000000).',
@@ -1745,12 +1773,8 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     });
 
     tick(); timer = setInterval(tick, 1000);
-    prev = document.activeElement;
-    setTimeout(function(){
-      ov.classList.add('open');
-      document.addEventListener('keydown', onKey);
-      form.name.focus({preventScroll:true});
-    }, 600);
+    if(done) thanks('כבר נרשמת להגרלה. בהצלחה! 🍀');
+    else if(autoOpen) setTimeout(openPopup, 600);
   }
 })();
 </script>
