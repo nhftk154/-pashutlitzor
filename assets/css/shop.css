@@ -33,13 +33,13 @@
 .product-card:hover .product-card-media img{transform:scale(1.05)}
 .product-badge{
   position:absolute;top:14px;inset-inline-start:14px;padding:6px 13px;border-radius:999px;
-  font-size:12px;font-weight:700;color:#fff;font-family:'DM Mono',monospace;letter-spacing:.03em;
+  font-size:13px;font-weight:700;color:#fff;font-family:'DM Mono',monospace;letter-spacing:.03em;
 }
 .product-badge[data-badge="bestseller"]{background:var(--green-secondary)}
 .product-badge[data-badge="new"]{background:var(--teal)}
 .product-badge[data-badge="sale"]{background:var(--accent)}
 .product-card-body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:6px;flex-grow:1}
-.product-card-cat{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft)}
+.product-card-cat{font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft)}
 .product-card-name{font-size:1.2rem;flex-grow:1}
 .product-card-price{font-weight:600;font-size:1.05rem;color:var(--green-primary)}
 
