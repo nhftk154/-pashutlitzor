@@ -582,10 +582,16 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   width:60px;height:60px;border-radius:50%;background:#0E7A3E;
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 8px 24px rgba(37,211,102,.4);
-  animation:pulse 2.4s var(--ease) infinite;
   transition:transform .45s cubic-bezier(.34,1.56,.64,1), opacity .4s var(--ease), visibility .4s;
   opacity:0;visibility:hidden;transform:scale(.5);
 }
+.fab::after{
+  content:'';position:absolute;inset:0;border-radius:50%;background:rgba(37,211,102,.5);
+  z-index:-1;pointer-events:none;opacity:0;will-change:transform,opacity;
+  animation:fabring 2.4s var(--ease) infinite;animation-play-state:paused;
+}
+.fab.fab--visible::after{animation-play-state:running}
+@keyframes fabring{0%{transform:scale(1);opacity:.5}70%,100%{transform:scale(1.55);opacity:0}}
 .fab.fab--visible{opacity:1;visibility:visible;transform:scale(1)}
 .fab:hover{transform:scale(1.08)}
 .fab svg{width:32px;height:32px;fill:#fff}
@@ -637,6 +643,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     transition-duration:.001ms!important;scroll-behavior:auto!important;
   }
   .reveal{opacity:1!important;transform:none!important}
+  .fab::after{animation:none;display:none}
   .fab{animation:none;opacity:1;visibility:visible;transform:none}
   #canvas-sequence{height:100svh}
   .canvas-card{width:100%!important;height:100%!important;border-radius:0!important}
@@ -1379,6 +1386,8 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   var ctx = canvas.getContext('2d');
   var section = document.getElementById('canvas-sequence');
   var images = [];
+  var bitmaps = [];
+  var secTop = 0, secTotal = 1;
   var loadedCount = 0;
   var lastExact = -1;
   var redrawQueued = false;
@@ -1390,20 +1399,29 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     canvas.width = Math.round(rect.width * dpr);
     canvas.height = Math.round(rect.height * dpr);
     lastExact = -1; // force redraw
+    measureSection();
+  }
+
+  // cached once (and on resize/load) so scrolling never forces a layout
+  function measureSection(){
+    secTop = section.getBoundingClientRect().top + window.scrollY;
+    secTotal = Math.max(1, section.offsetHeight - window.innerHeight);
   }
 
   function coverRect(img, cw, ch){
-    var iw = img.naturalWidth, ih = img.naturalHeight;
+    var iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
     var scale = Math.max(cw/iw, ch/ih);
     return {dx:(cw-iw*scale)/2, dy:(ch-ih*scale)/2, dw:iw*scale, dh:ih*scale};
   }
 
   function frameReady(img){ return img && img.complete && img.naturalWidth; }
   // frames arrive progressively — fall back to the closest frame that is loaded
+  // prefer the pre-decoded bitmap (decoded off the main thread) over the <img>
+  function src(i){ return bitmaps[i] || (frameReady(images[i]) ? images[i] : null); }
   function nearestLoaded(i){
     for(var d = 0; d < FRAME_COUNT; d++){
-      if(i - d >= 0 && frameReady(images[i - d])) return images[i - d];
-      if(i + d < FRAME_COUNT && frameReady(images[i + d])) return images[i + d];
+      if(i - d >= 0 && src(i - d)) return src(i - d);
+      if(i + d < FRAME_COUNT && src(i + d)) return src(i + d);
     }
     return null;
   }
@@ -1413,8 +1431,8 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     var lo = Math.floor(exact);
     var hi = Math.min(lo + 1, FRAME_COUNT - 1);
     var blend = exact - lo;
-    var imgLo = frameReady(images[lo]) ? images[lo] : nearestLoaded(lo);
-    var imgHi = frameReady(images[hi]) ? images[hi] : null;
+    var imgLo = src(lo) || nearestLoaded(lo);
+    var imgHi = src(hi);
     if(!imgLo) return;
     lastExact = exact;
     var cw = canvas.width, ch = canvas.height;
@@ -1431,10 +1449,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   }
 
   function getProgress(){
-    var rect = section.getBoundingClientRect();
-    var total = section.offsetHeight - window.innerHeight;
-    var scrolled = -rect.top;
-    var p = scrolled / total;
+    var p = (window.scrollY - secTop) / secTotal;
     return Math.max(0, Math.min(1, p));
   }
 
@@ -1494,6 +1509,12 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       img.decoding = 'async';
       function done(){
         loadedCount++;
+        if(window.createImageBitmap && img.naturalWidth){
+          createImageBitmap(img).then(function(bm){
+            bitmaps[idx-1] = bm;
+            if(Math.abs((idx - 1) - wantedExact) <= 1){ lastExact = -1; updateCanvas(); }
+          }, function(){});
+        }
         // redraw only if this frame is close to the one currently on screen,
         // and coalesce bursts of loads into one redraw per animation frame
         if(!redrawQueued && Math.abs((idx - 1) - wantedExact) <= 4){
@@ -1515,7 +1536,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     function start(){ started = true; for(var k = 0; k < MAX_INFLIGHT; k++) loadNext(); }
     loadNext(); // first needed frame straight away so the hero isn't empty
     if(document.readyState === 'complete') start();
-    else window.addEventListener('load', start, {once:true});
+    else window.addEventListener('load', function(){ measureSection(); start(); }, {once:true});
   }
 
   if(!reduceMotion){
