@@ -59,8 +59,9 @@
       <h2>2. תקופת ההגרלה</h2>
       <p>ההרשמה נסגרת ב-<strong id="rf-ends">—</strong> (שעון ישראל). הרשמות שיתקבלו לאחר מועד זה לא ישתתפו בהגרלה.</p>
 
-      <h2>3. הפרס</h2>
-      <p>הפרס: <strong id="rf-prize">—</strong>. הפרס אינו ניתן להמרה בכסף, ואינו ניתן להעברה לאחר.</p>
+      <h2>3. הפרסים</h2>
+      <ul id="rf-prizes"><li>יפורסמו באתר</li></ul>
+      <p>הפרסים אינם ניתנים להמרה בכסף, ואינם ניתנים להעברה לאחר.</p>
 
       <h2>4. ההשתתפות חינמית</h2>
       <p>ההשתתפות בהגרלה היא ללא תשלום וללא חובת רכישה או קבלת שירות כלשהו מהמארגנת. ההשתתפות כרוכה אך ורק במסירת שם מלא ומספר טלפון נייד בטופס שבאתר.</p>
@@ -88,8 +89,9 @@
     <script>
     (function(){
       fetch('../content/raffle.json',{cache:'no-cache'}).then(function(r){return r.json();}).then(function(c){
-        var prize=c.prizeTitle?c.prizeTitle+(c.prizeValueIls?' (שוויו '+Number(c.prizeValueIls).toLocaleString('he-IL')+' ש"ח)':''):'יפורסם באתר';
-        document.getElementById('rf-prize').textContent=prize+(c.prizeDetails?', הכולל: '+c.prizeDetails:'');
+        var pl=['הפרס הראשון','הפרס השני','הפרס השלישי','הפרס הרביעי','הפרס החמישי'], ul=document.getElementById('rf-prizes');
+        var ps=(c.prizes||[]).filter(function(p){return p&&p.title;});
+        if(ps.length){ ul.textContent=''; ps.forEach(function(p,i){ var li=document.createElement('li'); li.textContent=pl[i]+': '+p.title+(p.details?' ('+p.details+')':'')+(p.valueIls?', שווי '+Number(p.valueIls).toLocaleString('he-IL')+' ש"ח':''); ul.appendChild(li); }); }
         if(c.drawText) document.getElementById('rf-draw').textContent=c.drawText;
         var m=(c.endsAt||'').match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
         if(m) document.getElementById('rf-ends').textContent=m[3]+'/'+m[2]+'/'+m[1]+' בשעה '+m[4]+':'+m[5];

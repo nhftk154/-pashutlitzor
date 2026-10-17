@@ -25,7 +25,7 @@ function setup() {
 }
 
 function onOpen() {
-  SpreadsheetApp.getUi().createMenu('הגרלה').addItem('בחר זוכה', 'pickWinner').addToUi();
+  SpreadsheetApp.getUi().createMenu('הגרלה').addItem('בחר זוכות', 'pickWinner').addToUi();
 }
 
 function json_(obj) {
@@ -92,16 +92,20 @@ function doGet() {
   return json_({ ok: true });
 }
 
-// תפריט בגיליון: הגרלה → בחר זוכה. בחירה אקראית אחת, נשמרת בלשונית "זוכה".
+// תפריט בגיליון: הגרלה → בחר זוכות. שתי זוכות שונות (מקום ראשון ושני), נשמרות בלשונית "זוכה".
 function pickWinner() {
   var ui = SpreadsheetApp.getUi();
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(SHEET_NAME);
   var last = sh.getLastRow();
-  if (last < 2) { ui.alert('אין נרשמות.'); return; }
+  if (last < 3) { ui.alert('נדרשות לפחות 2 נרשמות.'); return; }
   var rows = sh.getRange(2, 1, last - 1, 4).getValues();
-  var w = rows[Math.floor(Math.random() * rows.length)];
+  var first = Math.floor(Math.random() * rows.length);
+  var second;
+  do { second = Math.floor(Math.random() * rows.length); } while (second === first);
   var ws = ss.getSheetByName(WINNER_SHEET) || ss.insertSheet(WINNER_SHEET);
-  ws.appendRow([new Date(), w[1], w[2], 'מתוך ' + rows.length + ' נרשמות']);
-  ui.alert('הזוכה: ' + w[1] + ' — ' + w[2]);
+  var now = new Date();
+  ws.appendRow([now, 'מקום ראשון', rows[first][1], rows[first][2], 'מתוך ' + rows.length + ' נרשמות']);
+  ws.appendRow([now, 'מקום שני', rows[second][1], rows[second][2], 'מתוך ' + rows.length + ' נרשמות']);
+  ui.alert('מקום ראשון: ' + rows[first][1] + ' — ' + rows[first][2] + '\nמקום שני: ' + rows[second][1] + ' — ' + rows[second][2]);
 }

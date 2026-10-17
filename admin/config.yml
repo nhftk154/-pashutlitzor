@@ -369,10 +369,17 @@ collections:
         file: "content/raffle.json"
         fields:
           - { label: "הגרלה פעילה (מציג את הפופ-אפ)", name: "enabled", widget: "boolean", default: false, hint: "להפעיל רק אחרי שמילאת פרס, תאריך סיום וכתובת סקריפט. השעון מתחיל לרוץ מרגע ההפעלה ועד תאריך הסיום." }
-          - { label: "שם הפרס", name: "prizeTitle", widget: "string", required: false }
-          - { label: "פירוט הפרס (מה כלול בו)", name: "prizeDetails", widget: "text", required: false }
-          - { label: "תמונת הפרס", name: "prizeImage", widget: "image", required: false }
-          - { label: "שווי הפרס בש\"ח", name: "prizeValueIls", widget: "number", value_type: "int", min: 0, required: false }
+          - label: "פרסים (לפי סדר: הראשון = מקום ראשון, השני = מקום שני)"
+            name: "prizes"
+            widget: "list"
+            min: 1
+            max: 5
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "שם הפרס", name: "title", widget: "string" }
+              - { label: "פירוט (מה כלול בו)", name: "details", widget: "text", required: false }
+              - { label: "שווי בש\"ח", name: "valueIls", widget: "number", value_type: "int", min: 0 }
+              - { label: "תמונה", name: "image", widget: "image", required: false }
           - { label: "תאריך ושעת סיום (שעון ישראל)", name: "endsAt", widget: "datetime", format: "YYYY-MM-DDTHH:mm:ss", date_format: "DD/MM/YYYY", time_format: "HH:mm", required: false, hint: "אותו תאריך חייב להיות מוגדר גם בסקריפט של גוגל (ENDS_AT). ההרשמה נסגרת בצד השרת לפי התאריך שם." }
           - { label: "מועד ואופן ביצוע ההגרלה", name: "drawText", widget: "text" }
           - { label: "כתובת סקריפט Google (Web app URL)", name: "scriptUrl", widget: "string", required: false }
