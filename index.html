@@ -1375,8 +1375,6 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   var redrawQueued = false;
   var wantedExact = FRAME_COUNT - 1;
   var dpr = Math.min(window.devicePixelRatio || 1, 1);
-  // phones: no full-screen blur filter and no frame crossfade (both are GPU-heavy)
-  var lite = window.matchMedia('(max-width:680px), (pointer:coarse)').matches;
 
   function resizeCanvas(){
     var rect = canvas.getBoundingClientRect();
@@ -1402,7 +1400,6 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   }
 
   function drawCrossfade(exact){
-    if(lite) exact = Math.round(exact);
     if(Math.abs(exact - lastExact) < 0.001) return;
     var lo = Math.floor(exact);
     var hi = Math.min(lo + 1, FRAME_COUNT - 1);
@@ -1458,7 +1455,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     expandP = pe;
     // quantised to 3px steps so the full-screen canvas is re-filtered far less often
     var blur = Math.max(0, Math.round(18 * (1 - pe/0.35) / 3) * 3);
-    var filter = (!lite && blur > 0.2) ? 'blur(' + blur.toFixed(1) + 'px)' : '';
+    var filter = blur > 0.2 ? 'blur(' + blur.toFixed(1) + 'px)' : '';
     if(filter !== lastFilter){
       canvas.style.filter = filter;
       lastFilter = filter;
