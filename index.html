@@ -1487,25 +1487,8 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     return null;
   }
 
-  var PERF = /[?&]perf\b/.test(location.search), perfEl = null, perfMax = 0, perfLast = 0, perfBmFail = 0, perfFallbackDraws = 0, perfDraws = 0, perfLongFrames = 0, perfPrevT = 0;
-  function perfShow(){
-    if(!PERF) return;
-    if(!perfEl){ perfEl = document.createElement('pre'); perfEl.style.cssText = 'position:fixed;top:60px;left:6px;z-index:99999;background:rgba(0,0,0,.8);color:#0f0;font:11px/1.35 monospace;padding:6px;margin:0;pointer-events:none;direction:ltr;text-align:left'; document.body.appendChild(perfEl); }
-    var bm = 0; for(var i = 0; i < FRAME_COUNT; i++) if(bitmaps[i]) bm++;
-    perfEl.textContent = 'loaded ' + loadedCount + '/' + FRAME_COUNT + '  bitmaps ' + bm + '  bmFail ' + perfBmFail + '\n' +
-      'draws ' + perfDraws + '  viaImg ' + perfFallbackDraws + '\n' +
-      'draw ms last ' + perfLast.toFixed(1) + ' max ' + perfMax.toFixed(1) + '\n' +
-      'gaps>50ms ' + perfLongFrames + '  canvas ' + canvas.width + 'x' + canvas.height + '  dpr ' + (window.devicePixelRatio||1);
-  }
   function drawCrossfade(exact){
     if(Math.abs(exact - lastExact) < 0.001) return;
-    var _t0 = PERF ? performance.now() : 0;
-    try { drawCrossfadeInner(exact); } finally {
-      if(PERF){ perfLast = performance.now() - _t0; if(perfLast > perfMax) perfMax = perfLast; perfDraws++;
-        if(perfPrevT && _t0 - perfPrevT > 50 && _t0 - perfPrevT < 400) perfLongFrames++; perfPrevT = _t0; perfShow(); }
-    }
-  }
-  function drawCrossfadeInner(exact){
     var lo = Math.floor(exact);
     var hi = Math.min(lo + 1, FRAME_COUNT - 1);
     var blend = exact - lo;
@@ -1513,7 +1496,6 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
     var imgHi = src(hi);
     if(!imgLo) return;
     lastExact = exact;
-    if(PERF && !bitmaps[lo]) perfFallbackDraws++;
     var cw = canvas.width, ch = canvas.height;
     var r = coverRect(imgLo, cw, ch);
     ctx.clearRect(0, 0, cw, ch);
@@ -1607,7 +1589,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
           createImageBitmap(img).then(function(bm){
             bitmaps[idx-1] = bm;
             if(Math.abs((idx - 1) - wantedExact) <= 1){ lastExact = -1; updateCanvas(); }
-          }, function(){ perfBmFail++; });
+          }, function(){});
         }
         // redraw only if this frame is close to the one currently on screen,
         // and coalesce bursts of loads into one redraw per animation frame
