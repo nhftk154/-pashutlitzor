@@ -1903,7 +1903,7 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
           if(window.scrollY < introEnd()) return;
           window.removeEventListener('scroll', onRaffleScroll);
           openPopup(true);
-        }, 700);
+        }, 500);
       };
       window.addEventListener('scroll', onRaffleScroll, {passive:true});
     }
