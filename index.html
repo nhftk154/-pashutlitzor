@@ -1755,23 +1755,15 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
   function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
   function pad(n){ return n < 10 ? '0' + n : '' + n; }
 
-  var RD = /[?&]rdebug\b/.test(location.search), rdEl = null, rdS = {state:'fetching', scrolls:0, timers:0, opened:0};
-  function rd(k, v){
-    if(!RD) return; rdS[k] = v;
-    if(!rdEl){ rdEl = document.createElement('pre'); rdEl.style.cssText = 'position:fixed;top:60px;left:6px;z-index:99999;background:rgba(0,0,0,.8);color:#0f0;font:11px/1.35 monospace;padding:6px;margin:0;pointer-events:none;direction:ltr;text-align:left;max-width:90vw;white-space:pre-wrap'; document.body.appendChild(rdEl); }
-    rdEl.textContent = Object.keys(rdS).map(function(x){ return x + ': ' + rdS[x]; }).join('\n');
-  }
-  rd('state', 'fetching');
   fetch('content/raffle.json', {cache:'no-cache'}).then(function(r){ return r.json(); }).then(function(cfg){
     var ends = parseEnds(cfg.endsAt);
-    rd('cfg', 'enabled=' + cfg.enabled + ' script=' + !!cfg.scriptUrl + ' ends=' + ends + ' now=' + Date.now());
-    if(!cfg.enabled || !cfg.scriptUrl || isNaN(ends) || Date.now() >= ends){ rd('state', 'NOT BUILT (config/expired)'); return; }
+    if(!cfg.enabled || !cfg.scriptUrl || isNaN(ends) || Date.now() >= ends)return;
     var link = document.getElementById('foot-raffle-link');
     if(link) link.hidden = false;
     var doneKey = 'raffleDone:' + cfg.endsAt;
     var done = !!store('l','g',doneKey);
     build(cfg, ends, doneKey, done, true);
-  }).catch(function(e){ rd('state', 'ERROR ' + e); });
+  }).catch(function(){});
 
   function build(cfg, ends, doneKey, done, autoOpen){
     var prev = null, timer = null;
@@ -1904,17 +1896,12 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
       // paused for a moment, so it never pops up in the middle of a scroll
       var introEnd = function(){ var sec = document.getElementById('canvas-sequence'); return sec ? Math.max(0, sec.offsetHeight - window.innerHeight) + 80 : window.innerHeight; };
       var settle = 0;
-      rd('state', 'listening, need scrollY>=' + introEnd());
       var onRaffleScroll = function(){
-        rd('scrolls', rdS.scrolls + 1); rd('scrollY', Math.round(window.scrollY));
         clearTimeout(settle);
         if(window.scrollY < introEnd()) return;
-        rd('timers', rdS.timers + 1);
         settle = setTimeout(function(){
-          rd('timerFired', 'scrollY=' + Math.round(window.scrollY));
           if(window.scrollY < introEnd()) return;
           window.removeEventListener('scroll', onRaffleScroll);
-          rd('opened', rdS.opened + 1);
           openPopup(true);
         }, 500);
       };
