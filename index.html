@@ -735,6 +735,14 @@ footer .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;text
 .raffle-msg{min-height:1.3em;font-size:.9rem;text-align:center}
 .raffle-msg.err{color:#a8321f}
 .raffle-msg.ok{color:var(--olive);font-weight:500}
+.raffle-form button[type=submit]{
+  width:100%;margin-top:6px;font-size:1.15rem;font-weight:700;letter-spacing:.01em;
+  background:linear-gradient(135deg,var(--accent) 0%,#B96A50 100%);color:#fff;
+  box-shadow:0 10px 24px rgba(206,134,108,.45),inset 0 1px 0 rgba(255,255,255,.28);
+  text-shadow:0 1px 1px rgba(90,40,25,.25);
+}
+@media(hover:hover) and (pointer:fine){.raffle-form button[type=submit]:hover:not([disabled]){background:linear-gradient(135deg,#D6937A 0%,#A85D44 100%);transform:translateY(-2px);box-shadow:0 14px 30px rgba(206,134,108,.55),inset 0 1px 0 rgba(255,255,255,.28)}}
+.raffle-form button[type=submit]:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
 .raffle-form button[type=submit][disabled]{opacity:.6;cursor:wait}
 .raffle-done{padding:8px 0 4px;font-size:1.05rem;line-height:1.6}
 .raffle-note{margin-top:10px;font-size:.78rem;color:var(--text-soft)}
